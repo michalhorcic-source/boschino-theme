@@ -1,0 +1,664 @@
+{{ 'section-collection-list.css' | asset_url | stylesheet_tag }}
+{{ 'component-card.css' | asset_url | stylesheet_tag }}
+{{ 'component-slider.css' | asset_url | stylesheet_tag }}
+
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+
+  /* =========================================================
+     BOSCHINO – hranatý carousel
+     - obrázek: bílé pozadí, max plocha
+     - text: tmavý banner + bílé písmo (do ztracena, měkké)
+     - hover: karta vystoupí + jemný červený akcent (spodní linka)
+     ========================================================= */
+
+  :root{
+    --boschino-red: #e20015;
+
+    --boschino-border: rgba(0,0,0,0.10);
+    --boschino-border-strong: rgba(0,0,0,0.18);
+
+    --boschino-shadow: 0 10px 22px rgba(0,0,0,0.08);
+    --boschino-shadow-hover: 0 18px 40px rgba(0,0,0,0.14);
+
+    --boschino-title: rgba(255,255,255,0.96);
+    --boschino-desc: rgba(255,255,255,0.78);
+  }
+
+  /* pás */
+  .boschino-subcats{
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    gap: 18px !important;
+
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+
+    padding: 12px 0 16px !important;
+    margin: 0 !important;
+    list-style: none !important;
+
+    scroll-snap-type: x mandatory !important;
+    -webkit-overflow-scrolling: touch !important;
+    scroll-behavior: smooth !important;
+  }
+
+  .boschino-subcats > li{
+    scroll-snap-align: start !important;
+    flex: 0 0 320px !important;
+    width: 320px !important;
+    max-width: 320px !important;
+    margin: 0 !important;
+  }
+
+ @media (min-width: 990px){
+  .boschino-subcats{
+    gap: 16px !important;
+    padding: 14px 0 18px !important;
+  }
+
+  .boschino-subcats > li{
+    flex: 0 0 280px !important;
+    width: 280px !important;
+    max-width: 280px !important;
+  }
+
+  .boschino-subcats__media{
+    height: 320px;
+  }
+}
+
+  /* scrollbar – jemně do červena (neřve) */
+.boschino-subcats::-webkit-scrollbar{ height: 10px; }
+
+.boschino-subcats::-webkit-scrollbar-thumb{
+  background: rgba(226,0,21,0.28);          /* jemná červená */
+  border-radius: 999px;
+  box-shadow: 0 2px 8px rgba(226,0,21,0.18); /* jen stín */
+}
+
+.boschino-subcats::-webkit-scrollbar-track{
+  background: rgba(0,0,0,0.05);
+  border-radius: 999px;
+}
+/* Firefox */
+.boschino-subcats{
+  scrollbar-color: rgba(226,0,21,0.28) rgba(0,0,0,0.05);
+  scrollbar-width: thin;
+}
+
+
+  /* karta */
+  .boschino-subcats__card{
+    position: relative;
+    display: block;
+    text-decoration: none !important;
+    border-radius: 0 !important;
+    overflow: hidden;
+
+    background: #fff;
+    border: 1px solid var(--boschino-border);
+    box-shadow: var(--boschino-shadow);
+
+    transform: translateZ(0);
+    transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+  }
+/* červený akcent jen při hover/focus (spodní linka) */
+.boschino-subcats__card::after{
+  content:"";
+  display:block;
+  height: 0;
+  background: rgba(226,0,21,0.35);
+  transition: height .18s ease;
+}
+.boschino-subcats__card:hover::after,
+.boschino-subcats__card:focus-within::after{
+  height: 2px;
+}
+
+
+  /* hover/focus – oživení */
+  .boschino-subcats__card:hover,
+  .boschino-subcats__card:focus-within{
+    border-color: rgba(226,0,21,0.22);
+    box-shadow: var(--boschino-shadow-hover);
+    transform: translateY(-4px);
+  }
+
+
+
+  .boschino-subcats__card:focus-visible{
+    outline: 3px solid rgba(226,0,21,0.25);
+    outline-offset: 3px;
+  }
+
+  /* media – bílé pozadí, max plocha */
+  .boschino-subcats__media{
+    height: 300px;
+    padding: 6px;
+    box-sizing: border-box;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #ffffff;
+    border-bottom: 1px solid rgba(0,0,0,0.06);
+    overflow: hidden;
+  }
+
+  @media (min-width: 990px){
+    .boschino-subcats__media{ height: 380px; }
+  }
+
+  .boschino-subcats__media img{
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: contain !important;
+    display: block !important;
+
+    transform: scale(1.12);
+    transform-origin: center;
+    transition: transform .18s ease;
+  }
+
+  /* hover: obrázek lehce „dýchne“ */
+  .boschino-subcats__card:hover .boschino-subcats__media img{
+    transform: scale(1.16);
+  }
+
+  /* TEXT – měkký banner do ztracena + vnitřní jemný stín */
+  .boschino-subcats__body{
+  position: relative;
+  padding: 10px 12px;
+  overflow: hidden;
+
+  /* jednotná výška banneru – pro title + 3 řádky desc */
+  height: 112px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  text-align: center;
+
+  background: linear-gradient(180deg,
+    rgba(10,12,14,0.00) 0%,
+    rgba(10,12,14,0.28) 22%,
+    rgba(10,12,14,0.70) 62%,
+    rgba(10,12,14,0.92) 100%
+  );
+}
+
+
+
+
+
+/* extra „závoj“ přímo pod textem – čitelnost bez tvrdosti */
+.boschino-subcats__title,
+.boschino-subcats__desc{
+  background: transparent;
+  padding: 0;
+  border-radius: 0;
+}
+
+
+
+
+  /* extra fade z fotky do banneru (ještě jemnější přechod) */
+  .boschino-subcats__body::before{
+    content:"";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: -44px;
+    height: 56px;
+
+    background: linear-gradient(180deg,
+      rgba(0,0,0,0.00) 0%,
+      rgba(0,0,0,0.10) 35%,
+      rgba(0,0,0,0.26) 70%,
+      rgba(0,0,0,0.44) 100%
+    );
+    pointer-events: none;
+  }
+
+  /* jemný „glass“ pocit + inner shadow méně agresivní */
+  .boschino-subcats__body::after{
+    content:"";
+    position: absolute;
+    inset: 0;
+    box-shadow:
+  inset 0 8px 12px rgba(0,0,0,0.12),
+  inset 0 1px 0 rgba(255,255,255,0.05);
+
+    pointer-events: none;
+  }
+.boschino-subcats__title{
+  position: relative;
+  margin: 0;
+
+  color: rgba(255,255,255,0.98);
+  font-size: 16px;
+  font-weight: 900;
+  line-height: 1.2;
+  letter-spacing: 0.2px;
+
+  max-width: 92%;
+  text-align: center;
+  min-height: 2.4em;
+
+
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+
+  text-shadow: 0 2px 10px rgba(0,0,0,0.55);
+}
+
+.boschino-subcats__desc{
+  position: relative;
+  margin: 0;
+
+  color: rgba(255,255,255,0.92);
+  font-size: 12.5px;
+  line-height: 1.35;
+
+  max-width: 92%;
+  text-align: center;
+  min-height: 4.05em;
+
+
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+
+  text-shadow: 0 2px 10px rgba(0,0,0,0.50);
+}
+
+
+
+
+
+  /* hover: banner jemně ožije červeným nádechem (nenápadně) */
+  .boschino-subcats__card:hover .boschino-subcats__body{
+  background: linear-gradient(180deg,
+    rgba(10,12,14,0.00) 0%,
+    rgba(10,12,14,0.32) 22%,
+    rgba(10,12,14,0.78) 62%,
+    rgba(10,12,14,0.92) 100%
+  );
+}
+
+
+
+  /* volitelně: pokud nechceš popis vůbec, odkomentuj */
+  /* .boschino-subcats__desc{ display:none !important; } */
+
+{%- endstyle -%}
+
+<div class="color-{{ section.settings.color_scheme }} gradient">
+  <div class="collection-list-wrapper page-width isolate section-{{ section.id }}-padding">
+
+    <div class="title-wrapper-with-link title-wrapper--no-top-margin" style="display:none;">
+  <h2
+    id="SectionHeading-{{ section.id }}"
+    class="collection-list-title inline-richtext {{ section.settings.heading_size }}{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}"
+  >
+    {{ collection.title | default: section.settings.title }}
+  </h2>
+</div>
+
+
+    <ul class="boschino-subcats boschino-subcats--grid" role="list" data-collapsed="true" id="boschinoSubcats">
+      {%- for block in section.blocks -%}
+        {%- assign c = block.settings.collection -%}
+        {%- if c != blank -%}
+          <li {{ block.shopify_attributes }}>
+            <a class="boschino-subcats__card" href="{{ c.url }}">
+              <div class="boschino-subcats__media">
+                {%- if c.featured_image -%}
+                  {{ c.featured_image | image_url: width: 1600 | image_tag: loading: 'lazy', alt: c.title }}
+                {%- else -%}
+                  {{ 'collection-apparel-1' | placeholder_svg_tag: 'placeholder-svg' }}
+                {%- endif -%}
+              </div>
+
+              <div class="boschino-subcats__body">
+                {%- assign t = block.settings.display_title | strip -%}
+<h3 class="boschino-subcats__title">
+  {{ t | default: c.title }}
+</h3>
+
+              </div>
+            </a>
+          </li>
+        {%- endif -%}
+      {%- endfor -%}
+    </ul>
+
+    <div class="boschino-subcats__actions">
+      <button class="boschino-subcats__btn" type="button" id="boschinoSubcatsBtn">
+        Zobrazit další kategorie
+      </button>
+    </div>
+
+    <script>
+      (function(){
+        var grid = document.getElementById('boschinoSubcats');
+        var btn  = document.getElementById('boschinoSubcatsBtn');
+        if(!grid || !btn) return;
+
+        btn.addEventListener('click', function(){
+          var collapsed = grid.getAttribute('data-collapsed') === 'true';
+          grid.setAttribute('data-collapsed', collapsed ? 'false' : 'true');
+          btn.textContent = collapsed ? 'Skrýt další kategorie' : 'Zobrazit další kategorie';
+        });
+      })();
+    </script>
+
+  </div>
+</div>
+<style>
+  /* BOSCHINO - subkategorie s pevnou sirkou banneru */
+  .boschino-subcats--grid{
+    display: grid !important;
+    overflow: visible !important;
+    scroll-snap-type: none !important;
+    -webkit-overflow-scrolling: auto !important;
+
+    gap: 18px !important;
+    padding: 14px 0 18px !important;
+    margin: 0 !important;
+    list-style: none !important;
+
+    grid-template-columns: repeat(auto-fit, 280px);
+    justify-content: space-evenly !important;
+    align-items: stretch !important;
+  }
+
+  .boschino-subcats--grid > li{
+    min-width: 0 !important;
+    width: 280px !important;
+    max-width: 280px !important;
+    flex: none !important;
+    scroll-snap-align: unset !important;
+    margin: 0 !important;
+  }
+
+  @media (max-width: 1200px){
+    .boschino-subcats--grid{
+      gap: 16px !important;
+      grid-template-columns: repeat(auto-fit, 260px);
+    }
+
+    .boschino-subcats--grid > li{
+      width: 260px !important;
+      max-width: 260px !important;
+    }
+  }
+
+  @media (max-width: 860px){
+    .boschino-subcats--grid{
+      gap: 14px !important;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      justify-content: stretch !important;
+    }
+
+    .boschino-subcats--grid > li{
+      width: auto !important;
+      max-width: none !important;
+    }
+  }
+
+  @media (max-width: 560px){
+    .boschino-subcats--grid{
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .boschino-subcats--grid[data-collapsed="true"] > li{
+    display: none;
+  }
+
+  .boschino-subcats--grid[data-collapsed="true"] > li:nth-child(-n+5){
+    display: block;
+  }
+
+  @media (max-width: 1200px){
+    .boschino-subcats--grid[data-collapsed="true"] > li{
+      display: none;
+    }
+
+    .boschino-subcats--grid[data-collapsed="true"] > li:nth-child(-n+4){
+      display: block;
+    }
+  }
+
+  @media (max-width: 860px){
+    .boschino-subcats--grid[data-collapsed="true"] > li{
+      display: none;
+    }
+
+    .boschino-subcats--grid[data-collapsed="true"] > li:nth-child(-n+2){
+      display: block;
+    }
+  }
+
+  @media (max-width: 560px){
+    .boschino-subcats--grid[data-collapsed="true"] > li{
+      display: none;
+    }
+
+    .boschino-subcats--grid[data-collapsed="true"] > li:first-child{
+      display: block;
+    }
+  }
+
+  .boschino-subcats__actions{
+    display: flex;
+    justify-content: center;
+    padding: 12px 0 4px;
+  }
+
+  .boschino-subcats__actions[hidden]{
+    display: none !important;
+  }
+
+  .boschino-subcats__btn{
+    border: 1px solid rgba(0,0,0,.18);
+    background: #fff;
+    border-radius: 999px;
+    padding: 10px 16px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  #shopify-section-{{ section.id }}{
+    display: block;
+    width: 100%;
+  }
+
+  #shopify-section-{{ section.id }} .boschino-subcats{
+    max-width: 1340px;
+    margin: 0 auto !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+</style>
+<script>
+  (function(){
+    var grid = document.getElementById('boschinoSubcats');
+    var btn = document.getElementById('boschinoSubcatsBtn');
+    var actions = btn ? btn.closest('.boschino-subcats__actions') : null;
+    var itemCount = 0;
+    var i;
+
+    if(!grid) return;
+
+    for(i = 0; i < grid.children.length; i++){
+      if(grid.children[i].tagName === 'LI'){
+        itemCount += 1;
+      }
+    }
+
+    if(!btn) return;
+
+    if(itemCount <= 5){
+      grid.setAttribute('data-collapsed', 'false');
+      if(actions) actions.hidden = true;
+      return;
+    }
+
+    grid.setAttribute('data-collapsed', 'true');
+    if(actions) actions.hidden = false;
+    btn.textContent = 'Zobrazit další kategorie';
+
+    btn.addEventListener('click', function(){
+      var collapsed = grid.getAttribute('data-collapsed') === 'true';
+      grid.setAttribute('data-collapsed', collapsed ? 'false' : 'true');
+      btn.textContent = collapsed ? 'Skrýt další kategorie' : 'Zobrazit další kategorie';
+    });
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "t:sections.collection-list.name",
+  "tag": "section",
+  "class": "section section-collection-list",
+  "max_blocks": 30,
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "inline_richtext",
+      "id": "title",
+      "default": "t:sections.collection-list.settings.title.default",
+      "label": "t:sections.collection-list.settings.title.label"
+    },
+    {
+      "type": "select",
+      "id": "heading_size",
+      "options": [
+        { "value": "h2", "label": "t:sections.all.heading_size.options__1.label" },
+        { "value": "h1", "label": "t:sections.all.heading_size.options__2.label" },
+        { "value": "h0", "label": "t:sections.all.heading_size.options__3.label" },
+        { "value": "hxl", "label": "t:sections.all.heading_size.options__4.label" },
+        { "value": "hxxl", "label": "t:sections.all.heading_size.options__5.label" }
+      ],
+      "default": "h1",
+      "label": "t:sections.all.heading_size.label"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.collection-list.settings.header_layout.content"
+    },
+    {
+      "type": "select",
+      "id": "image_ratio",
+      "options": [
+        { "value": "adapt", "label": "t:sections.collection-list.settings.image_ratio.options__1.label" },
+        { "value": "portrait", "label": "t:sections.collection-list.settings.image_ratio.options__2.label" },
+        { "value": "square", "label": "t:sections.collection-list.settings.image_ratio.options__3.label" }
+      ],
+      "default": "square",
+      "label": "t:sections.collection-list.settings.image_ratio.label"
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "min": 1,
+      "max": 6,
+      "step": 1,
+      "default": 3,
+      "label": "t:sections.collection-list.settings.columns_desktop.label"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.all.colors.label",
+      "info": "t:sections.all.colors.has_cards_info",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.collection-list.settings.header_mobile.content"
+    },
+    {
+      "type": "select",
+      "id": "columns_mobile",
+      "options": [
+        { "value": "1", "label": "t:sections.collection-list.settings.columns_mobile.options__1.label" },
+        { "value": "2", "label": "t:sections.collection-list.settings.columns_mobile.options__2.label" }
+      ],
+      "default": "1",
+      "label": "t:sections.collection-list.settings.columns_mobile.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "swipe_on_mobile",
+      "default": false,
+      "label": "t:sections.collection-list.settings.swipe_on_mobile.label"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.all.padding.section_padding_heading"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_top",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_bottom",
+      "default": 36
+    }
+  ],
+  "blocks": [
+    {
+      "type": "featured_collection",
+      "name": "Kolekce",
+      "settings": [
+        { "type": "collection", "id": "collection", "label": "Vyber kolekci" },
+        { "type": "text", "id": "display_title", "label": "Zobrazovaný název (volitelné)" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.collection-list.presets.name",
+      "blocks": [
+        { "type": "featured_collection" },
+        { "type": "featured_collection" },
+        { "type": "featured_collection" }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,504 @@
+/* BOSCHINO – katalogové karty podle správného fallback vzhledu */
+
+.bsh-collection-surface {
+  --bosch-blue: #2a3885;
+  --bosch-red: #e20015;
+  --bottom-dark: #255da0;
+}
+
+/* karta */
+.bsh-collection-surface #product-grid .card-wrapper,
+.bsh-collection-surface #product-grid .card {
+  border: 1.5px solid rgba(0, 0, 0, 0.18) !important;
+  outline: 1px solid rgba(0, 0, 0, 0.04) !important;
+  border-radius: 0 !important;
+  background: #ffffff !important;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08) !important;
+  overflow: hidden !important;
+  position: relative !important;
+  width: 100% !important;
+}
+
+.bsh-collection-surface #product-grid .card-wrapper::before,
+.bsh-collection-surface #product-grid .card::before {
+  content: "" !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  height: 2px !important;
+  width: 100% !important;
+  background: linear-gradient(90deg, #2a3885, #e20015) !important;
+  z-index: 50 !important;
+}
+
+.bsh-collection-surface #product-grid .card-wrapper:hover,
+.bsh-collection-surface #product-grid .card-wrapper:focus-within {
+  border-color: rgba(0, 0, 0, 0.38) !important;
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.12) !important;
+  transform: translateY(-1px) !important;
+}
+
+.bsh-collection-surface #product-grid .card {
+  display: flex !important;
+  flex-direction: column !important;
+  height: 100% !important;
+}
+
+.bsh-collection-surface #product-grid .card__content {
+  display: flex !important;
+  flex-direction: column !important;
+  flex: 1 1 auto !important;
+  padding: 0 !important;
+  background: linear-gradient(
+    180deg,
+    #ffffff 0%,
+    #ffffff 22%,
+    rgba(37, 93, 160, 0.08) 45%,
+    rgba(37, 93, 160, 0.22) 68%,
+    rgba(37, 93, 160, 0.45) 85%,
+    #255da0 100%
+  ) !important;
+}
+
+/* media */
+.bsh-collection-surface #product-grid .card__inner,
+.bsh-collection-surface #product-grid .card__media,
+.bsh-collection-surface #product-grid .card__media-wrapper,
+.bsh-collection-surface #product-grid .card__media > a.media.media--transparent {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  height: 250px !important;
+  min-height: 250px !important;
+  max-height: 250px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  overflow: hidden !important;
+  background: #fff !important;
+  box-sizing: border-box !important;
+}
+
+.bsh-collection-surface #product-grid .card__inner.ratio::before,
+.bsh-collection-surface #product-grid .card__media.ratio::before,
+.bsh-collection-surface #product-grid .ratio::before,
+.bsh-collection-surface #product-grid .media::before,
+.bsh-collection-surface #product-grid .card__media > a.media.media--transparent::before,
+.bsh-collection-surface #product-grid .card__media > a.media.media--transparent::after {
+  content: none !important;
+  display: none !important;
+}
+
+.bsh-collection-surface #product-grid .card__media {
+  display: flex !important;
+}
+
+.bsh-collection-surface #product-grid .card__media > a.media.media--transparent {
+  flex: 1 1 100% !important;
+  padding-top: 8px !important;
+}
+
+.bsh-collection-surface #product-grid .card__media > a.media.media--transparent img {
+  position: static !important;
+  left: auto !important;
+  right: auto !important;
+  top: auto !important;
+  bottom: auto !important;
+  inset: auto !important;
+  transform: none !important;
+  width: auto !important;
+  height: auto !important;
+  max-width: calc(100% - 16px) !important;
+  max-height: calc(100% - 16px) !important;
+  margin: 0 auto !important;
+  display: block !important;
+  object-fit: contain !important;
+  object-position: center center !important;
+  flex: 0 0 auto !important;
+}
+
+.bsh-collection-surface #product-grid .card__media img[src=""],
+.bsh-collection-surface #product-grid .card__media img:not([src]) {
+  display: none !important;
+}
+
+.bsh-collection-surface #product-grid .boschino-image-placeholder {
+  width: 100%;
+  height: 100%;
+  min-height: 220px;
+  background: #f3f3f3;
+}
+
+/* text */
+.bsh-collection-surface #product-grid .card__information {
+  padding: 18px 16px 10px 16px !important;
+  margin-top: 6px !important;
+  background: transparent !important;
+}
+
+.bsh-collection-surface #product-grid .card__heading {
+  color: rgba(0, 0, 0, 0.88) !important;
+  font-size: 14px !important;
+  font-weight: 900 !important;
+  line-height: 1.2 !important;
+  min-height: 3.6em !important;
+  margin: 0 !important;
+}
+
+.bsh-collection-surface #product-grid .card__heading a {
+  color: rgba(0, 0, 0, 0.88) !important;
+  font-size: 14px !important;
+  font-weight: 900 !important;
+  line-height: 1.2 !important;
+  text-decoration: none !important;
+  display: -webkit-box !important;
+  -webkit-line-clamp: 3 !important;
+  -webkit-box-orient: vertical !important;
+  overflow: hidden !important;
+}
+
+.bsh-collection-surface #product-grid .card__heading a::after,
+.bsh-collection-surface #product-grid a.full-unstyled-link::after {
+  content: none !important;
+  display: none !important;
+}
+
+.bsh-collection-surface #product-grid .price,
+.bsh-collection-surface #product-grid .price-item {
+  color: #2a3885 !important;
+  font-size: 16.5px !important;
+  font-weight: 900 !important;
+}
+
+/* sklad */
+.bsh-collection-surface #product-grid .boschino-stock {
+  margin-top: 6px !important;
+  margin-bottom: 10px !important;
+  font-size: 13px !important;
+  font-weight: 800 !important;
+  color: rgba(0, 0, 0, 0.62) !important;
+}
+
+.bsh-collection-surface #product-grid .boschino-stock__status {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+}
+
+.bsh-collection-surface #product-grid .boschino-stock__status::before {
+  content: "" !important;
+  width: 8px !important;
+  height: 8px !important;
+  border-radius: 999px !important;
+  display: inline-block !important;
+  background: #2ecc71 !important;
+}
+
+.bsh-collection-surface #product-grid .boschino-stock__status--in::before {
+  background: #2ecc71 !important;
+}
+
+.bsh-collection-surface #product-grid .boschino-stock__status--order::before {
+  background: #f1c40f !important;
+}
+
+.bsh-collection-surface #product-grid .boschino-stock__status--out::before {
+  background: #e74c3c !important;
+}
+
+/* actions */
+.bsh-collection-surface #product-grid .boschino-actions {
+  padding: 12px 16px 12px 16px !important;
+  position: relative !important;
+  margin-top: auto !important;
+}
+
+.bsh-collection-surface #product-grid .boschino-quantity {
+  width: 100% !important;
+  margin: 0 !important;
+  display: grid !important;
+  grid-template-columns: 56px 1fr 56px !important;
+  height: 46px !important;
+  min-height: 46px !important;
+  border: 1px solid rgba(255,255,255,0.60) !important;
+  background: rgba(255,255,255,0.94) !important;
+  border-radius: 0 !important;
+  overflow: hidden !important;
+  box-shadow: none !important;
+}
+
+.bsh-collection-surface #product-grid .boschino-quantity button {
+  width: 56px !important;
+  height: 46px !important;
+  border: 0 !important;
+  background: transparent !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  font-size: 0 !important;
+  font-weight: 400 !important;
+  position: relative !important;
+}
+
+.bsh-collection-surface #product-grid .boschino-quantity .boschino-minus::before {
+  content: "−" !important;
+  font-size: 18px !important;
+  font-weight: 400 !important;
+  line-height: 1 !important;
+  color: rgba(0,0,0,0.70) !important;
+  display: block !important;
+}
+
+.bsh-collection-surface #product-grid .boschino-quantity .boschino-plus::before {
+  content: "+" !important;
+  font-size: 18px !important;
+  font-weight: 400 !important;
+  line-height: 1 !important;
+  color: rgba(0,0,0,0.70) !important;
+  display: block !important;
+}
+
+.bsh-collection-surface #product-grid .boschino-quantity .boschino-minus {
+  border-right: 1px solid rgba(0,0,0,0.12) !important;
+}
+
+.bsh-collection-surface #product-grid .boschino-quantity .boschino-plus {
+  border-left: 1px solid rgba(0,0,0,0.12) !important;
+}
+
+.bsh-collection-surface #product-grid .boschino-quantity button:hover {
+  background: rgba(0,0,0,0.04) !important;
+}
+
+.bsh-collection-surface #product-grid .boschino-quantity input {
+  width: 100% !important;
+  border: 0 !important;
+  outline: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+  text-align: center !important;
+  font-weight: 400 !important;
+  font-size: 14px !important;
+  color: rgba(0,0,0,0.75) !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  -webkit-appearance: none !important;
+  appearance: none !important;
+  position: relative !important;
+}
+
+.bsh-collection-surface #product-grid .boschino-quantity input::-webkit-outer-spin-button,
+.bsh-collection-surface #product-grid .boschino-quantity input::-webkit-inner-spin-button {
+  -webkit-appearance: none !important;
+  margin: 0 !important;
+}
+
+.bsh-collection-surface #product-grid .boschino-quantity input[type=number] {
+  -moz-appearance: textfield !important;
+}
+
+/* cta */
+.bsh-collection-surface #product-grid .boschino-cta {
+  display: flex !important;
+  align-items: stretch !important;
+  width: 100% !important;
+  margin: 10px 0 0 0 !important;
+  padding: 0 !important;
+  border: 1px solid rgba(0, 0, 0, 0.14) !important;
+  background: rgba(255, 255, 255, 0.94) !important;
+  min-height: 46px !important;
+  border-radius: 0 !important;
+  overflow: hidden !important;
+  box-sizing: border-box !important;
+}
+
+.bsh-collection-surface #product-grid .boschino-cta:hover {
+  border-color: rgba(0, 0, 0, 0.22) !important;
+  background: rgba(255, 255, 255, 0.98) !important;
+}
+
+.bsh-collection-surface #product-grid .boschino-cta__detail {
+  flex: 1 1 auto !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  height: 46px !important;
+  border: 0 !important;
+  background: transparent !important;
+  color: rgba(0, 0, 0, 0.88) !important;
+  font-weight: 900 !important;
+  letter-spacing: 0.2px !important;
+  text-decoration: none !important;
+  white-space: nowrap !important;
+  min-width: 0 !important;
+  position: relative !important;
+}
+
+.bsh-collection-surface #product-grid .boschino-cta__cart {
+  flex: 0 0 56px !important;
+  display: flex !important;
+}
+
+.bsh-collection-surface #product-grid .boschino-cta__btn {
+  width: 56px !important;
+  height: 46px !important;
+  border: 0 !important;
+  background: transparent !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-left: 1px solid rgba(0, 0, 0, 0.12) !important;
+  outline: none !important;
+  box-shadow: none !important;
+  appearance: none !important;
+  position: relative !important;
+}
+
+.bsh-collection-surface #product-grid .boschino-cta__btn:hover,
+.bsh-collection-surface #product-grid .boschino-cta__detail:hover {
+  background: rgba(0, 0, 0, 0.04) !important;
+}
+
+.bsh-collection-surface #product-grid .boschino-cart-ico {
+  width: 18px !important;
+  height: 18px !important;
+  display: block !important;
+}
+
+.bsh-collection-surface #product-grid .boschino-cta__btn[disabled],
+.bsh-collection-surface #product-grid .boschino-quantity button[disabled],
+.bsh-collection-surface #product-grid .boschino-quantity input[disabled] {
+  opacity: 0.5 !important;
+  cursor: not-allowed !important;
+  pointer-events: none !important;
+}
+
+/* tooltip */
+.bsh-collection-surface #product-grid .inventory-status-with-tooltip {
+  position: relative;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  cursor: help;
+}
+
+.bsh-collection-surface #product-grid .inventory-tooltip {
+  position: absolute;
+  left: 0;
+  bottom: calc(100% + 10px);
+  z-index: 30;
+  min-width: 220px;
+  max-width: 280px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: rgba(28, 28, 28, 0.96);
+  color: #fff;
+  font-size: 12px;
+  line-height: 1.45;
+  font-weight: 500;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.22);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(6px);
+  transition: opacity 0.18s ease, transform 0.18s ease, visibility 0.18s ease;
+  pointer-events: none;
+}
+
+.bsh-collection-surface #product-grid .inventory-tooltip::after {
+  content: "";
+  position: absolute;
+  left: 18px;
+  top: 100%;
+  border-width: 6px;
+  border-style: solid;
+  border-color: rgba(28, 28, 28, 0.96) transparent transparent transparent;
+}
+
+.bsh-collection-surface #product-grid .inventory-status-with-tooltip:hover .inventory-tooltip,
+.bsh-collection-surface #product-grid .inventory-status-with-tooltip:focus .inventory-tooltip,
+.bsh-collection-surface #product-grid .inventory-status-with-tooltip:focus-within .inventory-tooltip {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.bsh-collection-surface #product-grid .boschino-quantity input {
+  position: relative !important;
+  z-index: 0 !important;
+}
+
+/* mobil – stejné chování jako fallback */
+@media (max-width: 640px) {
+  .bsh-collection-surface #product-grid .boschino-actions {
+    padding: 10px 10px 10px 10px !important;
+  }
+
+  .bsh-collection-surface #product-grid .card__information {
+    padding: 14px 12px 8px 12px !important;
+  }
+
+  .bsh-collection-surface #product-grid .card__heading,
+  .bsh-collection-surface #product-grid .card__heading a {
+    font-size: 14px !important;
+    line-height: 1.2 !important;
+  }
+
+  .bsh-collection-surface #product-grid .price,
+  .bsh-collection-surface #product-grid .price-item {
+    font-size: 15px !important;
+  }
+
+  .bsh-collection-surface #product-grid .boschino-stock {
+    font-size: 12px !important;
+  }
+
+  .bsh-collection-surface #product-grid .boschino-quantity {
+    grid-template-columns: 1fr 1fr 1fr !important;
+    height: 40px !important;
+    min-height: 40px !important;
+  }
+
+  .bsh-collection-surface #product-grid .boschino-quantity button,
+  .bsh-collection-surface #product-grid .boschino-quantity input {
+    height: 40px !important;
+  }
+
+  .bsh-collection-surface #product-grid .boschino-cta {
+    display: block !important;
+    width: 100% !important;
+    min-height: 40px !important;
+  }
+
+  .bsh-collection-surface #product-grid .boschino-cta__detail {
+    display: none !important;
+  }
+
+  .bsh-collection-surface #product-grid .boschino-cta__cart {
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    flex: 0 0 100% !important;
+  }
+
+  .bsh-collection-surface #product-grid .boschino-cta__btn {
+    width: 100% !important;
+    max-width: 100% !important;
+    height: 40px !important;
+    min-height: 40px !important;
+    border-left: 0 !important;
+  }
+}
+
+@media screen and (max-width: 749px) {
+  .bsh-collection-surface #product-grid .inventory-tooltip {
+    left: 0;
+    min-width: 200px;
+    max-width: 240px;
+  }
+}

@@ -1,0 +1,1525 @@
+{% comment %}
+  Boschino custom header
+  - Desktop: klasické menu + flyouty
+  - Mobile: text položky je proklik, šipka zvlášť rozbaluje submenu
+  - Bez duplicitních bloků
+{% endcomment %}
+
+{%- liquid
+  assign boschino_facebook_link = 'https://www.facebook.com/people/Boschino/61585881047958/'
+  assign boschino_instagram_link = 'https://www.instagram.com/boschino.cz/'
+
+  assign logo_img = 'https://cdn.shopify.com/s/files/1/1001/0741/9979/files/logo_se_sloganem1_preview_rev_1.png?v=1769516494'
+  assign fb_icon = 'https://cdn.shopify.com/s/files/1/1001/0741/9979/files/fb_ikona_preview_rev_1.png?v=1767956366'
+  assign ig_icon = 'https://cdn.shopify.com/s/files/1/1001/0741/9979/files/ig_ikona_preview_rev_1.png?v=1767956366'
+
+  assign main_menu = linklists[section.settings.menu]
+-%}
+
+<style>
+  :root{
+    --boschino-bg: #E5E7E8;
+    --boschino-blue: #1F2D6B;
+    --boschino-ann: #2a3885;
+    --boschino-red: #ED0007;
+    --boschino-card-shadow: 0 10px 26px rgba(17,17,17,.06);
+    --boschino-border: rgba(17,17,17,.10);
+    --boschino-text: rgba(17,17,17,.85);
+    --boschino-header-max: 1320px;
+  }
+
+  .boschino-header{
+    font-family: var(--font-body-family);
+    background: var(--boschino-bg);
+    position: relative;
+    z-index: 2000;
+  }
+
+  .boschino-annbar{
+    background: var(--boschino-ann);
+    color: #fff;
+    width: 100%;
+  }
+
+  .boschino-annbar__container{ padding: 0 8px; }
+
+  @media (max-width: 989px){
+    .boschino-annbar__container{ padding: 0 12px; }
+  }
+
+  .boschino-annbar__inner{
+    max-width: var(--boschino-header-max);
+    margin: 0 auto;
+    padding: 6px 0;
+    position: relative;
+  }
+
+  .boschino-annbar__track{
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    align-items: center;
+  }
+
+  .boschino-annbar__item{
+    display: flex;
+    align-items: center;
+    text-align: center;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.15;
+    white-space: nowrap;
+    justify-content: center;
+  }
+
+  .boschino-annbar__item.is-left{ justify-content: flex-start; }
+  .boschino-annbar__item.is-right{ justify-content: flex-end; }
+
+  .boschino-annbar__item a{
+    color: #fff;
+    text-decoration: none;
+  }
+
+  .boschino-annbar__item a:hover{ text-decoration: underline; }
+
+  .boschino-annbar__btn{ display: none; }
+
+  .boschino-header__wrap{
+    padding: 12px 8px 14px;
+    max-width: var(--boschino-header-max);
+    margin: 0 auto;
+  }
+
+  .boschino-header__card{
+    max-width: var(--boschino-header-max);
+    margin: 0 auto;
+    border: 1px solid var(--boschino-border);
+    box-shadow: var(--boschino-card-shadow);
+    position: relative;
+    padding: 18px 20px 14px;
+    overflow: visible !important;
+    background-image:
+      radial-gradient(circle at 92% -120px,
+        transparent 0 305px,
+        rgba(237,0,7,.12) 305px 319px,
+        transparent 319px 100%);
+    background-repeat: no-repeat;
+    background-color: #fff;
+  }
+
+  .boschino-header__decor::before{
+    content:"";
+    position: absolute;
+    top: -60%;
+    left: 54%;
+    width: 90px;
+    height: 220%;
+    background: rgba(237,0,7,.06);
+    transform: rotate(12deg);
+  }
+
+  .boschino-header__decor::after{
+    content:"";
+    position:absolute;
+    right: -20px;
+    top: -260px;
+    width: 640px;
+    height: 640px;
+    border-radius: 50%;
+    border: 8px solid rgba(237,0,7,.18);
+  }
+
+  .boschino-header__grid,
+  .boschino-mobileTop,
+  .boschino-mobileSearch,
+  .boschino-mobileBottom,
+  .boschino-mobileMenu{
+    position: relative;
+    z-index: 2;
+  }
+
+  .boschino-header__grid{
+    display: grid;
+    grid-template-columns: 300px 1fr 340px;
+    grid-template-areas:
+      "logo nav right"
+      "logo search right"
+      "logo brands right";
+    column-gap: 22px;
+    row-gap: 4px;
+    align-items: center;
+  }
+
+  .boschino-header__logo{
+    grid-area: logo;
+  }
+
+  .boschino-header__logo img{
+    max-width: 250px;
+    width: 100%;
+    height: auto;
+    display:block;
+  }
+
+  .boschino-header__nav{
+    grid-area: nav;
+    position: relative;
+    z-index: 2002;
+  }
+
+  .boschino-header__navDesktop{
+    display:flex;
+    justify-content: center;
+    gap: 26px;
+    white-space: nowrap;
+    padding-bottom: 4px;
+  }
+
+  .boschino-navLink{
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--boschino-text);
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  .boschino-navLink:hover{ color: var(--boschino-red); }
+
+  .boschino-header__navDesktop details:hover > summary,
+  .boschino-header__navDesktop details[open] > summary,
+  .boschino-header__navDesktop details:focus-within > summary{
+    color: var(--boschino-red) !important;
+  }
+
+  details.boschino-navDropdown{ position: relative; }
+  details.boschino-navDropdown > summary{ list-style: none; }
+  details.boschino-navDropdown > summary::-webkit-details-marker{ display: none; }
+
+  .boschino-navDropdown__panel{
+    position: absolute;
+    top: calc(100% + 10px);
+    left: 50%;
+    transform: translateX(-50%);
+    min-width: 260px;
+    background: #fff;
+    border: 1px solid rgba(17,17,17,.12);
+    box-shadow: 0 14px 34px rgba(0,0,0,.12);
+    padding: 10px;
+    z-index: 9999 !important;
+    display: grid;
+    gap: 6px;
+    border-radius: 12px;
+  }
+
+  .boschino-navDropdown__item{
+    padding: 10px 10px;
+    border-radius: 10px;
+    text-decoration: none;
+    color: var(--boschino-text);
+    font-weight: 600;
+    font-size: 14px;
+    white-space: nowrap;
+  }
+
+  .boschino-navDropdown__item:hover{
+    background: rgba(237,0,7,.06);
+    color: var(--boschino-red);
+  }
+
+  details.boschino-navDropdown:not([open]) .boschino-navDropdown__panel{ display: none; }
+
+  .boschino-flyItem{
+    position: relative;
+  }
+
+  .boschino-flyItem__parent{
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    width: 100%;
+    background: transparent;
+    border: 0;
+    text-align: left;
+  }
+
+  .boschino-flyItem__label{
+    color: inherit;
+    text-decoration: none;
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  .boschino-flyArrowBtn{
+    width: 24px;
+    height: 24px;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+    padding: 0;
+    margin-left: 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: inherit;
+    flex: 0 0 24px;
+  }
+
+  .boschino-flyArrow{
+    font-size: 18px;
+    line-height: 1;
+    opacity: .7;
+  }
+
+  .boschino-flyout{
+    display: none;
+    position: absolute;
+    top: 0;
+    left: calc(100% + 10px);
+    min-width: 280px;
+    background: #fff;
+    border: 1px solid rgba(17,17,17,.12);
+    box-shadow: 0 14px 34px rgba(0,0,0,.12);
+    padding: 10px;
+    border-radius: 12px;
+    z-index: 10000;
+  }
+
+  .boschino-flyItem.is-open > .boschino-flyout{
+    display: grid;
+    gap: 6px;
+  }
+
+  .boschino-flyItem:hover > .boschino-flyItem__parent,
+  .boschino-flyItem.is-open > .boschino-flyItem__parent{
+    background: rgba(237,0,7,.06);
+    color: var(--boschino-red);
+  }
+
+  .boschino-header__right{
+    grid-area: right;
+    justify-self: end !important;
+    padding-right: 30px !important;
+    margin-top: -40px !important;
+  }
+
+  .boschino-rightStack{
+    display:grid;
+    grid-template-rows: auto auto;
+    gap: 8px;
+    justify-items: end;
+  }
+
+  .boschino-icons{
+    display:inline-flex;
+    gap: 14px;
+    align-items:center;
+    width: max-content !important;
+  }
+
+  .boschino-icon{
+    width: 30px;
+    height: 30px;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    color: var(--boschino-blue);
+    text-decoration:none;
+    position: relative;
+  }
+
+  .boschino-icon svg{
+    width:22px;
+    height:22px;
+    display:block;
+  }
+
+  .boschino-cart-badge{
+    position: absolute;
+    top: -6px;
+    right: -8px;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
+    border-radius: 999px;
+    background: var(--boschino-red);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 800;
+    line-height: 18px;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,.18);
+  }
+
+  .boschino-follow{
+    display:flex !important;
+    gap: 10px;
+    align-items:center;
+    justify-content: flex-end !important;
+    white-space: nowrap;
+    width: max-content !important;
+  }
+
+  .boschino-follow span{
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--boschino-blue);
+  }
+
+  .boschino-follow img{
+    width: 34px;
+    height:34px;
+    display:block;
+    transition: transform .15s ease;
+  }
+
+  .boschino-follow a:hover img{ transform: scale(1.05); }
+
+  .boschino-header__search{
+    grid-area: search;
+    margin-bottom: -10px;
+  }
+
+  .boschino-search__field{
+    display:grid;
+    grid-template-columns: 1fr auto;
+    align-items:center;
+    border: 2px solid var(--boschino-blue);
+    border-radius: 999px;
+    overflow:hidden;
+    background:#fff;
+    max-width: 720px;
+    margin: 0 auto;
+    position: relative;
+  }
+
+  .boschino-search__input{
+    border:0;
+    outline:0;
+    padding: 10px 16px;
+    font-size: 14px;
+    background: transparent !important;
+    color: var(--boschino-text);
+    width:100%;
+    position: relative;
+    z-index: 2;
+  }
+
+  .boschino-search__ghost{
+  position: absolute;
+  left: 16px;
+  right: 56px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 14px;
+  color: rgba(0,0,0,.28);
+  white-space: nowrap;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 1;
+  display: none;
+}
+
+  .boschino-search__btn{
+    border:0;
+    outline:0;
+    background: var(--boschino-blue);
+    color:#fff;
+    padding: 0 16px;
+    height: 40px;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+  }
+
+  .boschino-search__btn svg{
+    width:18px;
+    height:18px;
+    display:block;
+  }
+
+    .boschino-searchForm.is-loading{
+    cursor: progress;
+  }
+
+  .boschino-searchForm.is-loading .boschino-search__input{
+    opacity: .7;
+    pointer-events: none;
+  }
+
+  .boschino-searchForm.is-loading .boschino-search__btn{
+    position: relative;
+    pointer-events: none;
+    opacity: .9;
+  }
+
+  .boschino-searchForm.is-loading .boschino-search__btn svg{
+    opacity: 0;
+  }
+
+  .boschino-searchForm.is-loading .boschino-search__btn::after{
+    content: "";
+    width: 18px;
+    height: 18px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-left: -9px;
+    margin-top: -9px;
+    border: 2px solid rgba(255,255,255,.45);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: boschinoSearchSpin .7s linear infinite;
+  }
+
+  @keyframes boschinoSearchSpin{
+    to { transform: rotate(360deg); }
+  }
+
+  .boschino-header__brands{
+    grid-area: brands;
+    justify-self: center;
+    margin-top: -14px;
+  }
+
+  .boschino-brandsbar{
+    display:flex;
+    justify-content:center;
+    width: 100%;
+    margin: 0 0 6px;
+  }
+
+  .boschino-brandsbar__inner{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap: 18px;
+    flex-wrap: nowrap;
+    overflow: hidden;
+  }
+
+  .boschino-brandsbar__inner img{
+    width: 90px;
+    height: 34px;
+    object-fit: contain;
+    display: block;
+    opacity: .95;
+    cursor: pointer;
+    transition: transform .16s ease, filter .16s ease;
+  }
+
+  .boschino-brandsbar__inner img:hover{
+    transform: translateY(-2px) scale(1.04);
+    filter: drop-shadow(0 8px 14px rgba(0,0,0,.16));
+  }
+
+  .boschino-brandsbar__inner img[alt="Balay"]{
+    transform: translateY(-3px) !important;
+  }
+
+  .boschino-brandsbar__inner img[alt="Balay"]:hover{
+    transform: translateY(-5px) scale(1.04) !important;
+  }
+
+  .boschino-mobileTop,
+  .boschino-mobileMenu,
+  .boschino-mobileBottom,
+  .boschino-mobileSearch{
+    display: none !important;
+  }
+
+  .boschino-suggestBox{
+    position:relative;
+    background:#fff;
+    border: 1px solid rgba(17,17,17,.18);
+    border-radius: 14px;
+    margin-top: 10px;
+    box-shadow: 0 16px 40px rgba(0,0,0,.18);
+    overflow: hidden;
+    max-height: 360px;
+  }
+
+  .boschino-suggestBox::before{
+    content:"";
+    position:absolute;
+    top:-8px;
+    left: 28px;
+    width: 14px;
+    height: 14px;
+    background:#fff;
+    border-left: 1px solid rgba(17,17,17,.18);
+    border-top: 1px solid rgba(17,17,17,.18);
+    transform: rotate(45deg);
+  }
+
+  .boschino-suggest-item{
+    padding: 12px 14px;
+    cursor:pointer;
+    line-height:1.25;
+    user-select:none;
+    font-weight: 600;
+  }
+
+  .boschino-suggest-item + .boschino-suggest-item{
+    border-top: 1px solid rgba(17,17,17,.06);
+  }
+
+  .boschino-suggest-item:hover,
+  .boschino-suggest-item.is-active{
+    background: rgba(17,17,17,.06);
+  }
+
+  @media (max-width: 1200px){
+    .boschino-brandsbar__inner img{
+      width: 80px;
+      height: 30px;
+    }
+  }
+
+  @media (max-width: 989px){
+    .boschino-header__wrap{
+      padding: 10px 12px 12px;
+      max-width: none;
+      margin: 0;
+    }
+
+    .boschino-header__card{ padding: 10px 12px 10px; }
+    .boschino-header__grid,
+    .boschino-header__brands{ display:none !important; }
+
+    .boschino-annbar__inner{
+      padding: 7px 12px !important;
+      max-width: none;
+    }
+
+    .boschino-annbar__track{
+      position: relative;
+      display: block;
+      overflow: hidden;
+      width: 100%;
+      height: 18px;
+    }
+
+    .boschino-annbar__item{
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      padding: 0 10px;
+      font-size: 12.5px;
+      opacity: 0;
+      visibility: hidden;
+      animation: boschinoAnnFade 12s infinite;
+    }
+
+    .boschino-annbar__item:nth-child(1){ animation-delay: 0s; }
+    .boschino-annbar__item:nth-child(2){ animation-delay: 4s; }
+    .boschino-annbar__item:nth-child(3){ animation-delay: 8s; }
+
+    .boschino-annbar__item.is-left,
+    .boschino-annbar__item.is-right{
+      justify-content: center;
+    }
+
+    .boschino-mobileTop{
+      display:grid !important;
+      grid-template-columns: 44px 1fr 44px;
+      align-items:center;
+      gap: 6px;
+      padding: 2px 2px 8px;
+    }
+
+    .boschino-burger{
+      width: 44px;
+      height: 38px;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      border: 0;
+      background: transparent;
+      color: var(--boschino-blue);
+      cursor:pointer;
+    }
+
+    .boschino-burger svg{
+      width:22px;
+      height:22px;
+      display:block;
+    }
+
+    .boschino-mobileLogo{
+      display:flex;
+      justify-content:center;
+      align-items:center;
+    }
+
+    .boschino-mobileLogo img{
+      max-width: 180px;
+      width: 100%;
+      height:auto;
+      display:block;
+    }
+
+    .boschino-mobileTopRight{
+      width: 44px;
+      height: 38px;
+    }
+
+    .boschino-mobileSearch{
+      display:block !important;
+      padding: 0 2px 10px;
+    }
+
+    .boschino-search__field{ max-width: 100%; }
+
+    .boschino-mobileBottom{
+      display:flex !important;
+      flex-direction: column !important;
+      align-items: stretch !important;
+      gap: 10px !important;
+      padding: 12px 2px 6px !important;
+    }
+
+    .boschino-mobileBottomRow{
+      display: flex !important;
+      justify-content: space-between !important;
+      align-items: center !important;
+      gap: 10px !important;
+    }
+
+    .boschino-mobileFollow{
+      display:flex;
+      align-items:center;
+      gap: 10px;
+      white-space: nowrap;
+    }
+
+    .boschino-mobileFollow span{
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--boschino-blue);
+    }
+
+    .boschino-mobileFollow img{
+      width: 34px;
+      height: 34px;
+      display:block;
+    }
+
+    .boschino-mobileIconsBottom{
+      display:flex;
+      align-items:center;
+      gap: 12px;
+    }
+
+    .boschino-mobileMenu{
+      display:block !important;
+      position: relative;
+      z-index: 50;
+    }
+
+    .boschino-drawer{
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    .boschino-drawer[data-open="true"]{ pointer-events: auto; }
+
+    .boschino-drawer__backdrop{
+      position:absolute;
+      inset:0;
+      background: rgba(0,0,0,.45);
+      opacity: 0;
+      transition: opacity .2s ease;
+    }
+
+    .boschino-drawer[data-open="true"] .boschino-drawer__backdrop{ opacity: 1; }
+
+    .boschino-drawer__panel{
+      position:absolute;
+      top:0;
+      left:0;
+      height: 100%;
+      width: min(82vw, 320px);
+      background: #fff;
+      border-right: 1px solid rgba(17,17,17,.10);
+      box-shadow: 0 18px 40px rgba(0,0,0,.18);
+      transform: translateX(-102%);
+      transition: transform .22s ease;
+      padding: 14px 14px 18px;
+      overflow-y: auto;
+    }
+
+    .boschino-drawer[data-open="true"] .boschino-drawer__panel{ transform: translateX(0); }
+
+    .boschino-drawer__title{
+      font-weight: 800;
+      color: var(--boschino-blue);
+      margin: 4px 0 12px;
+      font-size: 14px;
+      letter-spacing: .2px;
+    }
+
+    .boschino-drawer__nav{
+      display:flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 6px;
+    }
+
+    .boschino-drawer__nav > a{
+      font-size: 15px;
+      font-weight: 650;
+      color: var(--boschino-text);
+      text-decoration:none;
+      padding: 10px 10px;
+      border-radius: 10px;
+    }
+
+    .boschino-drawer__nav > a:hover{
+      color: var(--boschino-red);
+      background: rgba(237,0,7,.06);
+    }
+
+    
+
+    .boschino-drawer__close{
+      position:absolute;
+      top: 10px;
+      right: 10px;
+      width: 36px;
+      height: 36px;
+      border:0;
+      border-radius: 10px;
+      background: rgba(31,45,107,.08);
+      color: var(--boschino-blue);
+      cursor:pointer;
+    }
+
+    .boschino-drawer__close svg{
+      width:18px;
+      height:18px;
+      display:block;
+      margin:0 auto;
+    }
+
+    .boschino-drawerItem{
+      display: block;
+    }
+
+    .boschino-drawerRow{
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .boschino-drawerLink{
+      flex: 1 1 auto;
+      min-width: 0;
+      font-size: 15px;
+      font-weight: 650;
+      color: var(--boschino-text);
+      text-decoration:none;
+      padding: 10px 10px;
+      border-radius: 10px;
+    }
+
+    .boschino-drawerLink:hover{
+      background: rgba(237,0,7,.06);
+      color: var(--boschino-red);
+    }
+
+    .boschino-drawerToggle{
+      width: 42px;
+      height: 42px;
+      flex: 0 0 42px;
+      border: 0;
+      background: transparent;
+      border-radius: 10px;
+      cursor: pointer;
+      color: var(--boschino-text);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .boschino-drawerToggle:hover{
+      background: rgba(237,0,7,.06);
+      color: var(--boschino-red);
+    }
+
+    .boschino-drawerSubpanel{
+      display: none;
+      padding: 4px 0 0 10px;
+    }
+
+    .boschino-drawerItem.is-open > .boschino-drawerSubpanel{
+      display: grid;
+      gap: 6px;
+    }
+
+    .boschino-drawerItem.is-open > .boschino-drawerRow .boschino-drawerToggle{
+      background: rgba(237,0,7,.08);
+      color: var(--boschino-red);
+    }
+
+    .boschino-drawerItem--lvl3{
+  margin-left: 10px;
+}
+
+.boschino-drawerItem--lvl3 > .boschino-drawerRow .boschino-drawerLink{
+  font-size: 14px;
+  font-weight: 650;
+  background: rgba(31,45,107,.03);
+}
+
+.boschino-drawerItem--lvl3 > .boschino-drawerSubpanel a{
+  padding-left: 18px;
+}
+.boschino-drawerItem--lvl1 > .boschino-drawerRow .boschino-drawerLink{
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.boschino-drawerItem--lvl1 > .boschino-drawerSubpanel{
+  padding-left: 8px;
+  margin-top: 4px;
+}
+
+.boschino-drawerItem--lvl2 > .boschino-drawerSubpanel{
+  padding-left: 10px;
+}
+
+.boschino-drawerItem--lvl2 > .boschino-drawerRow .boschino-drawerLink{
+  font-size: 15px;
+  font-weight: 650;
+}
+
+.boschino-drawerArrow{
+  display: inline-block;
+  font-size: 18px;
+  line-height: 1;
+  transition: transform .18s ease;
+}
+
+.boschino-drawerItem.is-open > .boschino-drawerRow .boschino-drawerArrow{
+  transform: rotate(90deg);
+}
+
+    .boschino-mobileBrands{
+      width: 100% !important;
+      margin-top: 14px !important;
+    }
+
+    .boschino-mobileBrands__track{
+      display: flex !important;
+      align-items: center !important;
+      gap: 14px !important;
+      overflow-x: auto !important;
+      -webkit-overflow-scrolling: touch !important;
+      justify-content: flex-start !important;
+      padding: 8px 0 2px 0 !important;
+      scroll-snap-type: none !important;
+      scrollbar-width: none !important;
+      -ms-overflow-style: none !important;
+    }
+
+    .boschino-mobileBrands__track::-webkit-scrollbar{
+      display: none !important;
+      height: 0 !important;
+    }
+
+    .boschino-mobileBrands__item{
+      flex: 0 0 auto !important;
+      width: 96px !important;
+      height: 26px !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      border-radius: 10px;
+      transition: transform .15s ease, box-shadow .15s ease, background .15s ease;
+    }
+
+    .boschino-mobileBrands__item img{
+      max-width: 96px !important;
+      max-height: 26px !important;
+      width: auto !important;
+      height: auto !important;
+      object-fit: contain !important;
+      display: block !important;
+      transition: transform .15s ease, filter .15s ease;
+    }
+
+    .boschino-mobileBrands__item:active{
+      transform: translateY(-2px);
+      box-shadow: 0 10px 18px rgba(0,0,0,.12);
+      background: rgba(31,45,107,.04);
+    }
+
+    .boschino-mobileBrands__item:active img{
+      transform: scale(1.05);
+      filter: drop-shadow(0 6px 10px rgba(0,0,0,.16));
+    }
+
+    .boschino-mobileBrands__item img[alt="Balay"]{
+      transform: scale(1.25) !important;
+      transform-origin: center center !important;
+    }
+
+    .boschino-mobileBrands__item img[alt="NEFF"]{
+      transform: scale(1.30) !important;
+      transform-origin: center center !important;
+    }
+  }
+
+  @keyframes boschinoAnnFade{
+    0%, 27%   { opacity: 1; visibility: visible; }
+    33%, 100% { opacity: 0; visibility: hidden; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .boschino-annbar__item{
+      animation: none !important;
+      opacity: 1 !important;
+      visibility: visible !important;
+      position: static !important;
+    }
+
+    .boschino-annbar__track{
+      height: auto !important;
+      overflow: visible !important;
+    }
+  }
+
+html.boschino-menu-open,
+body.boschino-menu-open{
+  overflow: hidden;
+}
+
+</style>
+
+<header class="boschino-header" role="banner">
+  <div class="boschino-annbar" data-rotate="5000" aria-label="Oznamovací lišta">
+    <div class="boschino-annbar__container">
+      <div class="boschino-annbar__inner">
+        <div class="boschino-annbar__track">
+          <div class="boschino-annbar__item is-left"><a href="https://boschino.cz/pages/kontakty">Kontaktujte nás</a></div>
+          <div class="boschino-annbar__item">Doručujeme objednávky zdarma od 1500,- Kč</div>
+          <div class="boschino-annbar__item is-right"><a href="https://boschino.cz/pages/vydejni-mista">Výdejní místa</a></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="boschino-header__wrap">
+    <div class="boschino-header__card">
+      <div class="boschino-header__decor" aria-hidden="true"></div>
+
+      <div class="boschino-header__grid">
+        <div class="boschino-header__logo">
+          <a href="/" aria-label="{{ shop.name }}">
+            <img src="{{ logo_img }}" alt="{{ shop.name }}" loading="lazy" decoding="async" width="250" height="80">
+          </a>
+        </div>
+
+        <nav class="boschino-header__nav" aria-label="Hlavní menu">
+          <div class="boschino-header__navDesktop">
+            {%- for link in main_menu.links -%}
+              {%- if link.links != blank -%}
+                <details class="boschino-navDropdown">
+                  <summary class="boschino-navLink">{{ link.title }}</summary>
+
+                  <div class="boschino-navDropdown__panel boschino-navDropdown__panel--flyout">
+                    {%- for child in link.links -%}
+                      {%- if child.links != blank -%}
+                        <div class="boschino-flyItem">
+                          <div class="boschino-navDropdown__item boschino-flyItem__parent">
+                            <a href="{{ child.url }}" class="boschino-flyItem__label">{{ child.title }}</a>
+                            <button type="button" class="boschino-flyArrowBtn" aria-label="Otevřít submenu">
+                              <span class="boschino-flyArrow" aria-hidden="true">›</span>
+                            </button>
+                          </div>
+
+                          <div class="boschino-flyout">
+                            {%- assign pracky_submenu = linklists['d-ly-pro-pra-ky-submenu-1'] -%}
+                            {%- assign susicky_submenu = linklists['d-ly-pro-su-i-ky-submenu'] -%}
+                            {%- assign mycky_submenu = linklists['d-ly-pro-my-ky-submenu'] -%}
+                            {%- assign lednice_submenu = linklists['d-ly-pro-lednice-submenu'] -%}
+                            {%- assign trouby_submenu = linklists['d-ly-na-spor-ky-a-trouby-podmenu-trouby'] -%}
+                            {%- assign mikrovlnky_submenu = linklists['d-ly-pro-mikrovlnn-trouby-submenu'] -%}
+                            {%- assign digestore_submenu = linklists['d-ly-pro-digesto-e-submenu'] -%}
+                            {%- assign kavovary_submenu = linklists['d-ly-pro-k-vovary-submenu'] -%}
+                            {%- assign roboty_submenu = linklists['SEM_DEJ_HANDLE_PRO_ROBOTY'] -%}
+                            {%- assign male_spotrebice_submenu = linklists['d-ly-pro-mal-spot-ebi-e-submenu'] -%}
+                            {%- assign vysavace_submenu = linklists['d-ly-pro-vysava-e-submenu'] -%}
+                            {%- assign primotopy_submenu = linklists['d-ly-pro-p-motopy-submenu'] -%}
+                            {%- assign ohrivace_submenu = linklists['d-ly-pro-oh-va-e-vody-submenu'] -%}
+
+                            {%- for grandchild in child.links -%}
+                              {%- assign current_submenu = blank -%}
+                              {%- assign grandchild_handle = grandchild.title | handleize -%}
+
+                              {%- case grandchild_handle -%}
+                                {%- when 'dily-pro-pracky' -%}{%- assign current_submenu = pracky_submenu -%}
+                                {%- when 'dily-pro-susicky' -%}{%- assign current_submenu = susicky_submenu -%}
+                                {%- when 'dily-pro-mycky' -%}{%- assign current_submenu = mycky_submenu -%}
+                                {%- when 'dily-pro-lednice' -%}{%- assign current_submenu = lednice_submenu -%}
+                                {%- when 'dily-pro-trouby' -%}{%- assign current_submenu = trouby_submenu -%}
+                                {%- when 'dily-pro-mikrovlnne-trouby' -%}{%- assign current_submenu = mikrovlnky_submenu -%}
+                                {%- when 'dily-pro-digestore' -%}{%- assign current_submenu = digestore_submenu -%}
+                                {%- when 'dily-pro-kavovary' -%}{%- assign current_submenu = kavovary_submenu -%}
+                                {%- when 'dily-pro-kuchynske-roboty' -%}{%- assign current_submenu = roboty_submenu -%}
+                                {%- when 'dily-pro-male-spotrebice' -%}{%- assign current_submenu = male_spotrebice_submenu -%}
+                                {%- when 'dily-pro-vysavace' -%}{%- assign current_submenu = vysavace_submenu -%}
+                                {%- when 'dily-pro-primotopy' -%}{%- assign current_submenu = primotopy_submenu -%}
+                                {%- when 'dily-pro-ohrivace-vody' -%}{%- assign current_submenu = ohrivace_submenu -%}
+                              {%- endcase -%}
+
+                              {%- if grandchild.links != blank -%}
+                                <div class="boschino-flyItem">
+                                  <div class="boschino-navDropdown__item boschino-flyItem__parent">
+                                    <a href="{{ grandchild.url }}" class="boschino-flyItem__label">{{ grandchild.title }}</a>
+                                    <button type="button" class="boschino-flyArrowBtn" aria-label="Otevřít submenu">
+                                      <span class="boschino-flyArrow" aria-hidden="true">›</span>
+                                    </button>
+                                  </div>
+
+                                  <div class="boschino-flyout">
+                                    {%- for greatgrandchild in grandchild.links -%}
+                                      <a class="boschino-navDropdown__item" href="{{ greatgrandchild.url }}">{{ greatgrandchild.title }}</a>
+                                    {%- endfor -%}
+                                  </div>
+                                </div>
+
+                              {%- elsif current_submenu != blank and current_submenu.links != blank -%}
+                                <div class="boschino-flyItem">
+                                  <div class="boschino-navDropdown__item boschino-flyItem__parent">
+                                    <a href="{{ grandchild.url }}" class="boschino-flyItem__label">{{ grandchild.title }}</a>
+                                    <button type="button" class="boschino-flyArrowBtn" aria-label="Otevřít submenu">
+                                      <span class="boschino-flyArrow" aria-hidden="true">›</span>
+                                    </button>
+                                  </div>
+
+                                  <div class="boschino-flyout">
+                                    {%- for greatgrandchild in current_submenu.links -%}
+                                      <a class="boschino-navDropdown__item" href="{{ greatgrandchild.url }}">{{ greatgrandchild.title }}</a>
+                                    {%- endfor -%}
+                                  </div>
+                                </div>
+
+                              {%- else -%}
+                                <a class="boschino-navDropdown__item" href="{{ grandchild.url }}">{{ grandchild.title }}</a>
+                              {%- endif -%}
+                            {%- endfor -%}
+                          </div>
+                        </div>
+                      {%- else -%}
+                        <a class="boschino-navDropdown__item" href="{{ child.url }}">{{ child.title }}</a>
+                      {%- endif -%}
+                    {%- endfor -%}
+                  </div>
+                </details>
+              {%- else -%}
+                <a class="boschino-navLink" href="{{ link.url }}">{{ link.title }}</a>
+              {%- endif -%}
+            {%- endfor -%}
+          </div>
+        </nav>
+
+        <div class="boschino-header__right">
+          <div class="boschino-rightStack">
+            <div class="boschino-icons" aria-label="Uživatelské ikony">
+              <a class="boschino-icon" href="{{ routes.account_url }}" aria-label="Účet">
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M12 12a4 4 0 100-8 4 4 0 000 8z" stroke="currentColor" stroke-width="1.8"/>
+                  <path d="M4 20c1.8-4 13.2-4 16 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                </svg>
+              </a>
+
+              <a class="boschino-icon boschino-icon--cart" href="{{ routes.cart_url }}" aria-label="Košík ({{ cart.item_count }})">
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M7 7h14l-1.5 13H7L5 4H2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                {% if cart.item_count > 0 %}
+                  <span class="boschino-cart-badge" aria-hidden="true">{{ cart.item_count }}</span>
+                {% endif %}
+              </a>
+            </div>
+
+            <div class="boschino-follow" aria-label="Sledujte nás">
+              <span>Sledujte nás</span>
+              <a href="{{ boschino_facebook_link }}" target="_blank" rel="noopener" aria-label="Facebook">
+                <img src="{{ fb_icon }}" alt="Facebook" loading="lazy">
+              </a>
+              <a href="{{ boschino_instagram_link }}" target="_blank" rel="noopener" aria-label="Instagram">
+                <img src="{{ ig_icon }}" alt="Instagram" loading="lazy">
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div class="boschino-header__search">
+          <form class="boschino-searchForm" action="{{ routes.search_url }}" method="get" role="search" autocomplete="off">
+  <input type="hidden" name="type" value="product,page,article,collection">
+  <input type="hidden" name="options[prefix]" value="last">
+  <input type="hidden" name="q" class="boschino-search__hidden-q" value="{{ search.terms | escape }}">
+  <div class="boschino-search__field">
+    <input
+      class="boschino-search__input"
+      type="text"
+      name="boschino_search_visible"
+      value="{{ search.terms | escape }}"
+      placeholder="Vložte E-Nr. spotřebiče, popis nebo číslo náhradního dílu"
+      aria-label="Vyhledávání"
+      autocomplete="off"
+      autocorrect="off"
+      autocapitalize="off"
+      spellcheck="false"
+    >
+    <button class="boschino-search__btn" type="submit" aria-label="Hledat">
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M10.5 18a7.5 7.5 0 110-15 7.5 7.5 0 010 15z" stroke="currentColor" stroke-width="2"/>
+                  <path d="M16.5 16.5L21 21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div class="boschino-header__brands" aria-label="Značky BSH">
+        <div class="boschino-brandsbar">
+          <div class="boschino-brandsbar__inner">
+            <img loading="lazy" src="https://cdn.shopify.com/s/files/1/1001/0741/9979/files/logo_bosch_preview_rev_1_1.png?v=1770718551" alt="Bosch">
+            <img loading="lazy" src="https://cdn.shopify.com/s/files/1/1001/0741/9979/files/logo_siemens_preview_rev_1.png?v=1770715813" alt="Siemens">
+            <img loading="lazy" src="https://cdn.shopify.com/s/files/1/1001/0741/9979/files/logo_gaggenau_preview_rev_1.png?v=1770715814" alt="Gaggenau">
+            <img loading="lazy" src="https://cdn.shopify.com/s/files/1/1001/0741/9979/files/logo_constructa_preview_rev_1.png?v=1770720694" alt="Constructa">
+            <img loading="lazy" src="https://cdn.shopify.com/s/files/1/1001/0741/9979/files/logo_Balay_preview_rev_1.png?v=1770715814" alt="Balay">
+            <img loading="lazy" src="https://cdn.shopify.com/s/files/1/1001/0741/9979/files/logo_neff_preview_rev_1.png?v=1770715813" alt="NEFF">
+          </div>
+        </div>
+      </div>
+
+      <div class="boschino-mobileMenu">
+        <div class="boschino-drawer" id="boschino-mobile-drawer" data-open="false">
+          <div class="boschino-drawer__backdrop" aria-hidden="true"></div>
+
+          <div class="boschino-drawer__panel" role="dialog" aria-modal="true" aria-label="Menu">
+            <button class="boschino-drawer__close" type="button" aria-label="Zavřít menu">
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+            </button>
+
+            <div class="boschino-drawer__title">Menu</div>
+
+            <nav class="boschino-drawer__nav" aria-label="Mobilní menu">
+  {%- for link in main_menu.links -%}
+    {%- if link.links != blank -%}
+      <div class="boschino-drawerItem boschino-drawerItem--lvl1">
+        <div class="boschino-drawerRow">
+          <a href="{{ link.url }}" class="boschino-drawerLink">{{ link.title }}</a>
+          <button type="button" class="boschino-drawerToggle" aria-label="Otevřít submenu">
+            <span class="boschino-drawerArrow" aria-hidden="true">›</span>
+          </button>
+        </div>
+
+        <div class="boschino-drawerSubpanel">
+          {%- for child in link.links -%}
+            {%- if child.links != blank -%}
+              <div class="boschino-drawerItem boschino-drawerItem--lvl2">
+                <div class="boschino-drawerRow">
+                  <a href="{{ child.url }}" class="boschino-drawerLink">{{ child.title }}</a>
+                  <button type="button" class="boschino-drawerToggle" aria-label="Otevřít submenu">
+                    <span class="boschino-drawerArrow" aria-hidden="true">›</span>
+                  </button>
+                </div>
+
+                <div class="boschino-drawerSubpanel">
+                  {%- assign pracky_submenu = linklists['d-ly-pro-pra-ky-submenu-1'] -%}
+                  {%- assign susicky_submenu = linklists['d-ly-pro-su-i-ky-submenu'] -%}
+                  {%- assign mycky_submenu = linklists['d-ly-pro-my-ky-submenu'] -%}
+                  {%- assign lednice_submenu = linklists['d-ly-pro-lednice-submenu'] -%}
+                  {%- assign trouby_submenu = linklists['d-ly-na-spor-ky-a-trouby-podmenu-trouby'] -%}
+                  {%- assign mikrovlnky_submenu = linklists['d-ly-pro-mikrovlnn-trouby-submenu'] -%}
+                  {%- assign digestore_submenu = linklists['d-ly-pro-digesto-e-submenu'] -%}
+                  {%- assign kavovary_submenu = linklists['d-ly-pro-k-vovary-submenu'] -%}
+                  {%- assign roboty_submenu = linklists['SEM_DEJ_HANDLE_PRO_ROBOTY'] -%}
+                  {%- assign male_spotrebice_submenu = linklists['d-ly-pro-mal-spot-ebi-e-submenu'] -%}
+                  {%- assign vysavace_submenu = linklists['d-ly-pro-vysava-e-submenu'] -%}
+                  {%- assign primotopy_submenu = linklists['d-ly-pro-p-motopy-submenu'] -%}
+                  {%- assign ohrivace_submenu = linklists['d-ly-pro-oh-va-e-vody-submenu'] -%}
+
+                  {%- for grandchild in child.links -%}
+                    {%- assign current_submenu = blank -%}
+                    {%- assign grandchild_handle = grandchild.title | handleize -%}
+
+                    {%- case grandchild_handle -%}
+                      {%- when 'dily-pro-pracky' -%}{%- assign current_submenu = pracky_submenu -%}
+                      {%- when 'dily-pro-susicky' -%}{%- assign current_submenu = susicky_submenu -%}
+                      {%- when 'dily-pro-mycky' -%}{%- assign current_submenu = mycky_submenu -%}
+                      {%- when 'dily-pro-lednice' -%}{%- assign current_submenu = lednice_submenu -%}
+                      {%- when 'dily-pro-trouby' -%}{%- assign current_submenu = trouby_submenu -%}
+                      {%- when 'dily-pro-mikrovlnne-trouby' -%}{%- assign current_submenu = mikrovlnky_submenu -%}
+                      {%- when 'dily-pro-digestore' -%}{%- assign current_submenu = digestore_submenu -%}
+                      {%- when 'dily-pro-kavovary' -%}{%- assign current_submenu = kavovary_submenu -%}
+                      {%- when 'dily-pro-kuchynske-roboty' -%}{%- assign current_submenu = roboty_submenu -%}
+                      {%- when 'dily-pro-male-spotrebice' -%}{%- assign current_submenu = male_spotrebice_submenu -%}
+                      {%- when 'dily-pro-vysavace' -%}{%- assign current_submenu = vysavace_submenu -%}
+                      {%- when 'dily-pro-primotopy' -%}{%- assign current_submenu = primotopy_submenu -%}
+                      {%- when 'dily-pro-ohrivace-vody' -%}{%- assign current_submenu = ohrivace_submenu -%}
+                    {%- endcase -%}
+
+                    {%- if grandchild.links != blank -%}
+                      <div class="boschino-drawerItem boschino-drawerItem--lvl3">
+                        <div class="boschino-drawerRow">
+                          <a href="{{ grandchild.url }}" class="boschino-drawerLink">{{ grandchild.title }}</a>
+                          <button type="button" class="boschino-drawerToggle" aria-label="Otevřít submenu">
+                            <span class="boschino-drawerArrow" aria-hidden="true">›</span>
+                          </button>
+                        </div>
+
+                        <div class="boschino-drawerSubpanel">
+                          {%- for greatgrandchild in grandchild.links -%}
+                            <a href="{{ greatgrandchild.url }}" class="boschino-drawerLink">{{ greatgrandchild.title }}</a>
+                          {%- endfor -%}
+                        </div>
+                      </div>
+
+                    {%- elsif current_submenu != blank and current_submenu.links != blank -%}
+                      <div class="boschino-drawerItem boschino-drawerItem--lvl3">
+                        <div class="boschino-drawerRow">
+                          <a href="{{ grandchild.url }}" class="boschino-drawerLink">{{ grandchild.title }}</a>
+                          <button type="button" class="boschino-drawerToggle" aria-label="Otevřít submenu">
+                            <span class="boschino-drawerArrow" aria-hidden="true">›</span>
+                          </button>
+                        </div>
+
+                        <div class="boschino-drawerSubpanel">
+                          {%- for greatgrandchild in current_submenu.links -%}
+                            <a href="{{ greatgrandchild.url }}" class="boschino-drawerLink">{{ greatgrandchild.title }}</a>
+                          {%- endfor -%}
+                        </div>
+                      </div>
+
+                    {%- else -%}
+                      <a href="{{ grandchild.url }}" class="boschino-drawerLink">{{ grandchild.title }}</a>
+                    {%- endif -%}
+                  {%- endfor -%}
+                </div>
+              </div>
+            {%- else -%}
+              <a href="{{ child.url }}" class="boschino-drawerLink">{{ child.title }}</a>
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+      </div>
+    {%- else -%}
+      <a href="{{ link.url }}" class="boschino-drawerLink">{{ link.title }}</a>
+    {%- endif -%}
+  {%- endfor -%}
+            </nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="boschino-mobileTop">
+        <button class="boschino-burger" type="button" aria-label="Otevřít menu" aria-expanded="false" aria-controls="boschino-mobile-drawer">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
+
+        <div class="boschino-mobileLogo">
+          <a href="/" aria-label="{{ shop.name }}">
+            <img src="{{ logo_img }}" alt="{{ shop.name }}" loading="lazy">
+          </a>
+        </div>
+
+        <div class="boschino-mobileTopRight" aria-hidden="true"></div>
+      </div>
+
+      <div class="boschino-mobileSearch" aria-hidden="true">
+       <form class="boschino-searchForm" action="{{ routes.search_url }}" method="get" role="search" autocomplete="off">
+  <input type="hidden" name="type" value="product,page,article,collection">
+  <input type="hidden" name="options[prefix]" value="last">
+  <input type="hidden" name="q" class="boschino-search__hidden-q" value="{{ search.terms | escape }}">
+  <div class="boschino-search__field">
+    <input
+      class="boschino-search__input"
+      type="text"
+      name="boschino_search_visible"
+      value="{{ search.terms | escape }}"
+      placeholder="Zadejte model, popis nebo číslo náhradního dílu"
+      aria-label="Vyhledávání"
+      autocomplete="off"
+      autocorrect="off"
+      autocapitalize="off"
+      spellcheck="false"
+    >
+    <button class="boschino-search__btn" type="submit" aria-label="Hledat">
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M10.5 18a7.5 7.5 0 110-15 7.5 7.5 0 010 15z" stroke="currentColor" stroke-width="2"/>
+                <path d="M16.5 16.5L21 21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <div class="boschino-mobileBottom" aria-hidden="true">
+        <div class="boschino-mobileBottomRow">
+          <div class="boschino-mobileFollow" aria-label="Sledujte nás">
+            <span>Sledujte nás</span>
+            <a href="{{ boschino_facebook_link }}" target="_blank" rel="noopener" aria-label="Facebook">
+              <img src="{{ fb_icon }}" alt="Facebook" loading="lazy">
+            </a>
+            <a href="{{ boschino_instagram_link }}" target="_blank" rel="noopener" aria-label="Instagram">
+              <img src="{{ ig_icon }}" alt="Instagram" loading="lazy">
+            </a>
+          </div>
+
+          <div class="boschino-mobileIconsBottom" aria-label="Ikony">
+            <a class="boschino-icon" href="{{ routes.account_url }}" aria-label="Účet">
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M12 12a4 4 0 100-8 4 4 0 000 8z" stroke="currentColor" stroke-width="1.8"/>
+                <path d="M4 20c1.8-4 13.2-4 16 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+              </svg>
+            </a>
+
+            <a class="boschino-icon boschino-icon--cart" href="{{ routes.cart_url }}" aria-label="Košík ({{ cart.item_count }})">
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M7 7h14l-1.5 13H7L5 4H2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              {% if cart.item_count > 0 %}
+                <span class="boschino-cart-badge" aria-hidden="true">{{ cart.item_count }}</span>
+              {% endif %}
+            </a>
+          </div>
+        </div>
+
+        <div class="boschino-mobileBrands" aria-label="Značky BSH">
+          <div class="boschino-mobileBrands__track" id="boschinoMobileBrandsTrack">
+            <div class="boschino-mobileBrands__item"><img loading="lazy" src="https://cdn.shopify.com/s/files/1/1001/0741/9979/files/logo_bosch_preview_rev_1_1.png?v=1770718551" alt="Bosch"></div>
+            <div class="boschino-mobileBrands__item"><img loading="lazy" src="https://cdn.shopify.com/s/files/1/1001/0741/9979/files/logo_siemens_preview_rev_1.png?v=1770715813" alt="Siemens"></div>
+            <div class="boschino-mobileBrands__item"><img loading="lazy" src="https://cdn.shopify.com/s/files/1/1001/0741/9979/files/logo_gaggenau_preview_rev_1.png?v=1770715814" alt="Gaggenau"></div>
+            <div class="boschino-mobileBrands__item"><img loading="lazy" src="https://cdn.shopify.com/s/files/1/1001/0741/9979/files/logo_constructa_preview_rev_1.png?v=1770720694" alt="Constructa"></div>
+            <div class="boschino-mobileBrands__item"><img loading="lazy" src="https://cdn.shopify.com/s/files/1/1001/0741/9979/files/logo_Balay_preview_rev_1.png?v=1770715814" alt="Balay"></div>
+            <div class="boschino-mobileBrands__item"><img loading="lazy" src="https://cdn.shopify.com/s/files/1/1001/0741/9979/files/logo_neff_preview_rev_1.png?v=1770715813" alt="NEFF"></div>
+
+            <div class="boschino-mobileBrands__item" aria-hidden="true"><img loading="lazy" src="https://cdn.shopify.com/s/files/1/1001/0741/9979/files/logo_bosch_preview_rev_1_1.png?v=1770718551" alt=""></div>
+            <div class="boschino-mobileBrands__item" aria-hidden="true"><img loading="lazy" src="https://cdn.shopify.com/s/files/1/1001/0741/9979/files/logo_siemens_preview_rev_1.png?v=1770715813" alt=""></div>
+            <div class="boschino-mobileBrands__item" aria-hidden="true"><img loading="lazy" src="https://cdn.shopify.com/s/files/1/1001/0741/9979/files/logo_gaggenau_preview_rev_1.png?v=1770715814" alt=""></div>
+            <div class="boschino-mobileBrands__item" aria-hidden="true"><img loading="lazy" src="https://cdn.shopify.com/s/files/1/1001/0741/9979/files/logo_constructa_preview_rev_1.png?v=1770720694" alt=""></div>
+            <div class="boschino-mobileBrands__item" aria-hidden="true"><img loading="lazy" src="https://cdn.shopify.com/s/files/1/1001/0741/9979/files/logo_Balay_preview_rev_1.png?v=1770715814" alt=""></div>
+            <div class="boschino-mobileBrands__item" aria-hidden="true"><img loading="lazy" src="https://cdn.shopify.com/s/files/1/1001/0741/9979/files/logo_neff_preview_rev_1.png?v=1770715813" alt=""></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+</{{ header_tag }}>
+
+{%- if settings.cart_type == "notification" -%}
+  {%- render 'cart-notification', color_scheme: section.settings.color_scheme, desktop_menu_type: section.settings.menu_type_desktop -%}
+{%- endif -%}
+
+{% javascript %}
+  document.addEventListener('DOMContentLoaded', function () {
+    var burger = document.querySelector('.boschino-burger');
+    var drawer = document.querySelector('.boschino-drawer');
+    var closeBtn = document.querySelector('.boschino-drawer__close');
+    var backdrop = document.querySelector('.boschino-drawer__backdrop');
+
+    if (!burger || !drawer) return;
+
+    function openDrawer() {
+      drawer.setAttribute('data-open', 'true');
+      burger.setAttribute('aria-expanded', 'true');
+      document.documentElement.classList.add('boschino-menu-open');
+      document.body.classList.add('boschino-menu-open');
+    }
+
+    function closeDrawer() {
+      drawer.setAttribute('data-open', 'false');
+      burger.setAttribute('aria-expanded', 'false');
+      document.documentElement.classList.remove('boschino-menu-open');
+      document.body.classList.remove('boschino-menu-open');
+
+      drawer.querySelectorAll('.boschino-drawerItem.is-open').forEach(function(item) {
+        item.classList.remove('is-open');
+      });
+    }
+
+    burger.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+
+      if (drawer.getAttribute('data-open') === 'true') {
+        closeDrawer();
+      } else {
+        openDrawer();
+      }
+    });
+
+    if (closeBtn) {
+      closeBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        closeDrawer();
+      });
+    }
+
+    if (backdrop) {
+      backdrop.addEventListener('click', closeDrawer);
+    }
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && drawer.getAttribute('data-open') === 'true') {
+        closeDrawer();
+      }
+    });
+
+    drawer.addEventListener('click', function(e) {
+      var toggle = e.target.closest('.boschino-drawerToggle');
+      if (!toggle) return;
+
+      e.preventDefault();
+      e.stopPropagation();
+
+      var item = toggle.closest('.boschino-drawerItem');
+      if (!item) return;
+
+      item.classList.toggle('is-open');
+    });
+  });
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "Header Boschino",
+  "settings": [
+    {
+      "type": "link_list",
+      "id": "menu",
+      "label": "Hlavní menu",
+      "default": "main-menu"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Header Boschino"
+    }
+  ]
+}
+{% endschema %}

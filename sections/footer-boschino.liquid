@@ -1,0 +1,520 @@
+{% comment %}
+  Boschino custom footer
+  - PC beze změny (media queries od 750px a 990px zůstávají)
+  - Mobile změna:
+      * logo vycentrované
+      * "Informace" zarovnané vlevo
+      * "Platební metody" zarovnané vlevo
+      * FB/IG klidně na střed (sekce "Buďme ve spojení" centrovaně)
+{% endcomment %}
+
+{%- liquid
+  assign boschino_facebook_link = 'https://www.facebook.com/people/Boschino/61585881047958/'
+  assign boschino_instagram_link = 'https://www.instagram.com/boschino.cz/'
+
+  assign logo_img = 'https://cdn.shopify.com/s/files/1/1001/0741/9979/files/logo_se_sloganem1_preview_rev_1.png?v=1769516494'
+
+  assign fb_icon = 'https://cdn.shopify.com/s/files/1/1001/0741/9979/files/fb_ikona_preview_rev_1.png?v=1767956366'
+  assign ig_icon = 'https://cdn.shopify.com/s/files/1/1001/0741/9979/files/ig_ikona_preview_rev_1.png?v=1767956366'
+
+  assign pay_visa = 'https://cdn.shopify.com/s/files/1/1001/0741/9979/files/Visa_obrazek.jpg?v=1767956366'
+  assign pay_mc = 'https://cdn.shopify.com/s/files/1/1001/0741/9979/files/Mastercard.jpg?v=1767956366'
+  assign pay_comgate = 'https://cdn.shopify.com/s/files/1/1001/0741/9979/files/comgate.png?v=1767956366'
+  assign pay_cod = 'https://cdn.shopify.com/s/files/1/1001/0741/9979/files/platba_na_dobirku_preview_rev_1.png?v=1767956366'
+-%}
+
+{%- capture spectrum_svg -%}
+<svg viewBox="0 0 1200 60" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+  <polygon points="0,0 95,0 75,60 0,60" fill="#B0002A"/>
+  <polygon points="95,0 175,0 150,60 75,60" fill="#D10B2C"/>
+  <polygon points="175,0 260,0 235,60 150,60" fill="#8C1D73"/>
+  <polygon points="260,0 345,0 325,60 235,60" fill="#5B2AA6"/>
+  <polygon points="345,0 430,0 410,60 325,60" fill="#2037D8"/>
+  <polygon points="430,0 520,0 500,60 410,60" fill="#0C58FF"/>
+  <polygon points="520,0 610,0 585,60 500,60" fill="#0076E6"/>
+  <polygon points="610,0 710,0 690,60 585,60" fill="#00A9D6"/>
+  <polygon points="710,0 825,0 800,60 690,60" fill="#35C6CF"/>
+  <polygon points="825,0 945,0 920,60 800,60" fill="#4BD6A5"/>
+  <polygon points="945,0 1075,0 1045,60 920,60" fill="#2CC16C"/>
+  <polygon points="1075,0 1200,0 1200,60 1045,60" fill="#1A9B3A"/>
+
+  <polygon points="40,0 120,0 98,60 18,60" fill="#ffffff" opacity="0.10"/>
+  <polygon points="210,0 290,0 270,60 190,60" fill="#000000" opacity="0.10"/>
+  <polygon points="380,0 470,0 450,60 360,60" fill="#ffffff" opacity="0.08"/>
+  <polygon points="560,0 650,0 625,60 535,60" fill="#000000" opacity="0.10"/>
+  <polygon points="750,0 865,0 840,60 725,60" fill="#ffffff" opacity="0.08"/>
+  <polygon points="980,0 1120,0 1090,60 950,60" fill="#000000" opacity="0.10"/>
+
+  <path d="M880,60 C900,48 900,18 880,0 L950,0 C975,18 975,48 950,60 Z" fill="#ffffff" opacity="0.12"/>
+  <path d="M1015,60 C1040,45 1040,15 1015,0 L1085,0 C1110,15 1110,45 1085,60 Z" fill="#000000" opacity="0.08"/>
+</svg>
+{%- endcapture -%}
+
+<style>
+  .boschino-footer-block {
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #E5E7E8;
+    --boschino-col-gap: 44px;
+    --boschino-link-col-gap: 44px;
+    --boschino-right-col: 360px;
+    --boschino-top-shift: 0px;
+  }
+  .boschino-footer-block * { box-sizing: border-box; }
+
+  .boschino-footer-block{
+    font-family: {{ settings.type_body_font.family }}, {{ settings.type_body_font.fallback_families }};
+  }
+  .boschino-footer-block h3{
+    font-family: inherit;
+    font-weight: 700;
+  }
+
+  .boschino-spectrum {
+    width: 100%;
+    height: 16px;
+    line-height: 0;
+    overflow: hidden;
+    display: block;
+    border-bottom: 1px solid rgba(17,17,17,.12);
+    background: #fff;
+  }
+  .boschino-spectrum svg { width: 100%; height: 100%; display:block; }
+
+  .boschino-wrap { padding: 44px 8px 34px; }
+
+  .boschino-card{
+    max-width: 1320px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 34px 38px;
+    background: #fff;
+    border: 1px solid rgba(17,17,17,.10);
+    border-radius: 0;
+    box-shadow: 0 10px 26px rgba(17,17,17,.06);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .boschino-card::after{
+    content: "";
+    position: absolute;
+    right: -220px;
+    bottom: -220px;
+    width: 520px;
+    height: 520px;
+    border-radius: 50%;
+    border: 14px solid rgba(237,0,7,.07);
+    pointer-events: none;
+  }
+
+  .boschino-inner{
+    display: grid;
+    grid-template-columns: 1fr;
+    row-gap: 28px;
+    column-gap: var(--boschino-col-gap);
+    align-items: start;
+    padding-top: var(--boschino-top-shift);
+  }
+
+  .boschino-logo{ align-self: start; margin-top: 0; }
+  .boschino-logo img{
+    max-width: 360px;
+    height: auto;
+    display:block;
+  }
+
+  .boschino-col h3{
+    margin: 0 0 10px;
+    font-size: 16px;
+    letter-spacing: .2px;
+  }
+  .boschino-col h3::after{
+    content:"";
+    display:block;
+    width: 44px;
+    height: 2px;
+    margin-top: 8px;
+    background: rgba(237,0,7,.25);
+    border-radius: 999px;
+  }
+
+  .boschino-links{
+    list-style:none;
+    margin:0;
+    padding:0;
+    display:block;
+  }
+  .boschino-links li{ margin: 0 0 8px; }
+
+  .boschino-links a{
+    font-weight: 500;
+    text-decoration: none;
+    color: rgba(17,17,17,.84);
+  }
+  .boschino-links a:hover{
+    color: #ED0007;
+    text-decoration: underline;
+    text-decoration-color: #ED0007;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 3px;
+  }
+
+  .boschino-extras{
+    display: grid;
+    gap: 18px;
+  }
+
+  .boschino-sub{
+    margin: 0 0 8px;
+    font-size: 13px;
+    line-height: 1.35;
+    opacity: .70;
+    white-space: nowrap;
+  }
+
+  .boschino-payments{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    align-items: center;
+    justify-content: flex-start;
+    margin-top: 2px;
+    margin-bottom: 26px;
+  }
+
+  .boschino-pay{
+    width: 64px;
+    height: 42px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .boschino-pay img{
+    max-height: 42px;
+    max-width: 64px;
+    width: auto;
+    height: auto;
+    display:block;
+    filter: saturate(1.02);
+  }
+
+  .boschino-pay--comgate{
+    width: 108px;
+    height: 42px;
+  }
+  .boschino-pay--comgate img{
+    max-width: 128px;
+    max-height: 42px;
+  }
+
+  .boschino-social{
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 14px;
+    align-items: center;
+    justify-content: flex-start;
+    margin-top: 6px;
+  }
+  .boschino-social a{
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    border: 0;
+    background: transparent;
+    padding: 0;
+  }
+  .boschino-social img{
+    width: 44px;
+    height: 44px;
+    display: block;
+    transition: transform .15s ease;
+  }
+  .boschino-social a:hover img{ transform: scale(1.05); }
+
+  .boschino-trust{
+    margin-top: 18px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(17,17,17,.10);
+    display: grid;
+    gap: 10px;
+  }
+
+  .boschino-trust-item{
+    display:flex;
+    align-items:center;
+    gap: 10px;
+    color: rgba(17,17,17,.78);
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .boschino-trust-icon{
+    width: 18px;
+    height: 18px;
+    display:inline-block;
+  }
+  .boschino-trust-icon svg{
+    width: 18px;
+    height: 18px;
+    display:block;
+  }
+
+  .boschino-copyright{
+    text-align:center;
+    padding: 18px 24px 22px;
+    font-size: 12px;
+    opacity: .75;
+    color: rgba(17,17,17,.75);
+  }
+
+  /* ===========================
+     MOBILE ONLY: jen požadované změny
+     =========================== */
+  @media(max-width: 749px){
+    .boschino-wrap{ padding: 28px 14px 26px; }
+    .boschino-card{ padding: 22px 16px; }
+    .boschino-inner{ row-gap: 22px; }
+
+    /* Logo na střed */
+    .boschino-logo{ margin: 0 auto; text-align:center; }
+    .boschino-logo a{ display:inline-flex; justify-content:center; width:100%; }
+    .boschino-logo img{ margin: 0 auto; max-width: 260px; }
+
+    /* Informace a platby vlevo */
+    .boschino-col{ text-align:left; }
+    .boschino-col h3::after{ margin-left:0; margin-right:auto; }
+
+    .boschino-links{ display:block; }
+    .boschino-links li{ margin: 0 0 10px; }
+
+    .boschino-payments{
+      justify-content: flex-start;
+      flex-wrap: nowrap;
+      gap: 10px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      padding-bottom: 6px;
+      margin-bottom: 18px;
+    }
+    .boschino-payments::-webkit-scrollbar{ height: 4px; }
+    .boschino-payments::-webkit-scrollbar-thumb{ background: rgba(17,17,17,.18); border-radius: 999px; }
+
+    .boschino-pay{
+      flex: 0 0 auto;
+      width: 60px;
+      height: 40px;
+    }
+    .boschino-pay img{
+      max-height: 40px;
+      max-width: 60px;
+    }
+
+    .boschino-pay--comgate{
+      flex: 0 0 auto;
+      width: 96px;
+      height: 40px;
+    }
+    .boschino-pay--comgate img{
+      max-width: 110px;
+      max-height: 40px;
+    }
+
+    /* Sociální sekce může být na střed (nadpis + text + ikony) */
+    .boschino-extras > div:nth-child(2){ text-align:center; }
+    .boschino-extras > div:nth-child(2) h3::after{ margin-left:auto; margin-right:auto; }
+    .boschino-sub{ white-space: normal; text-align:center; }
+    .boschino-social{ justify-content: center; }
+
+    /* Trust kompaktněji (2 sloupce) */
+    .boschino-trust{
+      grid-template-columns: 1fr 1fr;
+      gap: 12px 14px;
+      justify-items: start;
+    }
+    .boschino-trust-item{ font-size: 12.5px; }
+  }
+
+  /* ============== DESKTOP (ponecháno) ============== */
+  @media(min-width: 750px){
+    .boschino-wrap{ padding: 46px 32px 40px; }
+
+    .boschino-inner{
+      grid-template-columns: 360px minmax(520px, 1fr);
+      row-gap: 28px;
+      column-gap: var(--boschino-col-gap);
+      justify-content: start;
+      padding-top: var(--boschino-top-shift);
+    }
+
+    .boschino-links{
+      display: inline-grid;
+      grid-auto-flow: column;
+      grid-template-rows: repeat(3, auto);
+      column-gap: var(--boschino-link-col-gap);
+      row-gap: 10px;
+    }
+    .boschino-links li{ margin: 0; }
+
+    .boschino-extras{
+      grid-column: 1 / -1;
+      grid-template-columns: 1fr 1fr;
+      gap: 34px;
+      align-items: start;
+    }
+
+    .boschino-trust{
+      grid-column: 1 / -1;
+      grid-template-columns: 1fr 1fr 1fr 1fr;
+      gap: 22px;
+      align-items: center;
+    }
+  }
+
+  @media(min-width: 990px){
+    .boschino-inner{
+      grid-template-columns: 360px minmax(0, max-content) var(--boschino-right-col);
+      column-gap: var(--boschino-col-gap);
+      justify-content: start;
+      padding-top: var(--boschino-top-shift);
+    }
+
+    .boschino-links a{ white-space: nowrap; }
+
+    .boschino-extras{
+      grid-column: auto;
+      grid-template-columns: 1fr;
+    }
+
+    .boschino-trust{
+      grid-column: 1 / -1;
+    }
+  }
+
+  @media(max-width: 420px){
+    .boschino-sub{ white-space: normal; }
+  }
+</style>
+
+<div class="boschino-footer-block">
+  <div class="boschino-spectrum" aria-hidden="true">
+    {{ spectrum_svg }}
+  </div>
+
+  <div class="boschino-wrap">
+    <div class="boschino-card">
+      <div class="boschino-inner">
+        <div class="boschino-logo">
+          <a href="/" aria-label="Boschino">
+            <img src="{{ logo_img }}" alt="{{ shop.name }}" loading="lazy">
+
+          </a>
+        </div>
+
+        <div class="boschino-col">
+          <h3>Informace</h3>
+          <ul class="boschino-links">
+            <li><a href="https://boschino.cz/pages/o-nas">O nás</a></li>
+            <li><a href="https://boschino.cz/pages/kontakty">Kontakty</a></li>
+            <li><a href="https://boschino.cz/pages/vydejni-mista">Výdejní místa</a></li>
+
+            <li><a href="https://boschino.cz/pages/obchodni-podminky">Obchodní podmínky</a></li>
+            <li><a href="https://boschino.cz/pages/chranime-vase-osobni-udaje">Ochrana osobních údajů</a></li>
+            <li><a href="https://boschino.cz/pages/doprava-platba-vraceni-zbozi">Doprava, platba &amp; vrácení zboží</a></li>
+          </ul>
+        </div>
+
+        <div class="boschino-col boschino-extras">
+          <div>
+            <h3>Platební metody</h3>
+            <div class="boschino-payments" aria-label="Platební metody">
+              {% if pay_visa != blank %}<span class="boschino-pay"><img src="{{ pay_visa }}" alt="Visa" loading="lazy"></span>{% endif %}
+              {% if pay_mc != blank %}<span class="boschino-pay"><img src="{{ pay_mc }}" alt="Mastercard" loading="lazy"></span>{% endif %}
+              {% if pay_comgate != blank %}<span class="boschino-pay boschino-pay--comgate"><img src="{{ pay_comgate }}" alt="Comgate" loading="lazy"></span>{% endif %}
+              {% if pay_cod != blank %}<span class="boschino-pay"><img src="{{ pay_cod }}" alt="Dobírka" loading="lazy"></span>{% endif %}
+            </div>
+          </div>
+
+          <div>
+            <h3>Buďme ve spojení</h3>
+            <p class="boschino-sub">Inspirace, novinky a akce najdete na našich sociálních sítích.</p>
+            <div class="boschino-social" aria-label="Sociální sítě">
+              <a href="{{ boschino_facebook_link }}" target="_blank" rel="noopener" aria-label="Facebook">
+                <img src="{{ fb_icon }}" alt="Facebook" loading="lazy">
+              </a>
+              <a href="{{ boschino_instagram_link }}" target="_blank" rel="noopener" aria-label="Instagram">
+                <img src="{{ ig_icon }}" alt="Instagram" loading="lazy">
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div class="boschino-trust" aria-label="Výhody">
+          <div class="boschino-trust-item">
+            <span class="boschino-trust-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none">
+                <path d="M12 2l8 4v6c0 5-3.4 9.4-8 10-4.6-.6-8-5-8-10V6l8-4z" stroke="rgba(17,17,17,.75)" stroke-width="2"/>
+                <path d="M8 12l2.5 2.5L16 9" stroke="#ED0007" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </span>
+            Originální díly a kvalita
+          </div>
+
+          <div class="boschino-trust-item">
+            <span class="boschino-trust-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none">
+                <path d="M3 7h12l3 4h3v6h-2" stroke="rgba(17,17,17,.75)" stroke-width="2" stroke-linecap="round"/>
+                <path d="M3 7v10h2" stroke="rgba(17,17,17,.75)" stroke-width="2" stroke-linecap="round"/>
+                <circle cx="7" cy="17" r="2" stroke="#ED0007" stroke-width="2"/>
+                <circle cx="19" cy="17" r="2" stroke="#ED0007" stroke-width="2"/>
+              </svg>
+            </span>
+            Rychlé doručení zboží
+          </div>
+
+          <div class="boschino-trust-item">
+            <span class="boschino-trust-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none">
+                <path d="M12 3a7 7 0 017 7c0 2.7-1.5 5-3.7 6.2V21l-3.3-2-3.3 2v-4.8C6.5 15 5 12.7 5 10a7 7 0 017-7z" stroke="rgba(17,17,17,.75)" stroke-width="2"/>
+                <path d="M9 10h6" stroke="#ED0007" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+            </span>
+            Podpora a servis
+          </div>
+
+          <div class="boschino-trust-item">
+            <span class="boschino-trust-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none">
+                <path d="M4 7h16v14H4V7z" stroke="rgba(17,17,17,.75)" stroke-width="2"/>
+                <path d="M4 11h16" stroke="rgba(17,17,17,.75)" stroke-width="2"/>
+                <path d="M8 7V5h8v2" stroke="#ED0007" stroke-width="2" stroke-linecap="round"/>
+                <path d="M8 15h4" stroke="#ED0007" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+            </span>
+            Velké skladové zásoby
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="boschino-copyright">
+    © {{ 'now' | date: '%Y' }}, {{ shop.name }} Využívá Shopify.
+  </div>
+
+  <div class="boschino-spectrum" aria-hidden="true">
+    {{ spectrum_svg }}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Footer – Boschino",
+  "settings": [],
+  "presets": [
+    { "name": "Footer – Boschino" }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,167 @@
+.totals {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+}
+
+.totals > * {
+  font-size: 1.6rem;
+  margin: 0;
+}
+
+.totals > h2 {
+  font-size: calc(var(--font-heading-scale) * 1.6rem);
+}
+
+.totals * {
+  line-height: 1;
+}
+
+.totals > * + * {
+  margin-left: 2rem;
+}
+
+.totals__total {
+  margin-top: 0.5rem;
+}
+
+.totals__total-value {
+  font-size: 1.8rem;
+}
+
+.cart__ctas + .totals {
+  margin-top: 2rem;
+}
+
+@media all and (min-width: 750px) {
+  .totals {
+    justify-content: flex-end;
+  }
+}
+
+/* =========================================================
+   KOŠÍK – POKLADNA + CTA + SHOP/PAYPAL: HRANATÉ (override)
+   CELÝ SOUBOR component-totals.css (můžeš nahradit)
+   ========================================================= */
+
+/* 1) Checkout / Pokladna – hlavní button */
+#checkout,
+button[name="checkout"],
+.cart__checkout-button,
+.cart__ctas button,
+.cart__ctas .button,
+.cart__ctas a.button,
+.cart__footer button,
+.cart__footer .button,
+.cart__footer a.button {
+  border-radius: 0 !important;
+}
+
+/* Dawn/Shopify někdy dělá rohy přes pseudo prvky */
+#checkout::before,
+#checkout::after,
+button[name="checkout"]::before,
+button[name="checkout"]::after,
+.cart__checkout-button::before,
+.cart__checkout-button::after,
+.cart__ctas .button::before,
+.cart__ctas .button::after,
+.cart__footer .button::before,
+.cart__footer .button::after {
+  border-radius: 0 !important;
+}
+
+/* 2) Obal košíkového footeru – kdyby měl rohy */
+.cart__footer,
+.cart__footer * {
+  border-radius: 0 !important;
+}
+
+/* 3) Shopify payment button (Shop Pay / PayPal)
+   - někdy je to iframe → nemusí jít 100 % přepsat
+*/
+.shopify-payment-button,
+.shopify-payment-button * {
+  border-radius: 0 !important;
+}
+
+.shopify-payment-button__button,
+.shopify-payment-button__more-options,
+.shopify-payment-button__button::before,
+.shopify-payment-button__button::after {
+  border-radius: 0 !important;
+}
+
+/* 4) Chceš-li SHOP/PAYPAL skrýt (volitelné):
+   odkomentuj následující řádek
+*/
+/*
+.template-cart .shopify-payment-button {
+  display: none !important;
+}
+*/
+
+/* 5) Designově čistší CTA blok (jemné sjednocení) */
+.cart__ctas {
+  gap: 10px;
+}
+
+.cart__ctas .button,
+.cart__ctas button,
+.cart__checkout-button {
+  min-height: 44px;
+  letter-spacing: 0.02em;
+}
+/* =========================================================
+   KOŠÍK – MNOŽSTVÍ (SJEEDNOTIT 100%)
+   - vypne pseudo rámečky z motivu
+   - rámeček dá přes OUTLINE (stabilní u všech řádků)
+   ========================================================= */
+.template-cart quantity-input.quantity,
+.template-cart .quantity {
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  background: #fff !important;
+
+  outline: 1px solid rgba(0,0,0,0.35) !important; /* barvu si klidně změň */
+  outline-offset: 0 !important;
+
+  overflow: hidden !important;
+}
+
+/* motiv (Dawn/Trade) často kreslí rámeček přes ::after/::before */
+.template-cart quantity-input.quantity::before,
+.template-cart quantity-input.quantity::after,
+.template-cart .quantity::before,
+.template-cart .quantity::after {
+  content: none !important;
+  display: none !important;
+  box-shadow: none !important;
+  border: 0 !important;
+}
+
+/* uvnitř: žádné linky, žádné stíny */
+.template-cart .quantity__button,
+.template-cart .quantity__input {
+  border: 0 !important;
+  box-shadow: none !important;
+  outline: none !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+}
+
+/* někdy dělají dělící čáry přes pseudo prvky tlačítek */
+.template-cart .quantity__button::before,
+.template-cart .quantity__button::after,
+.template-cart .quantity__input::before,
+.template-cart .quantity__input::after {
+  content: none !important;
+  display: none !important;
+}
+
+/* disabled tlačítka ať nevypadají “jinak” rámečkem */
+.template-cart .quantity__button[disabled] {
+  opacity: 0.55 !important;
+}
+

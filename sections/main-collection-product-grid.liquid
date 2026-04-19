@@ -1,0 +1,3476 @@
+{{ 'template-collection.css' | asset_url | stylesheet_tag }}
+{{ 'component-card.css' | asset_url | stylesheet_tag }}
+{{ 'component-price.css' | asset_url | stylesheet_tag }}
+{{ 'component-facets.css' | asset_url | stylesheet_tag }}
+
+{% if section.settings.image_shape == 'blob' %}
+  {{ 'mask-blobs.css' | asset_url | stylesheet_tag }}
+{%- endif -%}
+
+{% render 'bsh-collection-jsonld', collection: collection %}
+
+{%- style -%}
+/* =========================
+   BOSCHINO – Collection UI (STEJNÝ VZOR JAKO SEARCH)
+   ========================= */
+
+.section-{{ section.id }}-padding{
+  padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+  padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+
+  /* =====================================================
+     BOSCHINO DESIGN SYSTEM – COLLECTION / SEARCH UI
+     ===================================================== */
+
+  /* Brand */
+  --bosch-blue: #2a3885;
+  --bosch-red:  #e20015;
+
+  /* Background */
+  --ui-bg: #E5E7E8;          /* hlavní katalogové pozadí */
+
+  /* Text */
+  --text-strong: rgba(0,0,0,0.88);
+  --text-soft:   rgba(0,0,0,0.62);
+
+  /* Borders & Shadows (oficiálnější, méně e-shopový look) */
+  --border-soft:  rgba(0,0,0,0.18);
+  --shadow-soft:  0 4px 10px rgba(0,0,0,0.06);
+  --shadow-hover: 0 8px 18px rgba(0,0,0,0.10);
+
+  /* Bottom accent */
+  --bottom-dark: #255da0;
+}
+
+@media screen and (min-width: 750px) {
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top }}px;
+    padding-bottom: {{ section.settings.padding_bottom }}px;
+  }
+}
+
+/* Jemné pozadí sekce */
+.section-{{ section.id }}-padding.gradient {
+  background: var(--ui-bg) !important;
+}
+
+/* Ultra wide (jako kolekce/search) */
+.section-{{ section.id }}-padding .page-width {
+  max-width: none !important;
+  width: min(1800px, calc(100vw - 56px)) !important;
+  padding-left: 28px !important;
+  padding-right: 28px !important;
+}
+@media screen and (min-width: 1600px) {
+  .section-{{ section.id }}-padding .page-width {
+    width: min(2100px, calc(100vw - 64px)) !important;
+    padding-left: 32px !important;
+    padding-right: 32px !important;
+  }
+}
+
+/* Layout pro vertical facets */
+@media screen and (min-width: 990px) {
+  .section-{{ section.id }}-padding .facets-vertical {
+    grid-template-columns: 260px 1fr !important;
+    column-gap: 28px !important;
+  }
+}
+
+/* Grid spacing
+   duplicita fix: když na desktopu přepínáme #product-grid na CSS GRID,
+   tak gap na .boschino-product-grid necháme jen pro <990px */
+@media screen and (max-width: 989px) {
+  .section-{{ section.id }}-padding .boschino-product-grid {
+    gap: 22px !important;
+  }
+}
+@media screen and (min-width: 750px) and (max-width: 989px) {
+  .section-{{ section.id }}-padding .boschino-product-grid {
+    gap: 28px !important;
+  }
+}
+
+/* =========================
+   FORCE 4 COLUMNS (desktop)
+   – přepneme Dawn flex grid na CSS GRID
+   ========================= */
+@media screen and (min-width: 990px) {
+  .section-{{ section.id }}-padding #product-grid {
+    display: grid !important;
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    column-gap: 28px !important;
+    row-gap: 28px !important;
+  }
+
+  /* Dawn má na .grid__item width – to musíme vypnout */
+  .section-{{ section.id }}-padding #product-grid > .grid__item,
+  .section-{{ section.id }}-padding #product-grid > li.grid__item {
+    width: auto !important;
+    max-width: none !important;
+    flex: initial !important;
+  }
+
+  /* pojistka: ať se content vedle filtrů může zmenšit */
+  .section-{{ section.id }}-padding .product-grid-container {
+    min-width: 0 !important;
+  }
+}
+
+/* =========================
+   FILTRY – větší písmo + checkbox styl (stejné jako search)
+   ========================= */
+.section-{{ section.id }}-padding .facets__heading,
+.section-{{ section.id }}-padding .facets__summary,
+.section-{{ section.id }}-padding .facets__title {
+  font-size: 16px !important;
+  font-weight: 900 !important;
+  letter-spacing: 0 !important;
+  text-transform: none !important;
+}
+
+.section-{{ section.id }}-padding .facets__item label,
+.section-{{ section.id }}-padding .facet-checkbox {
+  font-size: 16px !important;
+  font-weight: 800 !important;
+  color: rgba(0,0,0,0.84) !important;
+  text-transform: none !important;
+}
+
+/* schovej dawn checkbox ikonky */
+.section-{{ section.id }}-padding .facets label.facet-checkbox .facet-checkbox__checkbox,
+.section-{{ section.id }}-padding .facets label.facet-checkbox .facet-checkbox__checkbox-icon,
+.section-{{ section.id }}-padding .facets label.facet-checkbox .icon-checkmark,
+.section-{{ section.id }}-padding .facets label.facet-checkbox svg.icon-checkmark,
+.section-{{ section.id }}-padding .facets label.facet-checkbox .icon-square,
+.section-{{ section.id }}-padding .facets label.facet-checkbox svg.icon-square,
+.section-{{ section.id }}-padding .facets label.facet-checkbox .icon-checkbox,
+.section-{{ section.id }}-padding .facets label.facet-checkbox svg.icon-checkbox,
+.section-{{ section.id }}-padding .facets label.facet-checkbox > input[type="checkbox"] + svg{
+  display: none !important;
+}
+
+/* řádek klikací + prostor pro box */
+.section-{{ section.id }}-padding .facets label.facet-checkbox{
+  position: relative !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  cursor: pointer !important;
+  padding-left: 34px !important;
+}
+
+/* input funkční, neviditelný */
+.section-{{ section.id }}-padding .facets label.facet-checkbox > input[type="checkbox"]{
+  position: absolute !important;
+  opacity: 0 !important;
+  width: 1px !important;
+  height: 1px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* černý rámeček */
+.section-{{ section.id }}-padding .facets label.facet-checkbox::before{
+  content: "" !important;
+  position: absolute !important;
+  left: 0 !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  width: 22px !important;
+  height: 22px !important;
+  border: 3px solid #000 !important;
+  background: #fff !important;
+  box-sizing: border-box !important;
+  pointer-events: none !important;
+}
+
+/* fajfka PNG */
+.section-{{ section.id }}-padding .facets label.facet-checkbox:has(> input[type="checkbox"]:checked)::after{
+  content: "" !important;
+  position: absolute !important;
+  pointer-events: none !important;
+  left: 11px !important;
+  top: 50% !important;
+  width: 48px !important;
+  height: 36px !important;
+  background-repeat: no-repeat !important;
+  background-position: center !important;
+  background-size: contain !important;
+  background-image: url("https://cdn.shopify.com/s/files/1/1001/0741/9979/files/fajfka_png.png?v=1769163383") !important;
+  transform: translate(-35%, -65%) !important;
+}
+
+/* 4) Top bar (Řadit + počet): enterprise styl */
+.section-{{ section.id }}-padding .facets-wrapper{
+  background: transparent !important;
+  border: 0 !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+}
+
+.section-{{ section.id }}-padding .facets-vertical-form{
+  background:#f6f8fb !important;
+  border:1px solid rgba(0,0,0,0.08) !important;
+  padding:10px 14px !important;
+  border-radius:0 !important;
+}
+
+.section-{{ section.id }}-padding .facets-vertical-sort .facets-vertical-form{
+  box-shadow:none !important;
+  border-left:6px solid var(--bosch-blue) !important;
+  background:rgba(255,255,255,0.96) !important;
+  backdrop-filter:blur(6px);
+}
+
+/* 4) Pojistka: grid a karty nechť jsou v nižší vrstvě */
+.section-{{ section.id }}-padding #product-grid{
+  position: relative !important;
+  z-index: 1 !important;
+}
+.section-{{ section.id }}-padding #product-grid .card-wrapper{
+  position: relative !important;
+  z-index: 1 !important;
+}
+/* skladovost pod cenou v kartě */
+.section-{{ section.id }}-padding #product-grid .boschino-stock{
+  margin-top: 6px !important;
+  font-size: 13px !important;
+  font-weight: 800 !important;
+  color: rgba(0,0,0,0.62) !important;
+}
+
+.section-{{ section.id }}-padding #product-grid .boschino-stock__status{
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+}
+
+/* malá tečka jako u detailu */
+.section-{{ section.id }}-padding #product-grid .boschino-stock__status::before{
+  content: "" !important;
+  width: 8px !important;
+  height: 8px !important;
+  border-radius: 999px !important;
+  display: inline-block !important;
+  background: #2ecc71 !important;
+}
+
+/* stavy */
+.section-{{ section.id }}-padding #product-grid .boschino-stock__status--in::before{
+  background: #2ecc71 !important;
+}
+.section-{{ section.id }}-padding #product-grid .boschino-stock__status--order::before{
+  background: #f1c40f !important;
+}
+.section-{{ section.id }}-padding #product-grid .boschino-stock__status--out::before{
+  background: #e74c3c !important;
+}
+
+/* tooltip bubliny skladovosti – stejné jako na produktu */
+.section-{{ section.id }}-padding #product-grid .inventory-status-with-tooltip {
+  position: relative;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  cursor: help;
+}
+
+.section-{{ section.id }}-padding #product-grid .inventory-status-with-tooltip .inventory-tooltip {
+  position: absolute;
+  left: 0;
+  bottom: calc(100% + 10px);
+  z-index: 30;
+  min-width: 220px;
+  max-width: 280px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: rgba(28, 28, 28, 0.96);
+  color: #fff;
+  font-size: 12px;
+  line-height: 1.45;
+  font-weight: 500;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.22);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(6px);
+  transition: opacity 0.18s ease, transform 0.18s ease, visibility 0.18s ease;
+  pointer-events: none;
+}
+
+.section-{{ section.id }}-padding #product-grid .inventory-status-with-tooltip .inventory-tooltip::after {
+  content: "";
+  position: absolute;
+  left: 18px;
+  top: 100%;
+  border-width: 6px;
+  border-style: solid;
+  border-color: rgba(28, 28, 28, 0.96) transparent transparent transparent;
+}
+
+.section-{{ section.id }}-padding #product-grid .inventory-status-with-tooltip:hover .inventory-tooltip,
+.section-{{ section.id }}-padding #product-grid .inventory-status-with-tooltip:focus .inventory-tooltip,
+.section-{{ section.id }}-padding #product-grid .inventory-status-with-tooltip:focus-within .inventory-tooltip {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+@media screen and (max-width: 749px) {
+  .section-{{ section.id }}-padding #product-grid .inventory-status-with-tooltip .inventory-tooltip {
+    left: 0;
+    right: auto;
+    min-width: 200px;
+    max-width: 240px;
+  }
+}
+
+/* =========================================================
+   BOSCHINO – appliance filter finální čistší varianta
+   ========================================================= */
+
+.section-{{ section.id }}-padding .boschino-appliance-filter{
+  margin-bottom: 12px !important;
+  background: #f5f6f8 !important;
+  border: 1px solid rgba(42,56,133,0.08) !important;
+  border-left: 0 !important;
+  border-radius: 0 !important;
+  padding: 12px 16px !important;
+  box-shadow: none !important;
+}
+
+.section-{{ section.id }}-padding .boschino-appliance-filter__top{
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 16px !important;
+  margin-bottom: 8px !important;
+}
+
+.section-{{ section.id }}-padding .boschino-appliance-filter__top-left{
+  min-width: 0 !important;
+  flex: 1 1 auto !important;
+}
+
+.section-{{ section.id }}-padding .boschino-appliance-filter__top-right{
+  flex: 0 0 auto !important;
+}
+
+.section-{{ section.id }}-padding .boschino-appliance-filter__header{
+  margin: 0 !important;
+  font-size: 15px !important;
+  font-weight: 900 !important;
+  color: rgba(0,0,0,0.86) !important;
+  line-height: 1.2 !important;
+}
+
+.section-{{ section.id }}-padding .boschino-appliance-filter__sort-form{
+  margin: 0 !important;
+}
+
+.section-{{ section.id }}-padding .boschino-appliance-filter__sort-wrap{
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  flex-wrap: nowrap !important;
+}
+
+.section-{{ section.id }}-padding .boschino-appliance-filter__sort-label{
+  margin: 0 !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  color: rgba(0,0,0,0.60) !important;
+  white-space: nowrap !important;
+}
+
+.section-{{ section.id }}-padding .boschino-appliance-filter__sort-select-wrap{
+  position: relative !important;
+  min-width: 190px !important;
+}
+
+.section-{{ section.id }}-padding .boschino-appliance-filter__sort-select{
+  width: 100% !important;
+  min-height: 38px !important;
+  padding: 0 34px 0 12px !important;
+  border: 1px solid rgba(42,56,133,0.14) !important;
+  border-radius: 10px !important;
+  background: #fff !important;
+  color: rgba(0,0,0,0.82) !important;
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  box-shadow: none !important;
+}
+
+.section-{{ section.id }}-padding .boschino-appliance-filter__sort-caret{
+  position: absolute !important;
+  right: 12px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  pointer-events: none !important;
+  display: inline-flex !important;
+  color: var(--bosch-blue) !important;
+}
+
+.section-{{ section.id }}-padding .boschino-appliance-filter__count{
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  color: rgba(0,0,0,0.56) !important;
+  white-space: nowrap !important;
+}
+
+.section-{{ section.id }}-padding .boschino-appliance-filter__field{
+  position: relative !important;
+  z-index: 120 !important;
+  overflow: visible !important;
+}
+
+.section-{{ section.id }}-padding .boschino-appliance-filter__input{
+  width: 100% !important;
+  height: 44px !important;
+  min-height: 44px !important;
+  padding: 0 16px !important;
+  border: 2px solid var(--bosch-blue) !important;
+  border-radius: 999px !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  color: var(--text-strong) !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  line-height: 44px !important;
+  box-shadow: none !important;
+  outline: 0 !important;
+  position: relative !important;
+  z-index: 2 !important;
+  -webkit-appearance: none !important;
+  appearance: none !important;
+  text-transform: uppercase !important;
+}
+
+.section-{{ section.id }}-padding .boschino-appliance-filter__input::placeholder{
+  color: rgba(0,0,0,.42) !important;
+}
+
+.section-{{ section.id }}-padding .boschino-appliance-filter__input:focus{
+  border-color: var(--bosch-blue) !important;
+  box-shadow: none !important;
+}
+
+.section-{{ section.id }}-padding .boschino-appliance-filter__ghost{
+  position: absolute !important;
+  left: 16px !important;
+  right: 16px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  line-height: 44px !important;
+  color: rgba(0,0,0,.28) !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  pointer-events: none !important;
+  z-index: 1 !important;
+  display: none;
+}
+
+.section-{{ section.id }}-padding .boschino-appliance-filter__ghost-typed{
+  visibility: hidden !important;
+}
+
+.section-{{ section.id }}-padding .boschino-appliance-filter__ghost-suffix{
+  color: rgba(0,0,0,.28) !important;
+}
+
+.section-{{ section.id }}-padding .boschino-appliance-filter__suggestions{
+  position: absolute !important;
+  top: calc(100% + 10px) !important;
+  left: 0 !important;
+  right: 0 !important;
+  z-index: 9999 !important;
+  background: #fff !important;
+  border: 1px solid rgba(17,17,17,.18) !important;
+  border-radius: 14px !important;
+  box-shadow: 0 16px 40px rgba(0,0,0,.18) !important;
+  overflow: hidden !important;
+  max-height: 360px !important;
+  overflow-y: auto !important;
+}
+
+.section-{{ section.id }}-padding .boschino-appliance-filter__suggestions::before{
+  content: "" !important;
+  position: absolute !important;
+  top: -8px !important;
+  left: 28px !important;
+  width: 14px !important;
+  height: 14px !important;
+  background: #fff !important;
+  border-left: 1px solid rgba(17,17,17,.18) !important;
+  border-top: 1px solid rgba(17,17,17,.18) !important;
+  transform: rotate(45deg) !important;
+}
+
+.section-{{ section.id }}-padding .boschino-appliance-filter__suggestion{
+  display: block !important;
+  width: 100% !important;
+  padding: 12px 14px !important;
+  border: 0 !important;
+  border-bottom: 1px solid rgba(17,17,17,.06) !important;
+  background: #fff !important;
+  text-align: left !important;
+  cursor: pointer !important;
+  line-height: 1.25 !important;
+  user-select: none !important;
+}
+
+.section-{{ section.id }}-padding .boschino-appliance-filter__suggestion:last-child{
+  border-bottom: 0 !important;
+}
+
+.section-{{ section.id }}-padding .boschino-appliance-filter__suggestion:hover,
+.section-{{ section.id }}-padding .boschino-appliance-filter__suggestion.is-active{
+  background: rgba(17,17,17,.06) !important;
+}
+
+.section-{{ section.id }}-padding .boschino-appliance-filter__suggestion-model{
+  display: block !important;
+  font-size: 15px !important;
+  font-weight: 700 !important;
+  color: rgba(17,17,17,.66) !important;
+  line-height: 1.2 !important;
+}
+
+.section-{{ section.id }}-padding .boschino-appliance-filter__suggestion-title{
+  display: none !important;
+}
+
+.section-{{ section.id }}-padding .boschino-appliance-filter__empty{
+  padding: 12px 14px !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  color: rgba(17,17,17,.56) !important;
+  background: #fff !important;
+}
+
+.section-{{ section.id }}-padding .boschino-appliance-filter__state{
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 12px !important;
+  margin-top: 10px !important;
+  padding-top: 8px !important;
+  border-top: 1px solid rgba(0,0,0,0.06) !important;
+}
+
+.section-{{ section.id }}-padding .boschino-appliance-filter__state-left{
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  gap: 10px !important;
+  min-width: 0 !important;
+}
+
+.section-{{ section.id }}-padding .boschino-appliance-filter__state span{
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  color: rgba(0,0,0,0.66) !important;
+}
+
+.section-{{ section.id }}-padding .boschino-appliance-subfilters{
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 8px !important;
+}
+
+.section-{{ section.id }}-padding .boschino-appliance-subfilters__btn:hover{
+  background: rgba(42,56,133,0.04) !important;
+  border-color: rgba(42,56,133,0.26) !important;
+}
+
+.section-{{ section.id }}-padding .boschino-appliance-subfilters__btn.is-active{
+  background: #6ecbd6 !important;
+  border-color: #6ecbd6 !important;
+  color: #fff !important;
+}
+
+.section-{{ section.id }}-padding .boschino-appliance-filter__reset{
+  border: 0 !important;
+  background: transparent !important;
+  color: var(--bosch-blue) !important;
+  font-size: 13px !important;
+  font-weight: 900 !important;
+  cursor: pointer !important;
+  padding: 0 !important;
+}
+
+@media screen and (max-width: 989px) {
+  .section-{{ section.id }}-padding .boschino-appliance-filter__top{
+    display: block !important;
+  }
+
+  .section-{{ section.id }}-padding .boschino-appliance-filter__top-right{
+    margin-top: 10px !important;
+  }
+
+  .section-{{ section.id }}-padding .boschino-appliance-filter__sort-wrap{
+    flex-wrap: wrap !important;
+    gap: 10px !important;
+  }
+
+  .section-{{ section.id }}-padding .boschino-appliance-filter__sort-select-wrap{
+    min-width: 180px !important;
+  }
+
+  .section-{{ section.id }}-padding .boschino-appliance-filter__state{
+    align-items: flex-start !important;
+  }
+}
+
+@media screen and (max-width: 749px) {
+  .section-{{ section.id }}-padding .boschino-appliance-filter{
+    padding: 14px !important;
+  }
+
+  .section-{{ section.id }}-padding .boschino-appliance-filter__header{
+    font-size: 14px !important;
+  }
+
+  .section-{{ section.id }}-padding .boschino-appliance-filter__sort-select-wrap{
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  .section-{{ section.id }}-padding .boschino-appliance-filter__sort-select{
+    width: 100% !important;
+  }
+
+  .section-{{ section.id }}-padding .boschino-appliance-subfilters__btn{
+    min-height: 34px !important;
+    font-size: 12px !important;
+    padding: 0 11px !important;
+  }
+}
+
+.section-{{ section.id }}-padding .boschino-appliance-subfilters__btn{
+  min-height: 36px !important;
+  padding: 0 12px !important;
+  border: 1px solid rgba(42,56,133,0.18) !important;
+  border-radius: 999px !important;
+  background: #fff !important;
+  color: rgba(0,0,0,0.84) !important;
+  font-size: 13px !important;
+  font-weight: 900 !important;
+  line-height: 1 !important;
+  cursor: pointer !important;
+  transition: all 0.16s ease !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+}
+
+.section-{{ section.id }}-padding .boschino-appliance-subfilters__label{
+  display: inline-block !important;
+}
+
+.section-{{ section.id }}-padding .boschino-appliance-subfilters__count{
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-width: 20px !important;
+  height: 20px !important;
+  padding: 0 6px !important;
+  border-radius: 999px !important;
+  background: rgba(42,56,133,0.06) !important;
+  color: var(--bosch-blue) !important;
+  font-size: 11px !important;
+  font-weight: 800 !important;
+  line-height: 1 !important;
+}
+
+.section-{{ section.id }}-padding .boschino-appliance-subfilters__btn.is-active .boschino-appliance-subfilters__count{
+  background: rgba(255,255,255,0.22) !important;
+  color: #fff !important;
+}
+
+/* schovat původní dawn count pod custom filtrem */
+.section-{{ section.id }}-padding .facets .product-count,
+.section-{{ section.id }}-padding .facets .product-count-vertical,
+.section-{{ section.id }}-padding #main-collection-filters .product-count,
+.section-{{ section.id }}-padding #main-collection-filters .product-count-vertical {
+  display: none !important;
+}
+
+.section-{{ section.id }}-padding .boschino-appliance-filter{
+  margin-bottom: 0 !important;
+}
+
+.section-{{ section.id }}-padding #main-collection-filters{
+  position: relative !important;
+  z-index: 120 !important;
+  max-width: 1352px !important;
+  margin: 0 auto 12px auto !important;
+  padding: 0 !important;
+  overflow: visible !important;
+}
+
+.section-{{ section.id }}-padding .boschino-load-more-wrap{
+  display: flex !important;
+  justify-content: center !important;
+  margin-top: 28px !important;
+}
+
+.section-{{ section.id }}-padding .boschino-load-more-wrap[hidden]{
+  display: none !important;
+}
+
+.section-{{ section.id }}-padding .boschino-load-more-btn{
+  min-height: 46px !important;
+  padding: 0 24px !important;
+  border: 2px solid var(--bosch-blue) !important;
+  border-radius: 999px !important;
+  background: #fff !important;
+  color: var(--bosch-blue) !important;
+  font-size: 14px !important;
+  font-weight: 900 !important;
+  cursor: pointer !important;
+  transition: all 0.16s ease !important;
+}
+
+.section-{{ section.id }}-padding .boschino-load-more-btn:hover{
+  background: rgba(42,56,133,0.04) !important;
+}
+
+.section-{{ section.id }}-padding .boschino-grid-loading{
+  position: absolute !important;
+  inset: 0 !important;
+  z-index: 20 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-height: 260px !important;
+  background: rgba(245, 246, 248, 0.92) !important;
+  backdrop-filter: blur(2px) !important;
+}
+
+.section-{{ section.id }}-padding .boschino-grid-loading[hidden]{
+  display: none !important;
+}
+
+.section-{{ section.id }}-padding .boschino-grid-loading__box{
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  padding: 14px 18px !important;
+  border: 1px solid rgba(42,56,133,0.10) !important;
+  background: #fff !important;
+  border-radius: 999px !important;
+  box-shadow: 0 10px 24px rgba(0,0,0,0.08) !important;
+}
+
+.section-{{ section.id }}-padding .boschino-grid-loading__text{
+  font-size: 14px !important;
+  font-weight: 800 !important;
+  color: rgba(0,0,0,0.72) !important;
+}
+
+@keyframes boschinoSpin-{{ section.id }} {
+  to { transform: rotate(360deg); }
+}
+
+.section-{{ section.id }}-padding .boschino-appliance-filter__count-wrap{
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+}
+
+.section-{{ section.id }}-padding .boschino-inline-loading{
+  display: inline-block !important;
+  width: 16px !important;
+  height: 16px !important;
+  border-radius: 999px !important;
+  border: 2px solid rgba(42,56,133,0.18) !important;
+  border-top-color: var(--bosch-blue) !important;
+  animation: boschinoInlineSpin-{{ section.id }} 0.75s linear infinite !important;
+  flex: 0 0 auto !important;
+}
+
+.section-{{ section.id }}-padding .boschino-inline-loading[hidden]{
+  display: none !important;
+}
+
+@keyframes boschinoInlineSpin-{{ section.id }} {
+  to { transform: rotate(360deg); }
+}
+
+.section-{{ section.id }}-padding .boschino-appliance-filter{
+  position: relative !important;
+  z-index: 121 !important;
+  overflow: visible !important;
+}
+
+.section-{{ section.id }}-padding .product-grid-container{
+  min-width: 0 !important;
+  position: relative !important;
+  z-index: 1 !important;
+}
+
+.boschino-back-to-filters{
+  position: fixed !important;
+  right: 22px !important;
+  top: 88px !important;
+  bottom: auto !important;
+  z-index: 20 !important;
+  min-height: 46px !important;
+  padding: 0 18px !important;
+  border: 2px solid var(--bosch-blue) !important;
+  border-radius: 999px !important;
+  background: #fff !important;
+  color: var(--bosch-blue) !important;
+  font-size: 14px !important;
+  font-weight: 900 !important;
+  line-height: 1 !important;
+  box-shadow: 0 10px 24px rgba(0,0,0,0.12) !important;
+  cursor: pointer !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+  transform: translateY(-10px) !important;
+  transition: opacity .18s ease, transform .18s ease, visibility .18s ease, background .16s ease !important;
+}
+
+.boschino-back-to-filters:hover{
+  background: rgba(42,56,133,0.04) !important;
+}
+
+.boschino-back-to-filters.is-visible{
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+  transform: translateY(0) !important;
+}
+
+@media screen and (max-width: 749px) {
+  .boschino-back-to-filters{
+    right: 14px !important;
+    top: 86px !important;
+    bottom: auto !important;
+    min-height: 42px !important;
+    padding: 0 14px !important;
+    font-size: 13px !important;
+    z-index: 20 !important;
+  }
+}
+
+{%- endstyle -%}
+
+{{ 'vzhled-karticek-v-katalogu.css' | asset_url | stylesheet_tag }}
+
+<div class="section-{{ section.id }}-padding gradient color-{{ section.settings.color_scheme }} bsh-collection-surface">
+  <div class="page-width">
+    {%- paginate collection.products by 32 -%}
+
+      <div class="{% if section.settings.filter_type == 'vertical' %}facets-vertical{% endif %}">
+        <script src="{{ 'facets.js' | asset_url }}" defer="defer"></script>
+
+        {%- if section.settings.enable_filtering or section.settings.enable_sorting -%}
+          <aside
+  aria-labelledby="verticalTitle"
+  class="facets-wrapper{% unless section.settings.enable_filtering %} facets-wrapper--no-filters{% endunless %}"
+  id="main-collection-filters"
+  data-id="{{ section.id }}"
+>
+  <div class="boschino-appliance-filter" id="boschino-appliance-filter-{{ section.id }}">
+
+  <div class="boschino-appliance-filter__top">
+    <div class="boschino-appliance-filter__top-left">
+      <div class="boschino-appliance-filter__header">
+        Vyfiltrujte si produkty vhodné jen do vašeho spotřebiče vložením E-Nr. ze štítku:
+      </div>
+    </div>
+
+    {%- if section.settings.enable_sorting -%}
+  <div class="boschino-appliance-filter__top-right small-hide">
+    <div class="boschino-appliance-filter__sort-form">
+      <div class="boschino-appliance-filter__sort-wrap">
+        <label for="SortBy" class="boschino-appliance-filter__sort-label">
+  Seřadit podle
+</label>
+
+<div class="boschino-appliance-filter__sort-select-wrap">
+  {%- assign sort_by = collection.sort_by | default: 'created-ascending' -%}
+
+  <select
+    name="sort_by"
+    class="boschino-appliance-filter__sort-select"
+    id="SortBy"
+    aria-describedby="a11y-refresh-page-message"
+  >
+    <option value="created-ascending" {% if sort_by == 'created-ascending' %}selected="selected"{% endif %}>
+      Nejčastěji vyhledávané
+    </option>
+
+    <option value="best-selling" {% if sort_by == 'best-selling' %}selected="selected"{% endif %}>
+      Nejprodávanější
+    </option>
+
+    <option value="title-ascending" {% if sort_by == 'title-ascending' %}selected="selected"{% endif %}>
+      Abecedně A až Z
+    </option>
+
+    <option value="title-descending" {% if sort_by == 'title-descending' %}selected="selected"{% endif %}>
+      Abecedně Z až A
+    </option>
+
+    <option value="price-descending" {% if sort_by == 'price-descending' %}selected="selected"{% endif %}>
+      Nejvyšší cena
+    </option>
+
+    <option value="price-ascending" {% if sort_by == 'price-ascending' %}selected="selected"{% endif %}>
+      Nejnižší cena
+    </option>
+  </select>
+
+  <span class="boschino-appliance-filter__sort-caret">
+    {{- 'icon-caret.svg' | inline_asset_content -}}
+  </span>
+</div>
+
+        <div class="boschino-appliance-filter__count-wrap">
+          <div class="boschino-appliance-filter__count" role="status">
+            <span id="ProductCountDesktop">
+              {%- if collection.products_count == collection.all_products_count -%}
+                {{ 'products.facets.product_count_simple' | t: count: collection.products_count }}
+              {%- else -%}
+                {{ 'products.facets.product_count' | t: product_count: collection.products_count, count: collection.all_products_count }}
+              {%- endif -%}
+            </span>
+          </div>
+
+          <span
+            id="boschino-inline-loading-{{ section.id }}"
+            class="boschino-inline-loading"
+            hidden
+            aria-hidden="true"
+          ></span>
+        </div>
+      </div>
+    </div>
+  </div>
+{%- endif -%}
+  </div>
+
+  <div class="boschino-appliance-filter__field">
+    <input
+  type="text"
+  id="boschino-appliance-search-{{ section.id }}"
+  class="boschino-appliance-filter__input"
+  placeholder="Začněte psát, např. WAU28... / SMS46...  /  MUM..."
+  autocomplete="off"
+  inputmode="search"
+  autocapitalize="characters"
+  autocorrect="off"
+  spellcheck="false"
+>
+    <div
+      id="boschino-appliance-ghost-{{ section.id }}"
+      class="boschino-appliance-filter__ghost"
+      aria-hidden="true"
+    ></div>
+    <div
+      id="boschino-appliance-suggestions-{{ section.id }}"
+      class="boschino-appliance-filter__suggestions"
+      hidden
+    ></div>
+  </div>
+
+  <div
+  id="boschino-appliance-filter-state-{{ section.id }}"
+  class="boschino-appliance-filter__state"
+  hidden
+>
+  <div class="boschino-appliance-filter__state-left">
+    <span id="boschino-appliance-filter-state-text-{{ section.id }}"></span>
+
+    <div
+      id="boschino-appliance-subfilters-{{ section.id }}"
+      class="boschino-appliance-subfilters"
+      hidden
+    >
+      <button
+  type="button"
+  class="boschino-appliance-subfilters__btn"
+  data-availability-filter="in"
+>
+  <span class="boschino-appliance-subfilters__label">Skladem</span>
+  <span class="boschino-appliance-subfilters__count" data-availability-count="in">0</span>
+</button>
+
+<button
+  type="button"
+  class="boschino-appliance-subfilters__btn"
+  data-availability-filter="out"
+>
+  <span class="boschino-appliance-subfilters__label">Není skladem</span>
+  <span class="boschino-appliance-subfilters__count" data-availability-count="out">0</span>
+</button>
+    </div>
+  </div>
+
+  <button
+  type="button"
+  id="boschino-appliance-filter-reset-{{ section.id }}"
+  class="boschino-appliance-filter__reset"
+  hidden
+>
+  Zrušit filtry
+</button>
+</div>
+</div>
+
+  {% render 'facets',
+  results: collection,
+  enable_filtering: section.settings.enable_filtering,
+  enable_sorting: false,
+  filter_type: section.settings.filter_type,
+  paginate: paginate
+%}
+</aside>
+        {%- endif -%}
+
+        <div class="product-grid-container" id="ProductGridContainer">
+          <div
+  id="boschino-grid-loading-{{ section.id }}"
+  class="boschino-grid-loading"
+  hidden
+
+>
+  <div class="boschino-grid-loading__box">
+    <span class="boschino-grid-loading__spinner"></span>
+    <span class="boschino-grid-loading__text">Načítám produkty a filtry…</span>
+  </div>
+</div>
+          {%- if collection.products.size == 0 -%}
+            <div class="collection collection--empty" id="product-grid" data-id="{{ section.id }}">
+              <div class="loading-overlay"></div>
+              <div class="title-wrapper center">
+                <h2 class="title title--primary">
+                  {{ 'sections.collection_template.empty' | t -}}
+                  <br>
+                  {{
+                    'sections.collection_template.use_fewer_filters_html'
+                    | t: link: collection.url, class: 'underlined-link link'
+                  }}
+                </h2>
+              </div>
+            </div>
+          {%- else -%}
+            <div class="collection">
+              <div class="loading-overlay"></div>
+
+{%- assign seo = collection.metafields.custom.seo_content.value -%}
+
+<div id="product-grid-anchor" aria-hidden="true"></div>
+
+{% if seo != blank and seo.pre_grid_intro != blank %}
+  <section class="bsh-pregrid bsh-pregrid--trust" aria-labelledby="bsh-pregrid-title">
+    <h2 id="bsh-pregrid-title" class="visually-hidden">
+      Výhody nákupu originálních dílů
+    </h2>
+
+    <div class="bsh-pregrid__text">
+      {{ seo.pre_grid_intro | metafield_tag }}
+    </div>
+
+    <div class="bsh-pregrid__actions">
+      <a href="#enr" class="button button--secondary">Jak najít E-Nr spotřebiče</a>
+    </div>
+  </section>
+{% endif %}
+
+<ul
+  id="product-grid"
+  data-id="{{ section.id }}"
+  class="grid product-grid boschino-product-grid grid--{{ section.settings.columns_mobile }}-col-tablet-down grid--{{ section.settings.columns_desktop }}-col-desktop"
+>
+
+  {%- comment -%} 1) SKLADEM (zelené) {%- endcomment -%}
+  {%- for product in collection.products -%}
+    {%- assign variant = product.selected_or_first_available_variant -%}
+    {%- assign qty = variant.inventory_quantity | default: 0 -%}
+    {%- assign policy = variant.inventory_policy -%}
+
+    {%- if qty > 0 -%}
+      <li
+  class="grid__item"
+  data-product-gid="gid://shopify/Product/{{ product.id }}"
+  data-availability="in"
+>
+        <div class="card-wrapper product-card-wrapper">
+          <div class="card card--standard card--media" tabindex="-1">
+            <div class="card__inner">
+              <div class="card__media">
+                <a href="{{ product.url }}" class="media media--transparent">
+                  {%- if product.featured_media -%}
+                    {{ product.featured_media | image_url: width: 900 | image_tag: loading: 'lazy', alt: product.title }}
+                  {%- endif -%}
+                </a>
+              </div>
+            </div>
+
+            <div class="card__content">
+              <div class="card__information">
+                <h3 class="card__heading h5">
+                  <a href="{{ product.url }}" class="full-unstyled-link">
+                    {{ product.title | escape }}
+                  </a>
+                </h3>
+
+                <div class="card-information">
+                  {%- render 'price', product: product, use_variant: true, show_badges: false -%}
+
+                  <div class="boschino-stock">
+  <span class="inventory-status-with-tooltip" tabindex="0">
+    <span class="boschino-stock__status boschino-stock__status--in">
+      {%- if qty == 1 -%}
+        Poslední kus skladem
+      {%- else -%}
+        Skladem
+      {%- endif -%}
+    </span>
+    <span class="inventory-tooltip">
+      Odesíláme ihned s doručením následující pracovní den.
+    </span>
+  </span>
+</div>
+
+                </div>
+              </div>
+
+              <div class="boschino-actions">
+                <form method="post" action="/cart/add" class="boschino-card-buy" data-boschino-card-buy>
+                  <input type="hidden" name="id" value="{{ variant.id }}">
+
+                  <div class="boschino-quantity" data-boschino-qty>
+                    <button type="button" class="boschino-minus" data-qty-minus aria-label="Odebrat 1 ks"></button>
+
+                    <input
+                      type="number"
+                      name="quantity"
+                      value="1"
+                      min="1"
+                      step="1"
+                      inputmode="numeric"
+                      pattern="[0-9]*"
+                      aria-label="Počet kusů"
+                      data-qty-input
+                    >
+
+                    <button type="button" class="boschino-plus" data-qty-plus aria-label="Přidat 1 ks"></button>
+                  </div>
+
+                  <div class="boschino-cta">
+                    <a class="boschino-cta__detail" href="{{ product.url }}">Detail produktu</a>
+
+                    <div class="boschino-cta__cart">
+                      <button type="submit" class="boschino-cta__btn" aria-label="Přidat do košíku">
+                        <svg class="boschino-cart-ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                          <path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zm10 0c-1.1 0-1.99.9-1.99 2S15.9 22 17 22s2-.9 2-2-.9-2-2-2zM7.2 6h13.4c.8 0 1.4.7 1.2 1.5l-1.6 7.2c-.2.7-.8 1.3-1.6 1.3H8.1c-.7 0-1.4-.5-1.6-1.2L4.3 3H2V1h3.7c.6 0 1.1.4 1.2 1l.3 2z"></path>
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                </form>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </li>
+    {%- endif -%}
+  {%- endfor -%}
+
+  {%- comment -%} 2) NA OBJEDNÁVKU (není skladem, ale lze objednat) {%- endcomment -%}
+{%- for product in collection.products -%}
+  {%- assign variant = product.selected_or_first_available_variant -%}
+  {%- assign qty = variant.inventory_quantity | default: 0 -%}
+  {%- assign policy = variant.inventory_policy -%}
+  {%- assign termin_raw = product.metafields.custom.termin_dodani.value | default: '' -%}
+  {%- assign termin_norm = termin_raw | strip | downcase -%}
+  {%- assign is_neznamo = false -%}
+
+  {%- if termin_norm == 'neznamo' or termin_norm == 'neznámo' -%}
+    {%- assign is_neznamo = true -%}
+  {%- endif -%}
+
+  {%- if qty <= 0 and policy == 'continue' -%}
+    <li
+      class="grid__item"
+      data-product-gid="gid://shopify/Product/{{ product.id }}"
+      data-availability="out"
+    >
+      <div class="card-wrapper product-card-wrapper">
+        <div class="card card--standard card--media" tabindex="-1">
+          <div class="card__inner">
+            <div class="card__media">
+              <a href="{{ product.url }}" class="media media--transparent">
+                {%- if product.featured_media -%}
+                  {{ product.featured_media | image_url: width: 900 | image_tag: loading: 'lazy', alt: product.title }}
+                {%- endif -%}
+              </a>
+            </div>
+          </div>
+
+          <div class="card__content">
+            <div class="card__information">
+              <h3 class="card__heading h5">
+                <a href="{{ product.url }}" class="full-unstyled-link">
+                  {{ product.title | escape }}
+                </a>
+              </h3>
+
+              <div class="card-information">
+                {%- render 'price', product: product, use_variant: true, show_badges: false -%}
+
+                <div class="boschino-stock">
+                  <span class="inventory-status-with-tooltip" tabindex="0">
+                    <span class="boschino-stock__status boschino-stock__status--order">
+                      {%- if is_neznamo -%}
+                        Upřesnění po objednání
+                      {%- else -%}
+                        Na objednávku
+                      {%- endif -%}
+                    </span>
+                    <span class="inventory-tooltip">
+                      {%- if is_neznamo -%}
+                        Termín dodání upřesníme po Vašem objednání.
+                      {%- else -%}
+                        Tyto díly obvykle stíháme dodat do týdne od Vaší objednávky.
+                      {%- endif -%}
+                    </span>
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div class="boschino-actions">
+              <form method="post" action="/cart/add" class="boschino-card-buy" data-boschino-card-buy>
+                <input type="hidden" name="id" value="{{ variant.id }}">
+
+                <div class="boschino-quantity" data-boschino-qty>
+                  <button type="button" class="boschino-minus" data-qty-minus aria-label="Odebrat 1 ks">−</button>
+
+                  <input
+                    type="number"
+                    name="quantity"
+                    value="1"
+                    min="1"
+                    step="1"
+                    inputmode="numeric"
+                    pattern="[0-9]*"
+                    aria-label="Počet kusů"
+                    data-qty-input
+                  >
+
+                  <button type="button" class="boschino-plus" data-qty-plus aria-label="Přidat 1 ks">+</button>
+                </div>
+
+                <div class="boschino-cta">
+                  <a class="boschino-cta__detail" href="{{ product.url }}">Detail produktu</a>
+
+                  <div class="boschino-cta__cart">
+                    <button type="submit" class="boschino-cta__btn" aria-label="Objednat">
+                      <svg class="boschino-cart-ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                        <path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zm10 0c-1.1 0-1.99.9-1.99 2S15.9 22 17 22s2-.9 2-2-.9-2-2-2zM7.2 6h13.4c.8 0 1.4.7 1.2 1.5l-1.6 7.2c-.2.7-.8 1.3-1.6 1.3H8.1c-.7 0-1.4-.5-1.6-1.2L4.3 3H2V1h3.7c.6 0 1.1.4 1.2 1l.3 2z"></path>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              </form>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </li>
+  {%- endif -%}
+{%- endfor -%}
+
+  {%- comment -%} 3) NELZE OBJEDNAT (červené) {%- endcomment -%}
+{%- for product in collection.products -%}
+  {%- assign variant = product.selected_or_first_available_variant -%}
+  {%- assign qty = variant.inventory_quantity | default: 0 -%}
+  {%- assign policy = variant.inventory_policy -%}
+  {%- assign termin_raw = product.metafields.custom.termin_dodani.value | default: '' -%}
+  {%- assign termin_norm = termin_raw | strip | downcase -%}
+  {%- assign is_vyrazeno = false -%}
+  {%- assign show_out = false -%}
+
+  {%- if termin_norm == 'vyrazeno' or termin_norm == 'vyřazeno' -%}
+    {%- assign is_vyrazeno = true -%}
+  {%- endif -%}
+
+  {%- comment -%}
+    PRIORITA:
+    1) qty > 0                => Skladem
+    2) qty <= 0 + continue    => Na objednávku
+    3) qty <= 0 + !continue   => Nelze objednat / Prodej ukončen
+
+    metafield "vyřazeno" smí rozhodovat jen pokud qty <= 0
+  {%- endcomment -%}
+
+  {%- if qty <= 0 and policy != 'continue' -%}
+    {%- assign show_out = true -%}
+  {%- endif -%}
+
+  {%- if qty <= 0 and is_vyrazeno -%}
+    {%- assign show_out = true -%}
+  {%- endif -%}
+
+  {%- if show_out -%}
+    <li
+  class="grid__item"
+  data-product-gid="gid://shopify/Product/{{ product.id }}"
+  data-availability="out"
+>
+      <div class="card-wrapper product-card-wrapper">
+        <div class="card card--standard card--media" tabindex="-1">
+          <div class="card__inner">
+            <div class="card__media">
+              <a href="{{ product.url }}" class="media media--transparent">
+                {%- if product.featured_media -%}
+                  {{ product.featured_media | image_url: width: 900 | image_tag: loading: 'lazy', alt: product.title }}
+                {%- endif -%}
+              </a>
+            </div>
+          </div>
+
+          <div class="card__content">
+            <div class="card__information">
+              <h3 class="card__heading h5">
+                <a href="{{ product.url }}" class="full-unstyled-link">
+                  {{ product.title | escape }}
+                </a>
+              </h3>
+
+              <div class="card-information">
+                <div class="price" style="visibility:hidden">
+                  <div class="price__container">
+                    <div class="price__regular">
+                      <span class="price-item price-item--regular">0</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="boschino-stock">
+  <span class="inventory-status-with-tooltip" tabindex="0">
+    <span class="boschino-stock__status boschino-stock__status--out">
+      Nelze objednat
+    </span>
+    <span class="inventory-tooltip">
+      Tento díl je bohužel vyřazen a nelze jej již objednat.
+    </span>
+  </span>
+</div>
+              </div>
+            </div>
+
+            <div class="boschino-actions">
+              <form method="post" action="/cart/add" class="boschino-card-buy" data-boschino-card-buy>
+                <input type="hidden" name="id" value="{{ variant.id }}">
+
+                <div class="boschino-quantity" data-boschino-qty>
+                  <button type="button" class="boschino-minus" data-qty-minus disabled aria-label="Odebrat 1 ks"></button>
+
+                  <input
+                    type="number"
+                    name="quantity"
+                    value="0"
+                    min="0"
+                    step="1"
+                    inputmode="numeric"
+                    pattern="[0-9]*"
+                    aria-label="Počet kusů"
+                    data-qty-input
+                    disabled
+                  >
+
+                  <button type="button" class="boschino-plus" data-qty-plus disabled aria-label="Přidat 1 ks"></button>
+                </div>
+
+                <div class="boschino-cta">
+                  <a class="boschino-cta__detail" href="{{ product.url }}">Detail produktu</a>
+
+                  <div class="boschino-cta__cart">
+                    <button type="submit" class="boschino-cta__btn" disabled aria-label="Prodej ukončen">
+                      <svg class="boschino-cart-ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                        <path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zm10 0c-1.1 0-1.99.9-1.99 2S15.9 22 17 22s2-.9 2-2-.9-2-2-2zM7.2 6h13.4c.8 0 1.4.7 1.2 1.5l-1.6 7.2c-.2.7-.8 1.3-1.6 1.3H8.1c-.7 0-1.4-.5-1.6-1.2L4.3 3H2V1h3.7c.6 0 1.1.4 1.2 1l.3 2z"></path>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              </form>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </li>
+  {%- endif -%}
+{%- endfor -%}
+
+</ul>
+
+<div
+  id="boschino-load-more-wrap-{{ section.id }}"
+  class="boschino-load-more-wrap"
+  hidden
+>
+  <button
+    type="button"
+    id="boschino-load-more-{{ section.id }}"
+    class="boschino-load-more-btn"
+  >
+    Načíst další
+  </button>
+</div>
+
+            </div>
+          {%- endif -%}
+        </div>
+      </div>
+
+    {%- endpaginate -%}
+  </div>
+
+{% if section.settings.image_shape == 'arch' %}
+    {{ 'mask-arch.svg' | inline_asset_content }}
+  {%- endif -%}
+
+  <button
+    type="button"
+    id="boschino-back-to-filters-{{ section.id }}"
+    class="boschino-back-to-filters"
+    aria-label="Zpět na filtry"
+  >
+    ↑ Filtry
+  </button>
+</div>
+
+<script>
+(function () {
+  const sectionId = '{{ section.id }}';
+  const collectionHandle = {{ collection.handle | json }};
+  const collectionTitle = {{ collection.title | json }};
+
+  const searchInput = document.getElementById('boschino-appliance-search-' + sectionId);
+  const suggestionsEl = document.getElementById('boschino-appliance-suggestions-' + sectionId);
+  const filterRoot = document.getElementById('boschino-appliance-filter-' + sectionId);
+  const stateEl = document.getElementById('boschino-appliance-filter-state-' + sectionId);
+  const stateTextEl = document.getElementById('boschino-appliance-filter-state-text-' + sectionId);
+  const resetBtn = document.getElementById('boschino-appliance-filter-reset-' + sectionId);
+  const ghostEl = document.getElementById('boschino-appliance-ghost-' + sectionId);
+  const subfiltersEl = document.getElementById('boschino-appliance-subfilters-' + sectionId);
+  const backToFiltersBtn = document.getElementById('boschino-back-to-filters-' + sectionId);
+  const productGrid = document.getElementById('product-grid');
+  const loadMoreWrap = document.getElementById('boschino-load-more-wrap-' + sectionId);
+  const loadMoreBtn = document.getElementById('boschino-load-more-' + sectionId);
+  const countDesktop = document.getElementById('ProductCountDesktop');
+  const paginationEl = document.querySelector('.pagination-wrapper');
+  const gridLoadingEl = document.getElementById('boschino-grid-loading-' + sectionId);
+  const inlineLoadingEl = document.getElementById('boschino-inline-loading-' + sectionId);
+  const sortSelect = document.getElementById('SortBy');
+
+  const PAGE_SIZE = 32;
+  const scrollAfterSortKey = 'boschino-scroll-after-sort-' + sectionId;
+  const autoScrollStorageKey = 'boschino-collection-seen:' + window.location.pathname;
+
+  if (!searchInput || !suggestionsEl || !filterRoot || !productGrid || !collectionHandle || !ghostEl) return;
+
+  const SUPABASE_URL = 'https://hbntpqlpcrodrhfjxhpv.supabase.co';
+  const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_py5U4zoYoBusjy_rngRuWg_IcZ6o-AV';
+  const SHOPIFY_STOREFRONT_TOKEN = '7ca8d15c338fa86a89f0c7f4670ba6b2';
+  const SHOPIFY_GRAPHQL_URL = window.location.origin + '/api/2024-10/graphql.json';
+
+  let collectionProductsAll = [];
+  let collectionProductsLoaded = false;
+  let activeRequestId = 0;
+  let debounceTimer = null;
+  let currentApplianceProductGids = null;
+  let activeAvailabilityFilter = '';
+  let selectedModel = '';
+  let activeSuggestionIndex = -1;
+  let typedValue = '';
+  let visibleLimit = PAGE_SIZE;
+
+  const SUPABASE_REST_URL = SUPABASE_URL + '/rest/v1';
+  const SEARCH_MODELS_RPC_URL = SUPABASE_REST_URL + '/rpc/search_models';
+
+  const SUPABASE_HEADERS = {
+    apikey: SUPABASE_PUBLISHABLE_KEY,
+    Authorization: 'Bearer ' + SUPABASE_PUBLISHABLE_KEY,
+    'Content-Type': 'application/json'
+  };
+
+  const TYPO_RULES = [
+    { from: '0', to: 'O' },
+    { from: 'O', to: '0' },
+    { from: '1', to: 'I' },
+    { from: 'I', to: '1' },
+    { from: '8', to: 'B' },
+    { from: 'B', to: '8' },
+    { from: '5', to: 'S' },
+    { from: 'S', to: '5' },
+    { from: '2', to: 'Z' },
+    { from: 'Z', to: '2' },
+    { from: 'VV', to: 'W' },
+    { from: 'W', to: 'VV' }
+  ];
+
+  function escapeHtml(value) {
+    return String(value || '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  function normalizeText(value) {
+    return String(value || '').trim().toLowerCase();
+  }
+
+  function unique(values) {
+    return [...new Set((values || []).filter(Boolean))];
+  }
+
+  function uniqueByModel(items) {
+    return (items || []).filter(function (item, index, arr) {
+      return arr.findIndex(function (x) {
+        return String(x.model_norm || '').trim() === String(item.model_norm || '').trim();
+      }) === index;
+    });
+  }
+
+  function getNumericIdFromGid(gid) {
+    return String(gid || '').split('/').pop() || '';
+  }
+
+  function formatMoney(amount, currencyCode) {
+    const numericAmount = Number(amount || 0);
+    const currency = currencyCode || 'CZK';
+
+    try {
+      return new Intl.NumberFormat('cs-CZ', {
+        style: 'currency',
+        currency: currency,
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      }).format(numericAmount);
+    } catch (error) {
+      return numericAmount.toFixed(2).replace('.', ',') + ' Kč';
+    }
+  }
+
+  function parseMoneyToNumber(value) {
+    const normalized = String(value || '')
+      .replace(/\s+/g, '')
+      .replace(/[^\d,.-]/g, '')
+      .replace(/\.(?=\d{3}(?:[,.]|$))/g, '')
+      .replace(',', '.');
+
+    const numericValue = Number(normalized);
+    return Number.isFinite(numericValue) ? numericValue : 0;
+  }
+
+  function getProductHandleFromUrl(url) {
+    const match = String(url || '').match(/\/products\/([^/?#]+)/);
+    return match ? decodeURIComponent(match[1]) : '';
+  }
+
+  function hydrateCollectionProductsFromDom() {
+    if (!productGrid) return [];
+
+    return Array.from(productGrid.querySelectorAll('.grid__item[data-product-gid]'))
+      .map(function (item) {
+        const detailLink =
+          item.querySelector('.card__heading a') ||
+          item.querySelector('.full-unstyled-link') ||
+          item.querySelector('.boschino-cta__detail');
+        const image = item.querySelector('.card__media img');
+        const priceEl = item.querySelector('.price-item--regular');
+        const stockStatusEl = item.querySelector('.boschino-stock__status');
+        const variantInput =
+          item.querySelector('form[action="/cart/add"] input[name="id"]') ||
+          item.querySelector('form[action*="/cart/add"] input[name="id"]');
+
+        const stockLabel = normalizeText(stockStatusEl ? stockStatusEl.textContent : '');
+        const stockLabelPlain = stockLabel
+          ? stockLabel.normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+          : '';
+        let terminDodani = '';
+        let availableForSale = false;
+        let quantityAvailable = 0;
+        let currentlyNotInStock = false;
+
+        if (stockLabel.includes('skladem') || stockLabelPlain.includes('posledni kus')) {
+          availableForSale = true;
+          quantityAvailable = 1;
+        } else if (stockLabelPlain.includes('upresneni po objednani')) {
+          terminDodani = 'neznamo';
+          availableForSale = true;
+          currentlyNotInStock = true;
+        } else if (stockLabelPlain.includes('na objednavku')) {
+          availableForSale = true;
+          currentlyNotInStock = true;
+        } else {
+          terminDodani = 'vyrazeno';
+        }
+
+        return {
+          id: item.getAttribute('data-product-gid') || '',
+          handle: detailLink ? getProductHandleFromUrl(detailLink.getAttribute('href')) : '',
+          title: detailLink ? String(detailLink.textContent || '').trim() : '',
+          featuredImageUrl: image ? image.getAttribute('src') || '' : '',
+          featuredImageAlt: image ? image.getAttribute('alt') || '' : '',
+          terminDodani: terminDodani,
+          priceAmount: priceEl ? parseMoneyToNumber(priceEl.textContent) : 0,
+          priceCurrency: 'CZK',
+          variant: {
+            id: variantInput ? variantInput.value : '',
+            availableForSale: availableForSale,
+            quantityAvailable: quantityAvailable,
+            currentlyNotInStock: currentlyNotInStock
+          }
+        };
+      })
+      .filter(function (item) {
+        return item.id && item.handle;
+      });
+  }
+
+  function getCurrentSortValue() {
+    if (sortSelect && sortSelect.value) return sortSelect.value;
+    return new URLSearchParams(window.location.search).get('sort_by') || 'created-ascending';
+  }
+
+  function hasPendingSortScroll() {
+    try {
+      return sessionStorage.getItem(scrollAfterSortKey) === '1';
+    } catch (error) {
+      return false;
+    }
+  }
+
+  function runPendingSortScroll() {
+    if (!hasPendingSortScroll()) return;
+
+    try {
+      sessionStorage.removeItem(scrollAfterSortKey);
+    } catch (error) {}
+
+    requestAnimationFrame(function () {
+      scrollToFilteredProducts();
+    });
+  }
+
+  function getShouldAutoScrollOnLoad() {
+    try {
+      const alreadySeen = localStorage.getItem(autoScrollStorageKey) === '1';
+      localStorage.setItem(autoScrollStorageKey, '1');
+      return alreadySeen;
+    } catch (error) {
+      return false;
+    }
+  }
+
+  function scrollToFilteredProducts() {
+    const target =
+      document.getElementById('main-collection-filters') ||
+      productGrid ||
+      document.getElementById('ProductGridContainer');
+
+    if (!target) return;
+
+    const top = target.getBoundingClientRect().top + window.pageYOffset - 16;
+
+    window.scrollTo({
+      top: Math.max(0, top),
+      behavior: 'smooth'
+    });
+  }
+
+  function scrollToCategoriesIfNeeded() {
+    if (!getShouldAutoScrollOnLoad()) return;
+
+    const relatedHeading = Array.from(
+      document.querySelectorAll('h1, h2, h3, h4, h5, h6, p, div, span')
+    ).find(function (el) {
+      return (el.textContent || '').trim() === 'Související kategorie Boschino';
+    });
+
+    const target =
+      relatedHeading ||
+      document.getElementById('main-collection-filters') ||
+      document.getElementById('ProductGridContainer');
+
+    if (!target) return;
+
+    requestAnimationFrame(function () {
+      const top = target.getBoundingClientRect().top + window.pageYOffset - 16;
+
+      window.scrollTo({
+        top: Math.max(0, top),
+        behavior: 'smooth'
+      });
+    });
+  }
+
+  function setGhostValue(fullModel) {
+    const typed = String(typedValue || '');
+    const model = String(fullModel || '');
+
+    if (!model || !typed) {
+      clearGhostValue();
+      return;
+    }
+
+    const typedUpper = typed.toUpperCase();
+    const modelUpper = model.toUpperCase();
+
+    if (!modelUpper.startsWith(typedUpper)) {
+      clearGhostValue();
+      return;
+    }
+
+    const prefix = model.slice(0, typed.length);
+    const suffix = model.slice(typed.length);
+
+    if (!suffix) {
+      clearGhostValue();
+      return;
+    }
+
+    ghostEl.innerHTML =
+      '<span class="boschino-appliance-filter__ghost-typed">' + escapeHtml(prefix) + '</span>' +
+      '<span class="boschino-appliance-filter__ghost-suffix">' + escapeHtml(suffix) + '</span>';
+
+    ghostEl.style.display = 'block';
+  }
+
+  function clearGhostValue() {
+    ghostEl.innerHTML = '';
+    ghostEl.style.display = 'none';
+  }
+
+  function closeSuggestions() {
+    suggestionsEl.hidden = true;
+    suggestionsEl.innerHTML = '';
+    activeSuggestionIndex = -1;
+    clearGhostValue();
+  }
+
+  function resetVisibleLimit() {
+    visibleLimit = PAGE_SIZE;
+  }
+
+  function updateLoadMoreVisibility(totalMatched) {
+    if (!loadMoreWrap) return;
+    loadMoreWrap.hidden = !(totalMatched > visibleLimit);
+  }
+
+  function getAvailabilityLabel(mode) {
+    if (mode === 'in') return 'Skladem';
+    if (mode === 'out') return 'Není skladem';
+    return '';
+  }
+
+  function getCurrentAllowedSet() {
+    if (!Array.isArray(currentApplianceProductGids)) return null;
+    return new Set(currentApplianceProductGids.map(String));
+  }
+
+  function updateVisibleCount(total) {
+    const nextText = 'Počet produktů: ' + total;
+    const targets = Array.from(
+      document.querySelectorAll('#ProductCountDesktop, #ProductCount, .mobile-facets__count')
+    );
+
+    if (!targets.length) {
+      if (countDesktop) countDesktop.textContent = nextText;
+      return;
+    }
+
+    targets.forEach(function (el) {
+      el.textContent = nextText;
+    });
+  }
+
+  function setGridLoading(isLoading) {
+    if (gridLoadingEl) {
+      gridLoadingEl.hidden = !isLoading;
+    }
+
+    if (inlineLoadingEl) {
+      inlineLoadingEl.hidden = !isLoading;
+    }
+
+    if (loadMoreBtn) {
+      loadMoreBtn.disabled = isLoading;
+    }
+  }
+
+  function updateResetButtonVisibility() {
+  if (!resetBtn) return;
+
+  const hasModelFilter =
+    Array.isArray(currentApplianceProductGids) ||
+    String(typedValue || '').trim().length >= 3;
+
+  const hasAvailabilityFilter = !!activeAvailabilityFilter;
+
+  resetBtn.hidden = !(hasModelFilter || hasAvailabilityFilter);
+}
+
+  function syncSubfilterActiveState() {
+    if (!subfiltersEl) return;
+
+    const buttons = Array.from(subfiltersEl.querySelectorAll('[data-availability-filter]'));
+    buttons.forEach(function (button) {
+      const mode = button.getAttribute('data-availability-filter') || '';
+      button.classList.toggle('is-active', mode === activeAvailabilityFilter);
+    });
+  }
+
+  function isPartNumberCandidate(value) {
+    return /^(?:00|1|2)\d{6}$/.test(String(value || '').trim());
+  }
+
+  function isDigitsOnly(value) {
+    return /^\d+$/.test(String(value || '').trim());
+  }
+
+  function isWildcardModelCandidate(value) {
+    const normalized = String(value || '').trim().toUpperCase();
+
+    if (!normalized) return false;
+    if (normalized.includes(' ')) return false;
+    if (normalized.includes('/')) return false;
+    if (normalized.includes('(') || normalized.includes(')')) return false;
+    if (isPartNumberCandidate(normalized)) return false;
+    if (isDigitsOnly(normalized)) return false;
+    if (!normalized.includes('?')) return false;
+
+    const knownChars = normalized.replace(/\?/g, '');
+    return knownChars.length >= 2;
+  }
+
+  function getModelBase(value) {
+    return String(value || '').trim().toUpperCase().split('/')[0];
+  }
+
+  function getKnownPositionEntries(value) {
+    const base = getModelBase(value);
+    const entries = [];
+
+    for (let i = 0; i < base.length; i += 1) {
+      const char = base[i];
+      if (char && char !== '?') {
+        entries.push({ index: i, char: char });
+      }
+    }
+
+    return entries;
+  }
+
+  function getLookupPrefix(value) {
+    const base = getModelBase(value);
+    let prefix = '';
+
+    for (let i = 0; i < base.length; i += 1) {
+      const char = base[i];
+      if (char === '?') break;
+      prefix += char;
+    }
+
+    return prefix;
+  }
+
+  function modelMatchesKnownPositions(modelValue, rawQuery) {
+    const modelBase = getModelBase(modelValue);
+    const knownEntries = getKnownPositionEntries(rawQuery);
+
+    if (!knownEntries.length) return false;
+
+    for (const entry of knownEntries) {
+      if (modelBase.length <= entry.index) return false;
+      if (modelBase[entry.index] !== entry.char) return false;
+    }
+
+    return true;
+  }
+
+  function applyRuleAt(value, index, from, to) {
+    return value.slice(0, index) + to + value.slice(index + from.length);
+  }
+
+  function buildTypoVariantsOnce(value) {
+    const variants = [];
+
+    for (const rule of TYPO_RULES) {
+      let startIndex = 0;
+
+      while (startIndex < value.length) {
+        const index = value.indexOf(rule.from, startIndex);
+        if (index === -1) break;
+
+        variants.push(applyRuleAt(value, index, rule.from, rule.to));
+        startIndex = index + 1;
+      }
+    }
+
+    return unique(variants).filter(function (v) {
+      return v !== value;
+    });
+  }
+
+  function buildTypoVariantsTwice(value) {
+    const once = buildTypoVariantsOnce(value);
+    const twice = [];
+
+    for (const firstVariant of once) {
+      twice.push(...buildTypoVariantsOnce(firstVariant));
+      if (twice.length > 200) break;
+    }
+
+    return unique(twice).filter(function (v) {
+      return v !== value;
+    });
+  }
+
+  function isShortModelPrefixCandidate(value) {
+    const normalized = String(value || '').trim().toUpperCase();
+
+    if (!normalized) return false;
+    if (normalized.includes(' ')) return false;
+    if (normalized.includes('?')) return false;
+    if (/[\/()]/.test(normalized)) return false;
+    if (isPartNumberCandidate(normalized)) return false;
+    if (isDigitsOnly(normalized)) return false;
+    if (normalized.length < 3) return false;
+
+    const hasLetter = /[A-Z]/.test(normalized);
+    const hasDigit = /\d/.test(normalized);
+
+    return hasLetter && hasDigit;
+  }
+
+  function getAvailabilityMeta(product) {
+    const variant = product && product.variant ? product.variant : {};
+    const terminNorm = normalizeText(product ? product.terminDodani : '');
+    const isVyrazeno = terminNorm === 'vyrazeno' || terminNorm === 'vyřazeno';
+    const isNeznamo = terminNorm === 'neznamo' || terminNorm === 'neznámo';
+
+    const qtyRaw = variant.quantityAvailable;
+    const hasQty = qtyRaw !== null && qtyRaw !== undefined && qtyRaw !== '';
+    const qty = hasQty ? Number(qtyRaw) : 0;
+    const availableForSale = Boolean(variant.availableForSale);
+    const currentlyNotInStock = Boolean(variant.currentlyNotInStock);
+
+    const isInStock =
+      (hasQty && qty > 0) ||
+      (!hasQty && availableForSale && !currentlyNotInStock);
+
+    const isOrderable =
+      !isVyrazeno &&
+      (
+        (hasQty && qty <= 0 && availableForSale) ||
+        (!hasQty && availableForSale && currentlyNotInStock)
+      );
+
+    if (isInStock) {
+      return {
+        type: 'in',
+        filterValue: 'in',
+        label: qty === 1 ? 'Poslední kus skladem' : 'Skladem',
+        tooltip: 'Odesíláme ihned s doručením následující pracovní den.',
+        showPrice: true,
+        buyDisabled: false,
+        qtyValue: 1
+      };
+    }
+
+    if (isOrderable) {
+      return {
+        type: 'order',
+        filterValue: 'out',
+        label: isNeznamo ? 'Upřesnění po objednání' : 'Na objednávku',
+        tooltip: isNeznamo
+          ? 'Termín dodání upřesníme po Vašem objednání.'
+          : 'Tyto díly obvykle stíháme dodat do týdne od Vaší objednávky.',
+        showPrice: true,
+        buyDisabled: false,
+        qtyValue: 1
+      };
+    }
+
+    return {
+      type: 'out',
+      filterValue: 'out',
+      label: 'Nelze objednat',
+      tooltip: 'Tento díl je bohužel vyřazen a nelze jej již objednat.',
+      showPrice: false,
+      buyDisabled: true,
+      qtyValue: 0
+    };
+  }
+
+  function sortMatchedProducts(products) {
+    const sortBy = getCurrentSortValue();
+    const items = Array.isArray(products) ? products.slice() : [];
+
+    if (sortBy === 'price-descending' || sortBy === 'price-ascending') {
+      const withVisiblePrice = [];
+      const withoutVisiblePrice = [];
+
+      items.forEach(function (product) {
+        const availability = getAvailabilityMeta(product);
+
+        if (availability.showPrice) {
+          withVisiblePrice.push(product);
+        } else {
+          withoutVisiblePrice.push(product);
+        }
+      });
+
+      withVisiblePrice.sort(function (a, b) {
+        const priceA = Number(a.priceAmount || 0);
+        const priceB = Number(b.priceAmount || 0);
+
+        if (sortBy === 'price-descending') {
+          return priceB - priceA;
+        }
+
+        return priceA - priceB;
+      });
+
+      return withVisiblePrice.concat(withoutVisiblePrice);
+    }
+
+    return items;
+  }
+
+  function renderProductCard(product) {
+    const variant = product.variant || {};
+    const availability = getAvailabilityMeta(product);
+    const numericVariantId = getNumericIdFromGid(variant.id);
+    const productUrl = '/products/' + encodeURIComponent(product.handle || '');
+    const imageHtml = product.featuredImageUrl
+      ? `<img src="${escapeHtml(product.featuredImageUrl)}" loading="lazy" alt="${escapeHtml(product.featuredImageAlt || product.title || '')}">`
+      : '';
+
+    const priceHtml = availability.showPrice
+      ? `
+        <div class="price">
+          <div class="price__container">
+            <div class="price__regular">
+              <span class="price-item price-item--regular">${escapeHtml(formatMoney(product.priceAmount, product.priceCurrency))}</span>
+            </div>
+          </div>
+        </div>
+      `
+      : `
+        <div class="price" style="visibility:hidden">
+          <div class="price__container">
+            <div class="price__regular">
+              <span class="price-item price-item--regular">0</span>
+            </div>
+          </div>
+        </div>
+      `;
+
+    const minusText = availability.buyDisabled ? '' : '−';
+    const plusText = availability.buyDisabled ? '' : '+';
+
+    return `
+      <li
+        class="grid__item"
+        data-product-gid="${escapeHtml(product.id)}"
+        data-availability="${escapeHtml(availability.filterValue)}"
+      >
+        <div class="card-wrapper product-card-wrapper">
+          <div class="card card--standard card--media" tabindex="-1">
+            <div class="card__inner">
+              <div class="card__media">
+                <a href="${escapeHtml(productUrl)}" class="media media--transparent">
+                  ${imageHtml}
+                </a>
+              </div>
+            </div>
+
+            <div class="card__content">
+              <div class="card__information">
+                <h3 class="card__heading h5">
+                  <a href="${escapeHtml(productUrl)}" class="full-unstyled-link">
+                    ${escapeHtml(product.title || '')}
+                  </a>
+                </h3>
+
+                <div class="card-information">
+                  ${priceHtml}
+
+                  <div class="boschino-stock">
+                    <span class="inventory-status-with-tooltip" tabindex="0">
+                      <span class="boschino-stock__status boschino-stock__status--${escapeHtml(availability.type)}">
+                        ${escapeHtml(availability.label)}
+                      </span>
+                      <span class="inventory-tooltip">
+                        ${escapeHtml(availability.tooltip)}
+                      </span>
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="boschino-actions">
+                <form method="post" action="/cart/add" class="boschino-card-buy" data-boschino-card-buy>
+                  <input type="hidden" name="id" value="${escapeHtml(numericVariantId)}">
+
+                  <div class="boschino-quantity" data-boschino-qty>
+                    <button type="button" class="boschino-minus" data-qty-minus ${availability.buyDisabled ? 'disabled' : ''} aria-label="Odebrat 1 ks">${minusText}</button>
+
+                    <input
+                      type="number"
+                      name="quantity"
+                      value="${availability.qtyValue}"
+                      min="${availability.buyDisabled ? '0' : '1'}"
+                      step="1"
+                      inputmode="numeric"
+                      pattern="[0-9]*"
+                      aria-label="Počet kusů"
+                      data-qty-input
+                      ${availability.buyDisabled ? 'disabled' : ''}
+                    >
+
+                    <button type="button" class="boschino-plus" data-qty-plus ${availability.buyDisabled ? 'disabled' : ''} aria-label="Přidat 1 ks">${plusText}</button>
+                  </div>
+
+                  <div class="boschino-cta">
+                    <a class="boschino-cta__detail" href="${escapeHtml(productUrl)}">Detail produktu</a>
+
+                    <div class="boschino-cta__cart">
+                      <button type="submit" class="boschino-cta__btn" ${availability.buyDisabled ? 'disabled' : ''} aria-label="${availability.buyDisabled ? 'Prodej ukončen' : 'Přidat do košíku'}">
+                        <svg class="boschino-cart-ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                          <path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zm10 0c-1.1 0-1.99.9-1.99 2S15.9 22 17 22s2-.9 2-2-.9-2-2-2zM7.2 6h13.4c.8 0 1.4.7 1.2 1.5l-1.6 7.2c-.2.7-.8 1.3-1.6 1.3H8.1c-.7 0-1.4-.5-1.6-1.2L4.3 3H2V1h3.7c.6 0 1.1.4 1.2 1l.3 2z"></path>
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                </form>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </li>
+    `;
+  }
+
+  function renderFilteredGrid(products) {
+    productGrid.innerHTML = products.map(renderProductCard).join('');
+  }
+
+  function syncSubfilterCounts() {
+    if (!subfiltersEl || !collectionProductsAll.length) return;
+
+    const allowedSet = getCurrentAllowedSet();
+    let inCount = 0;
+    let outCount = 0;
+
+    collectionProductsAll.forEach(function (product) {
+      const gid = String(product.id || '');
+      if (allowedSet && !allowedSet.has(gid)) return;
+
+      const availability = getAvailabilityMeta(product);
+      if (availability.filterValue === 'in') inCount += 1;
+      if (availability.filterValue === 'out') outCount += 1;
+    });
+
+    const inEl = subfiltersEl.querySelector('[data-availability-count="in"]');
+    const outEl = subfiltersEl.querySelector('[data-availability-count="out"]');
+
+    if (inEl) inEl.textContent = String(inCount);
+    if (outEl) outEl.textContent = String(outCount);
+
+    subfiltersEl.hidden = false;
+  }
+
+  async function applyAllFilters(modelLabelText, options) {
+    options = options || {};
+    setGridLoading(true);
+
+    try {
+      await ensureCollectionProductsLoaded();
+    } catch (error) {
+      console.error(error);
+      setGridLoading(false);
+      return;
+    }
+
+    if (paginationEl) {
+      paginationEl.style.display = 'none';
+    }
+
+    const allowedSet = getCurrentAllowedSet();
+
+    const matchedProducts = collectionProductsAll.filter(function (product) {
+      const gid = String(product.id || '');
+      const availability = getAvailabilityMeta(product).filterValue;
+
+      let matchesAppliance = true;
+      let matchesAvailability = true;
+
+      if (allowedSet) {
+        matchesAppliance = allowedSet.has(gid);
+      }
+
+      if (activeAvailabilityFilter === 'in') {
+        matchesAvailability = availability === 'in';
+      } else if (activeAvailabilityFilter === 'out') {
+        matchesAvailability = availability === 'out';
+      }
+
+      return matchesAppliance && matchesAvailability;
+    });
+
+    const sortedProducts = sortMatchedProducts(matchedProducts);
+    renderFilteredGrid(sortedProducts.slice(0, visibleLimit));
+
+    if (stateEl) {
+      stateEl.hidden = false;
+    }
+
+    if (stateTextEl) {
+      if (allowedSet) {
+        stateTextEl.textContent = modelLabelText || '';
+      } else if (activeAvailabilityFilter) {
+        stateTextEl.textContent = 'Filtr dostupnosti: ' + getAvailabilityLabel(activeAvailabilityFilter);
+      } else {
+        stateTextEl.textContent = 'Zobrazeny všechny produkty v kategorii ' + collectionTitle;
+      }
+    }
+
+    if (subfiltersEl) {
+      subfiltersEl.hidden = false;
+    }
+
+    syncSubfilterCounts();
+    syncSubfilterActiveState();
+    updateVisibleCount(sortedProducts.length);
+    updateLoadMoreVisibility(sortedProducts.length);
+    setGridLoading(false);
+    updateResetButtonVisibility();
+
+    if (options.scrollToProducts) {
+      requestAnimationFrame(function () {
+        scrollToFilteredProducts();
+      });
+    }
+    requestAnimationFrame(function () {
+  updateBackToFiltersVisibility();
+});
+  }
+
+  function getSuggestionButtons() {
+    return Array.from(
+      suggestionsEl.querySelectorAll('.boschino-appliance-filter__suggestion')
+    );
+  }
+
+  function updateActiveSuggestion(nextIndex) {
+    const buttons = getSuggestionButtons();
+
+    if (!buttons.length) {
+      activeSuggestionIndex = -1;
+      return;
+    }
+
+    if (nextIndex < 0) nextIndex = buttons.length - 1;
+    if (nextIndex >= buttons.length) nextIndex = 0;
+
+    activeSuggestionIndex = nextIndex;
+
+    buttons.forEach(function (button, index) {
+      const isActive = index === activeSuggestionIndex;
+      button.classList.toggle('is-active', isActive);
+      button.setAttribute('aria-selected', isActive ? 'true' : 'false');
+    });
+
+    const activeButton = buttons[activeSuggestionIndex];
+    if (activeButton) {
+      activeButton.scrollIntoView({ block: 'nearest' });
+      setGhostValue(activeButton.getAttribute('data-model-number') || '');
+    } else {
+      clearGhostValue();
+    }
+  }
+
+  function selectSuggestionButton(button) {
+    if (!button) return;
+    const modelNumber = button.getAttribute('data-model-number');
+    if (modelNumber) {
+      selectApplianceModel(modelNumber);
+    }
+  }
+
+  function renderSuggestions(items) {
+    if (!Array.isArray(items) || !items.length) {
+      suggestionsEl.innerHTML = '<div class="boschino-appliance-filter__empty">Nic jsme nenašli.</div>';
+      suggestionsEl.hidden = false;
+      activeSuggestionIndex = -1;
+      clearGhostValue();
+      return;
+    }
+
+    suggestionsEl.innerHTML = items.map(function (item) {
+      const model = item.model_norm || '';
+      return `
+        <button
+          type="button"
+          class="boschino-appliance-filter__suggestion"
+          data-model-number="${escapeHtml(model)}"
+        >
+          <span class="boschino-appliance-filter__suggestion-model">${escapeHtml(model)}</span>
+          <span class="boschino-appliance-filter__suggestion-title"></span>
+        </button>
+      `;
+    }).join('');
+
+    suggestionsEl.hidden = false;
+    activeSuggestionIndex = -1;
+
+    const firstItem = items[0];
+    if (firstItem && firstItem.model_norm) {
+      setGhostValue(firstItem.model_norm);
+    } else {
+      clearGhostValue();
+    }
+  }
+
+  function scrollToFilters() {
+  const target =
+    document.getElementById('main-collection-filters') ||
+    document.getElementById('ProductGridContainer');
+
+  if (!target) return;
+
+  const top = target.getBoundingClientRect().top + window.pageYOffset - 16;
+
+  window.scrollTo({
+    top: Math.max(0, top),
+    behavior: 'smooth'
+  });
+}
+
+function updateBackToFiltersVisibility() {
+  if (!backToFiltersBtn) return;
+
+  const trigger = productGrid || document.getElementById('ProductGridContainer');
+  if (!trigger) {
+    backToFiltersBtn.classList.remove('is-visible');
+    return;
+  }
+
+  const rect = trigger.getBoundingClientRect();
+  const shouldShow = rect.top < -120;
+
+  backToFiltersBtn.classList.toggle('is-visible', shouldShow);
+}
+
+  function getSortConfig() {
+    const sortBy = getCurrentSortValue();
+
+    switch (sortBy) {
+      case 'price-ascending':
+        return { sortKey: 'PRICE', reverse: false };
+      case 'price-descending':
+        return { sortKey: 'PRICE', reverse: true };
+      case 'title-ascending':
+        return { sortKey: 'TITLE', reverse: false };
+      case 'title-descending':
+        return { sortKey: 'TITLE', reverse: true };
+      case 'created-ascending':
+        return { sortKey: 'CREATED', reverse: false };
+      case 'created-descending':
+        return { sortKey: 'CREATED', reverse: true };
+      case 'best-selling':
+        return { sortKey: 'BEST_SELLING', reverse: false };
+      default:
+        return { sortKey: 'CREATED', reverse: false };
+    }
+  }
+
+  async function fetchAllCollectionProducts(handle) {
+    const all = [];
+    let hasNextPage = true;
+    let cursor = null;
+    const sortConfig = getSortConfig();
+
+    while (hasNextPage) {
+      const query = `
+        query CollectionProductsForApplianceFilter($handle: String!, $cursor: String, $sortKey: ProductCollectionSortKeys, $reverse: Boolean) {
+          collection(handle: $handle) {
+            products(first: 250, after: $cursor, sortKey: $sortKey, reverse: $reverse) {
+              pageInfo {
+                hasNextPage
+                endCursor
+              }
+              nodes {
+                id
+                handle
+                title
+                featuredImage {
+                  url
+                  altText
+                }
+                metafield(namespace: "custom", key: "termin_dodani") {
+                  value
+                }
+                priceRange {
+                  minVariantPrice {
+                    amount
+                    currencyCode
+                  }
+                }
+                variants(first: 1) {
+                  nodes {
+                    id
+                    availableForSale
+                    quantityAvailable
+                    currentlyNotInStock
+                  }
+                }
+              }
+            }
+          }
+        }
+      `;
+
+      const response = await fetch(SHOPIFY_GRAPHQL_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Shopify-Storefront-Access-Token': SHOPIFY_STOREFRONT_TOKEN
+        },
+        body: JSON.stringify({
+          query: query,
+          variables: {
+            handle: handle,
+            cursor: cursor,
+            sortKey: sortConfig.sortKey,
+            reverse: sortConfig.reverse
+          }
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('Nepodařilo se načíst produkty kolekce ze Shopify.');
+      }
+
+      const payload = await response.json();
+
+      if (payload.errors && payload.errors.length) {
+        throw new Error(payload.errors.map(function (item) {
+          return item.message;
+        }).join(', '));
+      }
+
+      const products = payload && payload.data && payload.data.collection && payload.data.collection.products;
+      const nodes = products && products.nodes ? products.nodes : [];
+
+      nodes.forEach(function (node) {
+        const firstVariant = (node && node.variants && node.variants.nodes && node.variants.nodes[0]) || {};
+
+        all.push({
+          id: node && node.id ? node.id : '',
+          handle: node && node.handle ? node.handle : '',
+          title: node && node.title ? node.title : '',
+          featuredImageUrl: node && node.featuredImage && node.featuredImage.url ? node.featuredImage.url : '',
+          featuredImageAlt: node && node.featuredImage && node.featuredImage.altText ? node.featuredImage.altText : '',
+          terminDodani: node && node.metafield && node.metafield.value ? node.metafield.value : '',
+          priceAmount: node && node.priceRange && node.priceRange.minVariantPrice && node.priceRange.minVariantPrice.amount ? node.priceRange.minVariantPrice.amount : 0,
+          priceCurrency: node && node.priceRange && node.priceRange.minVariantPrice && node.priceRange.minVariantPrice.currencyCode ? node.priceRange.minVariantPrice.currencyCode : 'CZK',
+          variant: {
+            id: firstVariant && firstVariant.id ? firstVariant.id : '',
+            availableForSale: Boolean(firstVariant && firstVariant.availableForSale),
+            quantityAvailable: firstVariant ? firstVariant.quantityAvailable : null,
+            currentlyNotInStock: Boolean(firstVariant && firstVariant.currentlyNotInStock)
+          }
+        });
+      });
+
+      hasNextPage = Boolean(products && products.pageInfo && products.pageInfo.hasNextPage);
+      cursor = products && products.pageInfo ? products.pageInfo.endCursor : null;
+    }
+
+    return all;
+  }
+
+  async function ensureCollectionProductsLoaded() {
+    if (collectionProductsLoaded) return collectionProductsAll;
+
+    try {
+      collectionProductsAll = await fetchAllCollectionProducts(collectionHandle);
+    } catch (error) {
+      console.warn('Storefront fetch selhal, pouzivam DOM fallback pro kolekci.', error);
+      collectionProductsAll = [];
+    }
+
+    if (!Array.isArray(collectionProductsAll) || !collectionProductsAll.length) {
+      collectionProductsAll = hydrateCollectionProductsFromDom();
+    }
+
+    if (!Array.isArray(collectionProductsAll) || !collectionProductsAll.length) {
+      throw new Error('Nepodarilo se nacist produkty kolekce ani z DOM fallbacku.');
+    }
+
+    collectionProductsLoaded = true;
+
+    return collectionProductsAll;
+  }
+
+  async function fetchExactAppliance(modelValue) {
+    const url =
+      SUPABASE_REST_URL +
+      '/appliances?select=model_norm,shopify_handle' +
+      '&model_norm=eq.' + encodeURIComponent(modelValue) +
+      '&limit=1';
+
+    const res = await fetch(url, { headers: SUPABASE_HEADERS });
+    if (!res.ok) return null;
+
+    const data = await res.json();
+
+    if (Array.isArray(data) && data.length > 0) {
+      return {
+        model_norm: (data[0].model_norm || '').trim(),
+        shopify_handle: (data[0].shopify_handle || '').trim()
+      };
+    }
+
+    return null;
+  }
+
+  async function fetchModelsRpc(q) {
+    const res = await fetch(SEARCH_MODELS_RPC_URL, {
+      method: 'POST',
+      headers: SUPABASE_HEADERS,
+      body: JSON.stringify({ q: String(q || '').toUpperCase() })
+    });
+
+    if (!res.ok) return [];
+    const data = await res.json();
+
+    if (!Array.isArray(data)) return [];
+
+    return data
+      .map(function (item) {
+        if (typeof item === 'string') return item.trim();
+        if (item && typeof item.model === 'string') return item.model.trim();
+        return '';
+      })
+      .filter(Boolean);
+  }
+
+  async function fetchAppliancesByModels(models) {
+    const uniqueModels = unique(
+      (models || []).map(function (v) {
+        return String(v || '').trim().toUpperCase();
+      })
+    ).slice(0, 50);
+
+    if (!uniqueModels.length) return [];
+
+    const conditions = uniqueModels
+      .map(function (model) {
+        return 'model_norm.eq.' + encodeURIComponent(model);
+      })
+      .join(',');
+
+    const url =
+      SUPABASE_REST_URL +
+      '/appliances?select=model_norm,shopify_handle' +
+      '&or=(' + conditions + ')' +
+      '&order=model_norm.asc' +
+      '&limit=50';
+
+    const res = await fetch(url, { headers: SUPABASE_HEADERS });
+    if (!res.ok) return [];
+
+    const data = await res.json();
+    if (!Array.isArray(data)) return [];
+
+    return data
+      .map(function (item) {
+        return {
+          model_norm: (item.model_norm || '').trim(),
+          shopify_handle: (item.shopify_handle || '').trim()
+        };
+      })
+      .filter(function (item) {
+        return item.model_norm;
+      });
+  }
+
+  async function fetchPrefixCandidates(rawValue) {
+    const normalized = String(rawValue || '').trim().toUpperCase();
+    if (!isShortModelPrefixCandidate(normalized)) return [];
+
+    const url =
+      SUPABASE_REST_URL +
+      '/appliances?select=model_norm,shopify_handle' +
+      '&model_norm=like.' + encodeURIComponent(normalized + '%') +
+      '&order=model_norm.asc' +
+      '&limit=20';
+
+    const res = await fetch(url, { headers: SUPABASE_HEADERS });
+    if (!res.ok) return [];
+
+    const data = await res.json();
+    if (!Array.isArray(data)) return [];
+
+    return data
+      .map(function (item) {
+        return {
+          model_norm: (item.model_norm || '').trim(),
+          shopify_handle: (item.shopify_handle || '').trim()
+        };
+      })
+      .filter(function (item) {
+        return item.model_norm;
+      });
+  }
+
+  async function fetchWildcardCandidates(rawValue) {
+    const normalized = String(rawValue || '').trim().toUpperCase();
+    const base = getModelBase(normalized);
+    const prefix = getLookupPrefix(normalized);
+    const knownEntries = getKnownPositionEntries(normalized);
+
+    if (knownEntries.length < 2) return [];
+
+    let url = SUPABASE_REST_URL + '/appliances?select=model_norm,shopify_handle';
+
+    if (prefix.length >= 1) {
+      url += '&model_norm=like.' + encodeURIComponent(prefix + '%');
+    }
+
+    url += '&order=model_norm.asc&limit=20';
+
+    const res = await fetch(url, { headers: SUPABASE_HEADERS });
+    if (!res.ok) return [];
+
+    const data = await res.json();
+    if (!Array.isArray(data)) return [];
+
+    return data
+      .map(function (item) {
+        return {
+          model_norm: (item.model_norm || '').trim(),
+          shopify_handle: (item.shopify_handle || '').trim()
+        };
+      })
+      .filter(function (item) {
+        return item.model_norm;
+      })
+      .filter(function (item) {
+        return modelMatchesKnownPositions(item.model_norm, base);
+      });
+  }
+
+  async function fetchPossibleModelCandidates(rawValue) {
+    const q = String(rawValue || '').trim().toUpperCase();
+    if (!q) return [];
+
+    if (isWildcardModelCandidate(q)) {
+      return uniqueByModel(await fetchWildcardCandidates(q));
+    }
+
+    const exactMatch = await fetchExactAppliance(q);
+    if (exactMatch) return [exactMatch];
+
+    const rpcMatches = await fetchModelsRpc(q);
+    if (rpcMatches.length) {
+      const rpcAppliances = await fetchAppliancesByModels(rpcMatches);
+      if (rpcAppliances.length) return uniqueByModel(rpcAppliances);
+    }
+
+    const prefixMatches = await fetchPrefixCandidates(q);
+    if (prefixMatches.length) return uniqueByModel(prefixMatches);
+
+    const canUseTypoLogic =
+      !q.includes(' ') &&
+      !q.includes('?') &&
+      !isPartNumberCandidate(q) &&
+      !isDigitsOnly(q);
+
+    if (!canUseTypoLogic) return [];
+
+    const singleVariants = buildTypoVariantsOnce(q);
+    for (const variant of singleVariants) {
+      const exactVariant = await fetchExactAppliance(variant);
+      if (exactVariant) return [exactVariant];
+
+      const rpcVariantMatches = await fetchModelsRpc(variant);
+      if (rpcVariantMatches.length) {
+        const rpcVariantAppliances = await fetchAppliancesByModels(rpcVariantMatches);
+        if (rpcVariantAppliances.length) return uniqueByModel(rpcVariantAppliances);
+      }
+
+      const prefixVariantMatches = await fetchPrefixCandidates(variant);
+      if (prefixVariantMatches.length) return uniqueByModel(prefixVariantMatches);
+    }
+
+    const doubleVariants = buildTypoVariantsTwice(q);
+    for (const variant of doubleVariants) {
+      const exactVariant = await fetchExactAppliance(variant);
+      if (exactVariant) return [exactVariant];
+
+      const rpcVariantMatches = await fetchModelsRpc(variant);
+      if (rpcVariantMatches.length) {
+        const rpcVariantAppliances = await fetchAppliancesByModels(rpcVariantMatches);
+        if (rpcVariantAppliances.length) return uniqueByModel(rpcVariantAppliances);
+      }
+
+      const prefixVariantMatches = await fetchPrefixCandidates(variant);
+      if (prefixVariantMatches.length) return uniqueByModel(prefixVariantMatches);
+    }
+
+    return [];
+  }
+
+  async function fetchCompatiblePartsForModel(modelNumber) {
+    const response = await fetch(SUPABASE_URL + '/rest/v1/rpc/parts_for_model_only', {
+      method: 'POST',
+      headers: {
+        apikey: SUPABASE_PUBLISHABLE_KEY,
+        Authorization: 'Bearer ' + SUPABASE_PUBLISHABLE_KEY,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        p_model_norm: modelNumber
+      })
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error('Supabase chyba: ' + response.status + ' ' + errorText);
+    }
+
+    return response.json();
+  }
+
+  function clearApplianceFilter(scrollToProducts) {
+  selectedModel = '';
+  typedValue = '';
+  searchInput.value = '';
+  currentApplianceProductGids = null;
+  activeAvailabilityFilter = '';
+  closeSuggestions();
+  resetVisibleLimit();
+  updateResetButtonVisibility();
+  applyAllFilters('', { scrollToProducts: !!scrollToProducts });
+}
+
+  function applyFilteredProductGids(productGids, stateLabelText, scrollToProducts) {
+    currentApplianceProductGids = Array.from(
+      new Set((productGids || []).map(String).filter(Boolean))
+    );
+
+    resetVisibleLimit();
+    applyAllFilters(stateLabelText || '', { scrollToProducts: !!scrollToProducts });
+  }
+
+  async function applyTypedPrefixFilter(items, rawQuery, requestId) {
+    const normalizedQuery = String(rawQuery || '').trim().toUpperCase();
+
+    if (!normalizedQuery || !Array.isArray(items) || !items.length) {
+      currentApplianceProductGids = null;
+      activeAvailabilityFilter = '';
+      applyAllFilters('');
+      return;
+    }
+
+    const matchingModels = items
+      .map(function (item) {
+        return String(item.model_norm || '').trim();
+      })
+      .filter(Boolean)
+      .filter(function (model) {
+        return model.toUpperCase().startsWith(normalizedQuery);
+      });
+
+    if (!matchingModels.length) {
+      currentApplianceProductGids = [];
+      activeAvailabilityFilter = '';
+      resetVisibleLimit();
+      applyAllFilters('Zobrazeny kompatibilní díly kategorie ' + collectionTitle + ' pro zadaný výraz: ' + rawQuery);
+      return;
+    }
+
+    const partsResults = await Promise.all(
+      matchingModels.map(function (model) {
+        return fetchCompatiblePartsForModel(model).catch(function () {
+          return [];
+        });
+      })
+    );
+
+    if (requestId !== activeRequestId) return;
+
+    const compatibleGids = Array.from(
+      new Set(
+        partsResults
+          .flat()
+          .map(function (item) {
+            return item.shopify_product_gid;
+          })
+          .filter(Boolean)
+      )
+    );
+
+    applyFilteredProductGids(
+      compatibleGids,
+      'Zobrazeny kompatibilní díly kategorie ' + collectionTitle + ' pro zadaný výraz: ' + rawQuery,
+      false
+    );
+  }
+
+  async function runAutocomplete() {
+    const query = (searchInput.value || '').trim();
+
+    if (query.length < 3) {
+      closeSuggestions();
+      selectedModel = '';
+      currentApplianceProductGids = null;
+      activeAvailabilityFilter = '';
+      resetVisibleLimit();
+
+      applyAllFilters('');
+      requestAnimationFrame(function () {
+        searchInput.focus();
+        const len = searchInput.value.length;
+        searchInput.setSelectionRange(len, len);
+      });
+
+      return;
+    }
+
+    const requestId = ++activeRequestId;
+
+    try {
+      const items = await fetchPossibleModelCandidates(query);
+
+      if (requestId !== activeRequestId) return;
+
+      renderSuggestions(items);
+
+      if (!Array.isArray(items) || !items.length) {
+        selectedModel = '';
+        currentApplianceProductGids = [];
+        activeAvailabilityFilter = '';
+        resetVisibleLimit();
+        applyAllFilters('Zobrazeny kompatibilní díly kategorie ' + collectionTitle + ' pro zadaný výraz: ' + query);
+        return;
+      }
+
+      const normalizedQuery = query.toUpperCase();
+      const exactMatch = items.find(function (item) {
+        return String(item.model_norm || '').toUpperCase() === normalizedQuery;
+      });
+
+      const firstItem = items[0];
+      const firstModel = String((firstItem && firstItem.model_norm) || '').trim();
+
+      if (exactMatch) {
+        selectedModel = String(exactMatch.model_norm || '').trim();
+        setGhostValue(selectedModel);
+
+        const parts = await fetchCompatiblePartsForModel(selectedModel);
+
+        if (requestId !== activeRequestId) return;
+
+        const compatibleGids = Array.from(
+          new Set(
+            (parts || [])
+              .map(function (item) {
+                return item.shopify_product_gid;
+              })
+              .filter(Boolean)
+          )
+        );
+
+        applyFilteredProductGids(
+          compatibleGids,
+          'Zobrazeny kompatibilní díly kategorie ' + collectionTitle + ' pro model: ' + selectedModel,
+          false
+        );
+        return;
+      }
+
+      selectedModel = '';
+
+      if (firstModel) {
+        setGhostValue(firstModel);
+      } else {
+        clearGhostValue();
+      }
+
+      await applyTypedPrefixFilter(items, query, requestId);
+    } catch (error) {
+      if (requestId !== activeRequestId) return;
+      suggestionsEl.innerHTML = '<div class="boschino-appliance-filter__empty">Nepodařilo se načíst našeptávání.</div>';
+      suggestionsEl.hidden = false;
+      activeSuggestionIndex = -1;
+      clearGhostValue();
+      console.error(error);
+    }
+  }
+
+  async function selectApplianceModel(modelNumber) {
+    try {
+      const parts = await fetchCompatiblePartsForModel(modelNumber);
+
+      const compatibleGids = Array.from(
+        new Set(
+          (parts || [])
+            .map(function (item) {
+              return item.shopify_product_gid;
+            })
+            .filter(Boolean)
+        )
+      );
+
+      selectedModel = modelNumber;
+      typedValue = modelNumber;
+      searchInput.value = modelNumber;
+      closeSuggestions();
+
+      applyFilteredProductGids(
+        compatibleGids,
+        'Zobrazeny kompatibilní díly kategorie ' + collectionTitle + ' pro model: ' + modelNumber,
+        true
+      );
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  searchInput.addEventListener('input', function () {
+  clearTimeout(debounceTimer);
+
+  const selectionStart = searchInput.selectionStart || 0;
+  const selectionEnd = searchInput.selectionEnd || 0;
+  const upperValue = String(searchInput.value || '').toUpperCase();
+
+  if (searchInput.value !== upperValue) {
+    searchInput.value = upperValue;
+    searchInput.setSelectionRange(selectionStart, selectionEnd);
+  }
+
+  typedValue = searchInput.value || '';
+  const currentValue = typedValue.trim();
+
+  if (!currentValue) {
+    clearApplianceFilter(false);
+    return;
+  }
+
+  if (currentValue.length < 3) {
+    closeSuggestions();
+    clearGhostValue();
+    return;
+  }
+
+  clearGhostValue();
+  resetVisibleLimit();
+  debounceTimer = setTimeout(runAutocomplete, 180);
+});
+
+  searchInput.addEventListener('keydown', function (event) {
+    const buttons = getSuggestionButtons();
+
+    if (event.key === 'ArrowDown') {
+      if (!buttons.length) return;
+      event.preventDefault();
+      updateActiveSuggestion(activeSuggestionIndex + 1);
+      return;
+    }
+
+    if (event.key === 'ArrowUp') {
+      if (!buttons.length) return;
+      event.preventDefault();
+      updateActiveSuggestion(activeSuggestionIndex - 1);
+      return;
+    }
+
+    if (event.key === 'Enter') {
+      event.preventDefault();
+
+      if (activeSuggestionIndex >= 0 && buttons[activeSuggestionIndex]) {
+        selectSuggestionButton(buttons[activeSuggestionIndex]);
+        closeSuggestions();
+        return;
+      }
+
+      closeSuggestions();
+    }
+
+    if (event.key === 'Escape') {
+      closeSuggestions();
+    }
+  });
+
+  searchInput.addEventListener('focus', function () {
+    if ((searchInput.value || '').trim().length >= 3 && !selectedModel) {
+      runAutocomplete();
+    }
+  });
+
+  if (resetBtn) {
+    resetBtn.addEventListener('click', function () {
+      clearApplianceFilter(true);
+    });
+  }
+
+  if (subfiltersEl) {
+    subfiltersEl.addEventListener('click', function (event) {
+      const button = event.target.closest('[data-availability-filter]');
+      if (!button) return;
+
+      const mode = button.getAttribute('data-availability-filter') || '';
+      activeAvailabilityFilter = activeAvailabilityFilter === mode ? '' : mode;
+
+      updateResetButtonVisibility();
+      resetVisibleLimit();
+
+      const currentText = stateTextEl ? stateTextEl.textContent : '';
+      applyAllFilters(currentText, { scrollToProducts: true });
+    });
+  }
+
+  document.addEventListener('click', function (event) {
+    const suggestionBtn = event.target.closest('.boschino-appliance-filter__suggestion');
+
+    if (suggestionBtn && suggestionsEl.contains(suggestionBtn)) {
+      selectSuggestionButton(suggestionBtn);
+      return;
+    }
+
+    if (!filterRoot.contains(event.target)) {
+      closeSuggestions();
+    }
+  });
+
+  document.addEventListener('keydown', function (event) {
+    if (event.key === 'Escape') {
+      closeSuggestions();
+    }
+  });
+
+  suggestionsEl.addEventListener('mousemove', function (event) {
+    const button = event.target.closest('.boschino-appliance-filter__suggestion');
+    if (!button) return;
+
+    const buttons = getSuggestionButtons();
+    const index = buttons.indexOf(button);
+    if (index === -1) return;
+
+    updateActiveSuggestion(index);
+  });
+
+  suggestionsEl.addEventListener('mouseleave', function () {
+    activeSuggestionIndex = -1;
+
+    const buttons = getSuggestionButtons();
+    buttons.forEach(function (button) {
+      button.classList.remove('is-active');
+      button.setAttribute('aria-selected', 'false');
+    });
+
+    const firstButton = suggestionsEl.querySelector('.boschino-appliance-filter__suggestion');
+    if (firstButton) {
+      setGhostValue(firstButton.getAttribute('data-model-number') || '');
+    } else {
+      clearGhostValue();
+    }
+  });
+
+  productGrid.addEventListener('click', function (event) {
+    const minusBtn = event.target.closest('[data-qty-minus]');
+    const plusBtn = event.target.closest('[data-qty-plus]');
+
+    if (minusBtn) {
+      const wrap = minusBtn.closest('[data-boschino-qty]');
+      const input = wrap ? wrap.querySelector('[data-qty-input]') : null;
+      if (!input || input.disabled) return;
+
+      const min = Number(input.min || 1);
+      const value = Number(input.value || min);
+      input.value = String(Math.max(min, value - 1));
+      return;
+    }
+
+    if (plusBtn) {
+      const wrap = plusBtn.closest('[data-boschino-qty]');
+      const input = wrap ? wrap.querySelector('[data-qty-input]') : null;
+      if (!input || input.disabled) return;
+
+      const min = Number(input.min || 1);
+      const value = Number(input.value || min);
+      input.value = String(Math.max(min, value + 1));
+    }
+  });
+
+  productGrid.addEventListener('input', function (event) {
+    const input = event.target.closest('[data-qty-input]');
+    if (!input || input.disabled) return;
+
+    const min = Number(input.min || 1);
+    const value = Number(String(input.value || '').replace(/[^0-9]/g, ''));
+    input.value = String(Number.isFinite(value) && value >= min ? value : min);
+  });
+
+  if (loadMoreBtn) {
+    loadMoreBtn.addEventListener('click', function () {
+      visibleLimit += PAGE_SIZE;
+      const currentText = stateTextEl ? stateTextEl.textContent : '';
+      applyAllFilters(currentText);
+    });
+  }
+
+  if (backToFiltersBtn) {
+  backToFiltersBtn.addEventListener('click', function () {
+    scrollToFilters();
+  });
+}
+
+window.addEventListener('scroll', updateBackToFiltersVisibility, { passive: true });
+window.addEventListener('resize', updateBackToFiltersVisibility);
+
+  if (sortSelect) {
+    sortSelect.addEventListener('change', function () {
+      const url = new URL(window.location.href);
+      const value = this.value || '';
+
+      if (value) {
+        url.searchParams.set('sort_by', value);
+      } else {
+        url.searchParams.delete('sort_by');
+      }
+
+      try {
+        sessionStorage.setItem(scrollAfterSortKey, '1');
+      } catch (error) {}
+
+      window.location.href = url.toString();
+    });
+  }
+
+  setGridLoading(true);
+
+  ensureCollectionProductsLoaded()
+  .then(function () {
+    return applyAllFilters('');
+  })
+  .then(function () {
+    if (hasPendingSortScroll()) {
+      runPendingSortScroll();
+    } else {
+      scrollToCategoriesIfNeeded();
+    }
+  })
+  .catch(function (error) {
+    console.error(error);
+  })
+  .finally(function () {
+  setGridLoading(false);
+  updateResetButtonVisibility();
+  updateBackToFiltersVisibility();
+});
+})();
+</script>
+
+<script>
+(function(){
+  function getHeaderOffset(){
+    var header = document.querySelector('.header, .section-header, #shopify-section-header, sticky-header');
+    if (!header) return 12;
+    var h = header.offsetHeight || 0;
+    return Math.min(Math.max(h, 0), 140) + 12;
+  }
+
+  function findTarget(id){
+    var el = document.getElementById(id);
+    if (el) return el;
+
+    if (id === 'product-grid-anchor'){
+      return document.querySelector('#ProductGridContainer, #product-grid, #CollectionProductGrid, .product-grid, [data-product-grid]');
+    }
+
+    return null;
+  }
+
+  function scrollToEl(el){
+    var y = window.scrollY + el.getBoundingClientRect().top - getHeaderOffset();
+    window.scrollTo({ top: y, behavior: 'smooth' });
+  }
+
+  function setActive(id){
+    document.querySelectorAll('.bsh-pill').forEach(function(link){
+      var active = link.getAttribute('data-scroll') === id;
+      link.classList.toggle('is-active', active);
+
+      if (active) {
+        link.setAttribute('aria-current', 'location');
+      } else {
+        link.removeAttribute('aria-current');
+      }
+    });
+  }
+
+  document.addEventListener('click', function(e){
+    var a = e.target.closest('.bsh-pill');
+    if (!a) return;
+
+    var targetId = a.getAttribute('data-scroll');
+    if (!targetId) return;
+
+    var target = findTarget(targetId);
+
+    if (targetId === 'product-grid-anchor') {
+      var grid =
+        document.querySelector('#ProductGridContainer') ||
+        document.querySelector('#product-grid') ||
+        document.querySelector('#CollectionProductGrid') ||
+        document.querySelector('.product-grid') ||
+        document.querySelector('[data-product-grid]');
+
+      if (grid) target = grid;
+    }
+
+    if (!target) {
+      e.preventDefault();
+      a.classList.add('is-disabled');
+      a.setAttribute('aria-disabled', 'true');
+      return;
+    }
+
+    e.preventDefault();
+    scrollToEl(target);
+    setActive(targetId);
+    history.replaceState(null, '', '#' + targetId);
+  }, { passive: false });
+
+  window.addEventListener('load', function(){
+    var hash = (location.hash || '').replace('#', '').trim();
+    if (!hash) return;
+
+    var target = findTarget(hash);
+
+    if (hash === 'product-grid-anchor') {
+      var grid =
+        document.querySelector('#ProductGridContainer') ||
+        document.querySelector('#product-grid') ||
+        document.querySelector('#CollectionProductGrid') ||
+        document.querySelector('.product-grid') ||
+        document.querySelector('[data-product-grid]');
+
+      if (grid) target = grid;
+    }
+
+    if (!target) return;
+
+    setTimeout(function(){
+      scrollToEl(target);
+      setActive(hash);
+    }, 50);
+  });
+
+  window.addEventListener('scroll', function(){
+    var candidates = ['product-grid-anchor', 'enr', 'related'];
+    var y = window.scrollY + 160;
+    var best = null;
+
+    for (var i = 0; i < candidates.length; i++){
+      var id = candidates[i];
+      var el = (id === 'product-grid-anchor')
+        ? (document.querySelector('#ProductGridContainer, #product-grid, #CollectionProductGrid, .product-grid, [data-product-grid]') || document.getElementById('product-grid-anchor'))
+        : findTarget(id);
+
+      if (!el) continue;
+
+      var top = el.getBoundingClientRect().top + window.scrollY;
+      if (top <= y) best = id;
+    }
+
+    if (best) setActive(best);
+  }, { passive: true });
+})();
+</script>
+
+{% schema %}
+{
+  "name": "t:sections.main-collection-product-grid.name",
+  "class": "section",
+  "settings": [
+    {
+      "type": "range",
+      "id": "products_per_page",
+      "min": 8,
+      "max": 48,
+      "step": 2,
+      "default": 32,
+      "label": "t:sections.main-collection-product-grid.settings.products_per_page.label"
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "min": 1,
+      "max": 6,
+      "step": 1,
+      "default": 4,
+      "label": "t:sections.main-collection-product-grid.settings.columns_desktop.label"
+    },
+    {
+      "type": "select",
+      "id": "columns_mobile",
+      "default": "2",
+      "label": "t:sections.main-collection-product-grid.settings.columns_mobile.label",
+      "options": [
+        { "value": "1", "label": "t:sections.main-collection-product-grid.settings.columns_mobile.options__1.label" },
+        { "value": "2", "label": "t:sections.main-collection-product-grid.settings.columns_mobile.options__2.label" }
+      ]
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.all.colors.label",
+      "info": "t:sections.all.colors.has_cards_info",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.main-collection-product-grid.settings.header__3.content"
+    },
+    {
+      "type": "select",
+      "id": "image_ratio",
+      "options": [
+        { "value": "adapt", "label": "t:sections.main-collection-product-grid.settings.image_ratio.options__1.label" },
+        { "value": "portrait", "label": "t:sections.main-collection-product-grid.settings.image_ratio.options__2.label" },
+        { "value": "square", "label": "t:sections.main-collection-product-grid.settings.image_ratio.options__3.label" }
+      ],
+      "default": "adapt",
+      "label": "t:sections.main-collection-product-grid.settings.image_ratio.label"
+    },
+    {
+      "type": "select",
+      "id": "image_shape",
+      "options": [
+        { "value": "default", "label": "t:sections.all.image_shape.options__1.label" },
+        { "value": "arch", "label": "t:sections.all.image_shape.options__2.label" },
+        { "value": "blob", "label": "t:sections.all.image_shape.options__3.label" },
+        { "value": "chevronleft", "label": "t:sections.all.image_shape.options__4.label" },
+        { "value": "chevronright", "label": "t:sections.all.image_shape.options__5.label" },
+        { "value": "diamond", "label": "t:sections.all.image_shape.options__6.label" },
+        { "value": "parallelogram", "label": "t:sections.all.image_shape.options__7.label" },
+        { "value": "round", "label": "t:sections.all.image_shape.options__8.label" }
+      ],
+      "default": "default",
+      "label": "t:sections.all.image_shape.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_secondary_image",
+      "default": false,
+      "label": "t:sections.main-collection-product-grid.settings.show_secondary_image.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_vendor",
+      "default": false,
+      "label": "t:sections.main-collection-product-grid.settings.show_vendor.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_rating",
+      "default": false,
+      "label": "t:sections.main-collection-product-grid.settings.show_rating.label",
+      "info": "t:sections.main-collection-product-grid.settings.show_rating.info"
+    },
+    {
+      "type": "select",
+      "id": "quick_add",
+      "default": "none",
+      "label": "t:sections.main-collection-product-grid.settings.quick_add.label",
+      "options": [
+        { "value": "none", "label": "t:sections.main-collection-product-grid.settings.quick_add.options.option_1" },
+        { "value": "standard", "label": "t:sections.main-collection-product-grid.settings.quick_add.options.option_2" },
+        { "value": "bulk", "label": "t:sections.main-collection-product-grid.settings.quick_add.options.option_3" }
+      ]
+    },
+    {
+      "type": "header",
+      "content": "t:sections.main-collection-product-grid.settings.header__1.content"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_filtering",
+      "default": true,
+      "label": "t:sections.main-collection-product-grid.settings.enable_filtering.label",
+      "info": "t:sections.main-collection-product-grid.settings.enable_filtering.info"
+    },
+    {
+      "type": "select",
+      "id": "filter_type",
+      "options": [
+        { "value": "horizontal", "label": "t:sections.main-collection-product-grid.settings.filter_type.options__1.label" },
+        { "value": "vertical", "label": "t:sections.main-collection-product-grid.settings.filter_type.options__2.label" },
+        { "value": "drawer", "label": "t:sections.main-collection-product-grid.settings.filter_type.options__3.label" }
+      ],
+      "default": "horizontal",
+      "label": "t:sections.main-collection-product-grid.settings.filter_type.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_sorting",
+      "default": true,
+      "label": "t:sections.main-collection-product-grid.settings.enable_sorting.label"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.all.padding.section_padding_heading"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_top",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_bottom",
+      "default": 36
+    }
+  ]
+}
+{% endschema %}

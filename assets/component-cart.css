@@ -1,0 +1,728 @@
+.cart {
+  position: relative;
+  display: block;
+}
+
+.cart__empty-text,
+.is-empty .cart__contents,
+cart-items.is-empty .title-wrapper-with-link,
+.is-empty .cart__footer {
+  display: none;
+}
+
+.is-empty .cart__empty-text,
+.is-empty .cart__warnings {
+  display: block;
+}
+
+.cart__warnings {
+  display: none;
+  text-align: center;
+  padding: 3rem 0 1rem;
+}
+
+.cart__empty-text {
+  margin: 4.5rem 0 2rem;
+}
+
+.cart__contents > * + * {
+  margin-top: 2.5rem;
+}
+
+.cart__login-title {
+  margin: 5.5rem 0 0.5rem;
+}
+
+.cart__login-paragraph {
+  margin-top: 0.8rem;
+}
+
+.cart__login-paragraph a {
+  font-size: inherit;
+}
+
+@media screen and (min-width: 990px) {
+  .cart__warnings {
+    padding: 7rem 0 1rem;
+  }
+
+  .cart__empty-text {
+    margin: 0 0 3rem;
+  }
+}
+
+cart-items {
+  display: block;
+}
+
+.cart__items {
+  position: relative;
+  padding-bottom: 3rem;
+  border-bottom: 0.1rem solid rgba(var(--color-foreground), 0.08);
+}
+
+.cart__items--disabled {
+  pointer-events: none;
+}
+
+.cart__footer-wrapper:last-child .cart__footer {
+  padding-bottom: 5rem;
+}
+
+.cart__footer > div:only-child {
+  margin-left: auto;
+}
+
+.cart__footer > * + * {
+  margin-top: 6.5rem;
+}
+
+.cart__footer .discounts {
+  margin-bottom: 1rem;
+}
+
+.cart__note {
+  height: fit-content;
+  top: 2.5rem;
+}
+
+.cart__note label {
+  display: flex;
+  align-items: flex-end;
+  position: absolute;
+  line-height: 1;
+  height: 1.8rem;
+  top: -3rem;
+  color: rgba(var(--color-foreground), 0.75);
+}
+
+.cart__note .field__input {
+  height: 100%;
+  position: relative;
+  border-radius: var(--inputs-radius);
+  padding: 1rem 2rem;
+}
+
+.cart__note .text-area {
+  resize: vertical;
+}
+
+.cart__note:after,
+.cart__note:hover.cart__note:after,
+.cart__note:before,
+.cart__note:hover.cart__note:before,
+.cart__note .field__input:focus,
+.cart__note .field__input {
+  border-bottom-right-radius: 0;
+}
+
+@media screen and (min-width: 750px) {
+  .cart__items {
+    grid-column-start: 1;
+    grid-column-end: 3;
+    padding-bottom: 4rem;
+  }
+
+  .cart__contents > * + * {
+    margin-top: 0;
+  }
+
+  .cart__items + .cart__footer {
+    grid-column: 2;
+  }
+
+  .cart__footer {
+    display: flex;
+    justify-content: space-between;
+    border: 0;
+  }
+
+  .cart__footer-wrapper:last-child {
+    padding-top: 0;
+  }
+
+  .cart__footer > * {
+    width: 35rem;
+  }
+
+  .cart__footer > * + * {
+    margin-left: 4rem;
+    margin-top: 0;
+  }
+}
+
+.cart__ctas button {
+  width: 100%;
+}
+
+.cart__ctas > * + * {
+  margin-top: 1rem;
+}
+
+.cart__update-button {
+  margin-bottom: 1rem;
+}
+
+.cart__dynamic-checkout-buttons {
+  max-width: 36rem;
+  margin: 0 auto;
+}
+
+.cart__dynamic-checkout-buttons:has(.dynamic-checkout__content:empty) {
+  margin: 0;
+}
+
+.cart__blocks > * + * {
+  margin-top: 1rem;
+}
+
+.cart-note__label {
+  display: inline-block;
+  margin-bottom: 1rem;
+  line-height: calc(1 + 1 / var(--font-body-scale));
+}
+
+.tax-note {
+  margin: 2.2rem 0 1.6rem auto;
+  text-align: center;
+  display: block;
+}
+
+.cart__checkout-button {
+  max-width: 36rem;
+}
+
+.cart__ctas {
+  text-align: center;
+}
+
+@media screen and (min-width: 750px) {
+  .cart-note {
+    max-width: 35rem;
+  }
+
+  .cart__update-button {
+    margin-bottom: 0;
+    margin-right: 0.8rem;
+  }
+
+  .tax-note {
+    margin-bottom: 2.2rem;
+    text-align: right;
+  }
+
+  [data-shopify-buttoncontainer] {
+    justify-content: flex-end;
+  }
+
+  .cart__ctas {
+    display: flex;
+    gap: 1rem;
+  }
+}
+/* =========================================================
+   BOSCHINO CART – TOP BAR (ROBUST) + čisté karty
+   Funguje i když se background na TD přepisuje.
+   VLOŽ NA ÚPLNÝ KONEC component-cart-items.css
+   ========================================================= */
+
+@media (min-width: 750px) {
+
+  /* mezery mezi "kartami" */
+  cart-items table.cart-items{
+    border-collapse: separate !important;
+    border-spacing: 0 16px !important;
+  }
+
+  /* bílá karta + padding */
+  cart-items tr.cart-item > td{
+    background: #fff !important;
+    border: 0 !important;
+    padding: 16px 18px !important;
+    vertical-align: middle !important;
+  }
+
+  /* stín celé karty */
+  cart-items tr.cart-item{
+    filter: drop-shadow(0 10px 18px rgba(0,0,0,.10)) !important;
+  }
+
+  /* =========================================================
+     TOP PRUH jako na produktových kartách (MODRÁ + ČERVENÁ)
+     DÁME HO PŘÍMO NA KONKRÉTNÍ BUŇKY – to u tebe projde vždy.
+     ========================================================= */
+  cart-items td.cart-item__media,
+  cart-items td.cart-item__details,
+  cart-items td.cart-item__quantity,
+  cart-items td.cart-item__totals{
+    box-shadow:
+      inset 0 4px 0 #1f2a7a,  /* modrá */
+      inset 0 6px 0 #e2001a   /* červená */
+      !important;
+    padding-top: 22px !important; /* ať text není nalepený na pruh */
+  }
+
+  /* obrázek bez rámečku (zapadne do bílé) */
+  .cart-item__image-container,
+  .cart-item__media .media,
+  .cart-item__media .global-media-settings{
+    border: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+  }
+
+  /* drž rozložení ať se popis nesprskne */
+  cart-items td.cart-item__media{ width: 140px !important; }
+  cart-items td.cart-item__quantity{ width: 260px !important; white-space: nowrap !important; }
+  cart-items td.cart-item__totals{ width: 160px !important; white-space: nowrap !important; }
+
+  .cart-item__details, .cart-item__details > *{ max-width: none !important; }
+  .cart-item__name{
+    font-weight: 900 !important;
+    color: #101820 !important;
+    word-break: normal !important;
+    overflow-wrap: normal !important;
+    hyphens: none !important;
+  }
+
+  /* množství – hranaté, čisté */
+  cart-items quantity-input.quantity,
+  cart-items .quantity{
+    height: 40px !important;
+    border: 1px solid rgba(16,24,32,.45) !important;
+    border-radius: 0 !important;
+    background: #fff !important;
+    overflow: hidden !important;
+    box-shadow: none !important;
+  }
+
+  cart-items .quantity__button,
+  cart-items .quantity__input{
+    height: 40px !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    background: transparent !important;
+    border-radius: 0 !important;
+    outline: none !important;
+  }
+
+  cart-items .quantity__button{ width: 40px !important; }
+  cart-items .quantity__input{ width: 56px !important; font-weight: 800 !important; }
+
+  cart-items .quantity__button:hover{
+    background: rgba(31,42,122,.08) !important;
+  }
+
+  /* hlavička PRODUKT/MNOŽSTVÍ/CELKEM výraznější */
+  .cart-items thead th{
+    text-transform: uppercase !important;
+    letter-spacing: .10em !important;
+    font-size: 12px !important;
+    font-weight: 900 !important;
+    color: #101820 !important;
+    opacity: 1 !important;
+  }
+}
+/* =========================================================
+   BOSCHINO CART – FIX výšky karet + obrázek vždy “fit”
+   VLOŽ NA ÚPLNÝ KONEC component-cart-items.css
+   ========================================================= */
+
+@media (min-width: 750px) {
+
+  /* 1) karta má stabilní “výšku” (řeší roztahování podle obrázku) */
+  cart-items tr.cart-item > td{
+    min-height: 96px !important;        /* výška karty jako baseline */
+    padding-top: 22px !important;       /* necháme prostor pod pruhem */
+    padding-bottom: 18px !important;
+  }
+
+  /* 2) sloupec s obrázkem se neroztahuje podle obsahu */
+  cart-items td.cart-item__media{
+    width: 140px !important;
+    height: 100% !important;
+  }
+
+  /* 3) vytvoř “slot” pro obrázek – vždy stejný rozměr */
+  cart-items td.cart-item__media .cart-item__media,
+  cart-items td.cart-item__media .cart-item__image-container,
+  cart-items td.cart-item__media .media,
+  cart-items td.cart-item__media .global-media-settings{
+    width: 92px !important;
+    height: 92px !important;
+    min-width: 92px !important;
+    min-height: 92px !important;
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    overflow: hidden !important;
+    border: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  /* 4) samotný obrázek se vždy přizpůsobí slotu */
+  cart-items td.cart-item__media img,
+  cart-items td.cart-item__media .cart-item__image{
+    width: 92px !important;
+    height: 92px !important;
+    max-width: 92px !important;
+    max-height: 92px !important;
+
+    object-fit: contain !important;
+    display: block !important;
+  }
+}
+/* =========================================================
+   BOSCHINO CART – Odstranit červeně + Poznámka k objednávce (box)
+   VLOŽ NA ÚPLNÝ KONEC CSS
+   ========================================================= */
+
+@media (min-width: 750px) {
+
+  /* ---------- ODSTRANIT: červené + výraznější (text i ikona) ---------- */
+  cart-remove-button .cart-remove-link,
+  cart-items cart-remove-button a,
+  cart-items cart-remove-button button {
+    color: #e2001a !important;
+    font-weight: 800 !important;
+  }
+
+  cart-remove-button .cart-remove-link svg,
+  cart-items cart-remove-button svg {
+    fill: #e2001a !important;
+    stroke: #e2001a !important;
+  }
+
+  cart-remove-button .cart-remove-link {
+    border: 1px solid rgba(226,0,26,.55) !important;
+    background: #fff !important;
+    padding: 8px 12px !important;
+    border-radius: 0 !important;
+  }
+
+  cart-remove-button .cart-remove-link:hover {
+    background: rgba(226,0,26,.08) !important;
+  }
+
+  /* ---------- POZNÁMKA K OBJEDNÁVCE: udělej z toho “okénko” ---------- */
+  .template-cart .cart__note {
+    display: block !important;
+    position: relative !important;
+    margin-top: 18px !important;
+
+    background: #fff !important;
+    border: 1px solid rgba(16,24,32,.14) !important;
+    box-shadow: 0 12px 24px rgba(0,0,0,.08) !important;
+
+    /* horní pruh jako karty (modrá + červená) */
+    box-shadow:
+      inset 0 4px 0 #1f2a7a,
+      inset 0 6px 0 #e2001a,
+      0 12px 24px rgba(0,0,0,.08) !important;
+
+    padding: 16px 18px 18px !important;
+  }
+
+  /* Label přepiš na “Přidat poznámku k objednávce” (jen styl – text musí být v šabloně)
+     Pokud téma label už má, jen ho zviditelníme a zvýrazníme. */
+  .template-cart .cart__note label,
+  .template-cart .cart-note__label {
+    position: static !important;
+    display: block !important;
+    margin: 0 0 10px !important;
+
+    font-weight: 900 !important;
+    color: #101820 !important;
+    letter-spacing: .02em !important;
+  }
+
+  /* textarea */
+  .template-cart .cart__note textarea,
+  .template-cart .cart__note .text-area,
+  .template-cart .cart__note .field__input {
+    width: 100% !important;
+    min-height: 110px !important;
+
+    border-radius: 0 !important;
+    border: 1px solid rgba(16,24,32,.28) !important;
+
+    padding: 12px 14px !important;
+    background: #fff !important;
+    box-shadow: none !important;
+    outline: none !important;
+  }
+
+  .template-cart .cart__note textarea:focus,
+  .template-cart .cart__note .field__input:focus {
+    border-color: rgba(31,42,122,.55) !important;
+    box-shadow: 0 0 0 3px rgba(31,42,122,.10) !important;
+  }
+}
+
+/* Mobil: ať je poznámka taky hezká */
+@media (max-width: 749px) {
+  .template-cart .cart__note {
+    display: block !important;
+    margin-top: 14px !important;
+    background: #fff !important;
+    border: 1px solid rgba(16,24,32,.14) !important;
+    padding: 14px !important;
+    box-shadow:
+      inset 0 4px 0 #1f2a7a,
+      inset 0 6px 0 #e2001a,
+      0 10px 20px rgba(0,0,0,.08) !important;
+  }
+
+  .template-cart .cart__note textarea,
+  .template-cart .cart__note .text-area,
+  .template-cart .cart__note .field__input {
+    min-height: 90px !important;
+    border-radius: 0 !important;
+  }
+
+  cart-remove-button .cart-remove-link {
+    color: #e2001a !important;
+    font-weight: 800 !important;
+  }
+}
+/* =========================================================
+   BOSCHINO CART – Odstranit jako čistý červený link (bez rámečku/tučného)
+   + styl poznámky (až bude přidaná do šablony)
+   ========================================================= */
+
+@media (min-width: 750px) {
+
+  /* ---------- ODSTRANIT: čistý link, červeně, bez rámečku ---------- */
+  cart-remove-button .cart-remove-link,
+  cart-items cart-remove-button a,
+  cart-items cart-remove-button button {
+    color: #e2001a !important;
+    font-weight: 400 !important;       /* NE tučné */
+    border: 0 !important;              /* pryč rámeček */
+    background: transparent !important;/* pryč pozadí */
+    padding: 0 !important;             /* jako link */
+    box-shadow: none !important;
+    text-decoration: none !important;
+  }
+
+  cart-remove-button .cart-remove-link:hover,
+  cart-items cart-remove-button a:hover,
+  cart-items cart-remove-button button:hover {
+    text-decoration: underline !important;
+    text-underline-offset: 3px !important;
+  }
+
+  cart-remove-button .cart-remove-link svg,
+  cart-items cart-remove-button svg {
+    fill: #e2001a !important;
+    stroke: #e2001a !important;
+  }
+
+  /* ---------- POZNÁMKA: jen jemné odsazení (bez “karty”) ---------- */
+  .template-cart .cart__note,
+  .template-cart .cart-note {
+    display: block !important;
+    margin-top: 18px !important;
+  }
+
+  .template-cart .cart__note label,
+  .template-cart .cart-note__label {
+    display: block !important;
+    margin: 0 0 8px !important;
+    font-weight: 600 !important; /* jemně, ne “mega tučné” */
+    color: #101820 !important;
+  }
+
+  .template-cart .cart__note textarea,
+  .template-cart .cart__note .field__input,
+  .template-cart .cart-note textarea {
+    width: 100% !important;
+    min-height: 110px !important;
+    padding: 12px 14px !important;
+
+    border-radius: 0 !important;
+    border: 1px solid rgba(16,24,32,.25) !important;
+    background: #fff !important;
+    box-shadow: none !important;
+    outline: none !important;
+  }
+
+  .template-cart .cart__note textarea:focus,
+  .template-cart .cart__note .field__input:focus,
+  .template-cart .cart-note textarea:focus {
+    border-color: rgba(226,0,26,.45) !important;
+    box-shadow: 0 0 0 3px rgba(226,0,26,.10) !important;
+  }
+}
+/* =========================================================
+   BOSCHINO CART – Totals (Odhadovaný součet) bez zalomení
+   VLOŽ NA ÚPLNÝ KONEC: component-cart.css / component-cart-items.css
+   ========================================================= */
+
+@media (min-width: 990px) {
+
+  /* celý blok součtu ať má plnou šířku pravého sloupce */
+  body.template-cart .cart__footer .totals{
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  /* řádek "Odhadovaný součet   0,00 Kč" drž v jedné linii */
+  body.template-cart .cart__footer .totals *{
+    word-break: normal !important;
+    overflow-wrap: normal !important;
+    hyphens: none !important;
+  }
+
+  /* typicky label v totals */
+  body.template-cart .cart__footer .totals__subtotal,
+  body.template-cart .cart__footer .totals__subtotal-value,
+  body.template-cart .cart__footer .totals__subtotal span,
+  body.template-cart .cart__footer .totals__subtotal-value span{
+    white-space: nowrap !important;
+  }
+
+  /* pojistka: kdyby to bylo jako řádek ve flexu */
+  body.template-cart .cart__footer .totals__subtotal{
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 16px !important;
+  }
+
+  /* částka – nikdy nerozdělit Kč na nový řádek */
+  body.template-cart .cart__footer .totals__subtotal-value,
+  body.template-cart .cart__footer .totals__subtotal-value *{
+    white-space: nowrap !important;
+  }
+}
+/* =========================================================
+   BOSCHINO – Poznámka vlevo vedle pokladny + Totals bez zalomení
+   VLOŽ NA ÚPLNÝ KONEC component-cart.css
+   ========================================================= */
+
+@media (min-width: 990px) {
+
+  /* layout footeru: vlevo poznámka, vpravo pokladna */
+  body.template-cart .cart__footer{
+    display: grid !important;
+    grid-template-columns: minmax(520px, 1fr) 420px !important; /* levý sloupec širší */
+    gap: 24px !important;
+    align-items: start !important;
+  }
+
+  body.template-cart .cart__footer > *{
+    width: auto !important;
+    margin: 0 !important;
+    min-width: 0 !important; /* důležité proti zalamování */
+  }
+
+  /* poznámka vlevo – žádné max-width 200px */
+  body.template-cart #BoschinoCartNote{
+    grid-column: 1 !important;
+    width: 100% !important;
+    max-width: none !important;
+  }
+
+  /* pravý blok (pokladna / totals) */
+  body.template-cart .cart__footer .cart__ctas,
+  body.template-cart .cart__footer .totals,
+  body.template-cart .cart__footer .cart__blocks{
+    grid-column: 2 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  /* --- FIX: Odhadovaný součet do jedné řádky --- */
+  body.template-cart .cart__footer .totals *{
+    white-space: nowrap !important;
+    word-break: normal !important;
+    overflow-wrap: normal !important;
+    hyphens: none !important;
+  }
+
+  /* typicky řádek totals */
+  body.template-cart .cart__footer .totals__subtotal,
+  body.template-cart .cart__footer .totals__total{
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    gap: 16px !important;
+  }
+
+  /* hodnota částky nikdy nerozdělit */
+  body.template-cart .cart__footer .totals__subtotal-value,
+  body.template-cart .cart__footer .totals__total-value{
+    white-space: nowrap !important;
+  }
+}
+
+/* vzhled boxu poznámky */
+.boschino-cart-note-wrap{
+  background:#fff;
+  padding:14px 16px 16px;
+  box-shadow:0 12px 24px rgba(0,0,0,.08);
+  position:relative;
+  width: 100%;
+}
+
+.boschino-cart-note-wrap::before{
+  content:"";
+  position:absolute;
+  left:0; right:0; top:0;
+  height:6px;
+  background:linear-gradient(to bottom,#1f2a7a 0 4px,#e2001a 4px 6px);
+}
+
+.boschino-cart-note-title{
+  margin:6px 0 10px;
+  font-size:13px;
+  font-weight:400;
+  color:#101820;
+}
+
+.boschino-cart-note-textarea{
+  width:100%;
+  min-height:110px;
+  padding:10px 12px;
+  border:1px solid rgba(16,24,32,.25);
+  border-radius:0;
+  background:#fff;
+  box-shadow:none;
+  outline:none;
+  resize:vertical;
+}
+
+.boschino-cart-note-textarea:focus{
+  border-color:rgba(226,0,26,.55);
+  box-shadow:none;
+}
+/* BOSCHINO CART – Odhadovaný součet na 1 řádek */
+@media (min-width: 990px){
+  body.template-cart .cart__footer .totals__subtotal{
+    display: grid !important;
+    grid-template-columns: 1fr max-content !important;
+    align-items: center !important;
+    column-gap: 16px !important;
+    width: 100% !important;
+  }
+
+  body.template-cart .cart__footer .totals__subtotal > *{
+    white-space: nowrap !important;
+    word-break: normal !important;
+    overflow-wrap: normal !important;
+    hyphens: none !important;
+  }
+
+  body.template-cart .cart__footer .totals__subtotal-value{
+    justify-self: end !important;
+    white-space: nowrap !important;
+  }
+}

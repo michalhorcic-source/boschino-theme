@@ -1,0 +1,126 @@
+{%- assign seo_ref = collection.metafields.custom.seo_content -%}
+{%- assign seo = seo_ref.value -%}
+
+{% if seo_ref != blank and seo != blank %}
+<section class="bsh-seo-bottom" id="seo-bottom" aria-labelledby="bsh-seo-bottom-title">
+  <h2 id="bsh-seo-bottom-title" class="visually-hidden">
+    Doplňující informace ke kategorii
+  </h2>
+
+  <div class="bsh-seo-bottom__inner">
+
+    {% if seo.common_issues != blank %}
+      <section id="common-issues" class="bsh-seo-block bsh-seo-block--issues">
+        <h2>Časté závady</h2>
+        <div class="rte">{{ seo.common_issues | metafield_tag }}</div>
+      </section>
+    {% endif %}
+
+    {% if seo.installation != blank %}
+      <section id="installation" class="bsh-seo-block bsh-seo-block--installation">
+        <h2>Výměna a montáž</h2>
+        <div class="rte">{{ seo.installation | metafield_tag }}</div>
+      </section>
+    {% endif %}
+
+    {%- assign faq_items = seo.faq_items.value -%}
+
+    {% if faq_items != blank %}
+      <section id="faq" class="bsh-seo-block bsh-seo-block--faq" aria-labelledby="seo-faq-title">
+        <h2 id="seo-faq-title">Často kladené dotazy</h2>
+
+        <div class="bsh-faq-list">
+          {% for item in faq_items %}
+            {% assign question_value = item.question.value | default: item.question %}
+
+            {% if question_value != blank %}
+              <article class="bsh-faq-item">
+                <h3>{{ question_value }}</h3>
+
+                {% if item.answer != blank %}
+                  <div class="rte">
+                    {{ item.answer | metafield_tag }}
+                  </div>
+                {% endif %}
+              </article>
+            {% endif %}
+          {% endfor %}
+        </div>
+      </section>
+
+      <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+          {% assign first_faq = true %}
+          {% for item in faq_items %}
+            {% assign question_value = item.question.value | default: item.question %}
+            {% capture answer_plain %}{{ item.answer | metafield_tag | strip_html | strip }}{% endcapture %}
+
+            {% if question_value != blank and answer_plain != blank %}
+              {% unless first_faq %},{% endunless %}
+              {
+                "@type": "Question",
+                "name": {{ question_value | strip | json }},
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": {{ answer_plain | strip | json }}
+                }
+              }
+              {% assign first_faq = false %}
+            {% endif %}
+          {% endfor %}
+        ]
+      }
+      </script>
+    {% endif %}
+
+    {% if seo.safety_instruction != blank %}
+      <section id="safety-instruction" class="bsh-seo-block bsh-seo-block--safety">
+        <h2>Bezpečnostní pokyny</h2>
+        <div class="rte">{{ seo.safety_instruction | metafield_tag }}</div>
+      </section>
+    {% endif %}
+
+    {% if seo.image != blank %}
+      <section class="bsh-seo-block bsh-seo-block--image" aria-label="Ilustrační obrázek kategorie">
+        <div class="bsh-seo-image-wrap">
+          {{ seo.image.value | image_url: width: 700 | image_tag: loading: 'lazy', alt: collection.title }}
+        </div>
+      </section>
+    {% endif %}
+
+    {% if seo.purchase_info != blank %}
+      <section id="purchase-info" class="bsh-seo-block bsh-seo-block--purchase">
+        <h2>Informace k nákupu</h2>
+        <div class="rte">{{ seo.purchase_info | metafield_tag }}</div>
+      </section>
+    {% endif %}
+
+  </div>
+
+  <nav aria-label="Rychlá navigace zpět na obsah stránky" class="bsh-nav bsh-nav--bottom">
+    <a data-scroll="product-grid-anchor" class="bsh-pill" href="#product-grid-anchor">
+      <span aria-hidden="true">🛒</span> Produkty
+    </a>
+    <a data-scroll="enr" class="bsh-pill" href="#enr">
+      <span aria-hidden="true">🔍</span> E-Nr.
+    </a>
+    <a data-scroll="related" class="bsh-pill" href="#related">
+      <span aria-hidden="true">🧭</span> Související
+    </a>
+  </nav>
+</section>
+{% endif %}
+
+{% schema %}
+{
+  "name": "BSH Collection SEO",
+  "presets": [
+    {
+      "name": "BSH Collection SEO"
+    }
+  ]
+}
+{% endschema %}

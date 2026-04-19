@@ -1,0 +1,333 @@
+{%- comment -%}
+Boschino – kompatibilní spotřebiče (metafield: product.metafields.custom.compatible_devices)
+
+Vylepšení:
+- počet kompatibilních spotřebičů
+- preview prvních 10 položek
+- link na všechny kompatibilní spotřebiče
+- vyhledávání + našeptávání (jen v tomto seznamu)
+- zvýraznění shody
+- počítadlo výsledků
+- auto-rozbalení accordionu při psaní
+- podpora URL hash (posun + rozbalení)
+
+DŮLEŽITÉ: Pro webový link používáme POUZE device.system.url. Pokud není, bez prolinku.
+{%- endcomment -%}
+
+{%- assign devices = product.metafields.custom.compatible_devices.value -%}
+{%- assign uid = 'cd-' | append: product.id -%}
+{%- assign preview_limit = 10 -%}
+
+{%- assign total_devices = 0 -%}
+{%- if devices != blank -%}
+  {%- for device in devices -%}
+    {%- if device != blank -%}
+      {%- assign total_devices = total_devices | plus: 1 -%}
+    {%- endif -%}
+  {%- endfor -%}
+{%- endif -%}
+
+<div class="compatible-devices" data-compatible-devices-root="{{ uid }}">
+
+  {%- if title != blank -%}
+    <h3 class="compatible-devices__title">{{ title }}</h3>
+  {%- endif -%}
+
+  {%- if total_devices > 0 -%}
+    <div class="compatible-devices__intro">
+      <p class="compatible-devices__total">
+        Kompatibilní s {{ total_devices }} spotřebiči.
+      </p>
+    </div>
+  {%- endif -%}
+
+  {%- if devices != blank -%}
+    <div class="compatible-devices__search">
+      <label class="compatible-devices__search-label" for="{{ uid }}-search">
+        Hledat v kompatibilních spotřebičích
+      </label>
+
+      <div class="compatible-devices__search-row">
+        <input
+          id="{{ uid }}-search"
+          class="compatible-devices__search-input"
+          type="search"
+          placeholder="Začněte psát, např. WAU28... / SMS46... / MUM..."
+          autocomplete="off"
+          list="{{ uid }}-datalist"
+          aria-controls="{{ uid }}-list"
+        >
+
+        <button type="button" class="compatible-devices__search-clear" data-compatible-devices-clear hidden>
+          Vymazat
+        </button>
+      </div>
+
+      <div class="compatible-devices__search-meta" aria-live="polite">
+        <span data-compatible-devices-count></span>
+      </div>
+
+      <datalist id="{{ uid }}-datalist">
+        {%- for device in devices -%}
+          {%- if device != blank -%}
+            {%- assign device_title =
+              device.nazev_spotrebice.value
+              | default: device.model_number.value
+              | default: device.title
+              | default: device.name
+              | default: device.handle
+              | default: 'Spotřebič'
+            -%}
+
+            {%- if device_title != blank -%}
+              <option value="{{ device_title | strip | escape }}"></option>
+            {%- endif -%}
+
+            {%- if device.model_number.value != blank -%}
+              <option value="{{ device.model_number.value | strip | escape }}"></option>
+            {%- endif -%}
+          {%- endif -%}
+        {%- endfor -%}
+      </datalist>
+    </div>
+  {%- endif -%}
+
+  <ul class="compatible-devices__list" role="list" id="{{ uid }}-list">
+
+    {%- if devices != blank -%}
+      {%- assign rendered_preview = 0 -%}
+
+      {%- for device in devices -%}
+        {%- if device != blank -%}
+          {%- assign device_url = device.system.url | default: blank -%}
+
+          {%- assign device_title =
+            device.nazev_spotrebice.value
+            | default: device.model_number.value
+            | default: device.title
+            | default: device.name
+            | default: device.handle
+            | default: 'Spotřebič'
+          -%}
+
+          {%- assign device_key =
+            device.handle
+            | default: device.model_number.value
+            | default: device_title
+            | handleize
+          -%}
+
+          {%- assign item_id = uid | append: '-' | append: device_key -%}
+          {%- assign rendered_preview = rendered_preview | plus: 1 -%}
+
+          <li
+            class="compatible-devices__item"
+            id="{{ item_id }}"
+            data-compatible-devices-item
+            data-compatible-devices-text="{{ device_title | strip | escape }}"
+            {% if rendered_preview > preview_limit %}hidden{% endif %}
+          >
+            {%- if device_url != blank -%}
+              <a class="compatible-devices__link" href="{{ device_url }}">
+                <span data-compatible-devices-label>{{ device_title | escape }}</span>
+              </a>
+            {%- else -%}
+              <span class="compatible-devices__text">
+                <span data-compatible-devices-label>{{ device_title | escape }}</span>
+              </span>
+            {%- endif -%}
+
+            {%- if device.model_number.value != blank and device_title != device.model_number.value -%}
+              <span class="compatible-devices__meta">
+                ({{ device.model_number.value | escape }})
+              </span>
+            {%- endif -%}
+          </li>
+        {%- endif -%}
+      {%- endfor -%}
+
+    {%- else -%}
+
+      {%- if show_empty_message == false -%}
+        {%- comment -%} Nezobrazujeme nic {%- endcomment -%}
+      {%- else -%}
+        <li class="compatible-devices__item compatible-devices__item--empty">
+          <em>Žádný kompatibilní spotřebič není přiřazen.</em>
+        </li>
+      {%- endif -%}
+
+    {%- endif -%}
+
+  </ul>
+
+  {%- if total_devices > preview_limit -%}
+    <div class="compatible-devices__footer">
+      <button
+        type="button"
+        class="compatible-devices__show-all"
+        data-compatible-devices-show-all
+      >
+        Zobrazit všechny kompatibilní spotřebiče
+      </button>
+    </div>
+  {%- endif -%}
+</div>
+
+<style>
+  .compatible-devices__intro { margin: 0 0 .75rem 0; }
+  .compatible-devices__total { margin: 0; font-size: .95em; opacity: .85; }
+
+  .compatible-devices__search { margin: 0 0 1rem 0; }
+  .compatible-devices__search-label { display:block; font-weight: 600; margin: 0 0 .35rem; }
+  .compatible-devices__search-row { display:flex; gap:.5rem; align-items:center; }
+  .compatible-devices__search-input { width: 100%; max-width: 520px; padding: .55rem .7rem; border: 1px solid rgba(0,0,0,.18); border-radius: 8px; }
+  .compatible-devices__search-clear { padding: .55rem .7rem; border: 1px solid rgba(0,0,0,.18); border-radius: 8px; background: #fff; cursor: pointer; }
+  .compatible-devices__search-meta { margin-top: .35rem; opacity: .8; font-size: .95em; }
+
+  .compatible-devices__footer { margin-top: 1rem; }
+  .compatible-devices__show-all {
+    padding: .55rem .7rem;
+    border: 1px solid rgba(0,0,0,.18);
+    border-radius: 8px;
+    background: #fff;
+    cursor: pointer;
+  }
+
+  .compatible-devices mark { padding: 0 .12em; border-radius: .2em; }
+</style>
+
+<script>
+(() => {
+  const root = document.querySelector('[data-compatible-devices-root="{{ uid }}"]');
+  if (!root) return;
+
+  const input = root.querySelector('#{{ uid }}-search');
+  const clearBtn = root.querySelector('[data-compatible-devices-clear]');
+  const countEl = root.querySelector('[data-compatible-devices-count]');
+  const showAllBtn = root.querySelector('[data-compatible-devices-show-all]');
+  const items = Array.from(root.querySelectorAll('[data-compatible-devices-item]'));
+  const previewLimit = {{ preview_limit | json }};
+  let expanded = false;
+
+  const escapeHtml = (s) => (s || '').replace(/[&<>"']/g, (c) => ({
+    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+  }[c]));
+
+  const escapeRegExp = (s) => (s || '').replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+  const getAccordionDetails = () => root.closest('details');
+
+  const visibleItems = () => items.filter(li => !li.hidden);
+
+  const updateCount = () => {
+    if (!countEl) return;
+    const visible = visibleItems().length;
+    const total = items.length;
+    countEl.textContent = `Zobrazeno ${visible} z ${total}`;
+  };
+
+  const setHighlight = (labelEl, query) => {
+    const raw = labelEl.getAttribute('data-raw-label') || labelEl.textContent || '';
+    if (!labelEl.getAttribute('data-raw-label')) labelEl.setAttribute('data-raw-label', raw);
+
+    if (!query) {
+      labelEl.innerHTML = escapeHtml(raw);
+      return;
+    }
+    const re = new RegExp('(' + escapeRegExp(query) + ')', 'ig');
+    labelEl.innerHTML = escapeHtml(raw).replace(re, '<mark>$1</mark>');
+  };
+
+  const updateShowAllButton = (queryActive) => {
+    if (!showAllBtn) return;
+    if (queryActive) {
+      showAllBtn.hidden = true;
+      return;
+    }
+    showAllBtn.hidden = expanded || items.length <= previewLimit;
+  };
+
+  const applyInitialPreview = () => {
+    items.forEach((li, index) => {
+      li.hidden = !expanded && index >= previewLimit;
+    });
+    updateShowAllButton(false);
+    updateCount();
+  };
+
+  const filter = (q) => {
+    const query = (q || '').trim().toLowerCase();
+    const hasQuery = !!query;
+
+    if (query) {
+      const details = getAccordionDetails();
+      if (details && !details.open) details.open = true;
+    }
+
+    items.forEach((li, index) => {
+      const labelEl = li.querySelector('[data-compatible-devices-label]');
+      const text = (li.getAttribute('data-compatible-devices-text') || '').toLowerCase();
+      const match = !query || text.includes(query);
+
+      if (hasQuery) {
+        li.hidden = !match;
+      } else {
+        li.hidden = !expanded && index >= previewLimit;
+      }
+
+      if (labelEl) setHighlight(labelEl, hasQuery ? q.trim() : '');
+    });
+
+    if (clearBtn) clearBtn.hidden = !query;
+    updateShowAllButton(hasQuery);
+    updateCount();
+  };
+
+  const scrollToHashIfMatches = () => {
+    const hash = (window.location.hash || '').replace('#', '').trim();
+    if (!hash) return;
+
+    const target = document.getElementById(hash);
+    if (!target || !root.contains(target)) return;
+
+    const details = getAccordionDetails();
+    if (details && !details.open) details.open = true;
+
+    expanded = true;
+    filter(input ? input.value : '');
+
+    target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    target.style.outline = '2px solid rgba(0,0,0,.25)';
+    target.style.borderRadius = '8px';
+    setTimeout(() => {
+      target.style.outline = '';
+      target.style.borderRadius = '';
+    }, 1600);
+  };
+
+  applyInitialPreview();
+  scrollToHashIfMatches();
+
+  if (input) {
+    input.addEventListener('input', (e) => filter(e.target.value));
+    input.addEventListener('search', (e) => filter(e.target.value));
+  }
+
+  if (clearBtn) {
+    clearBtn.addEventListener('click', () => {
+      input.value = '';
+      filter('');
+      input.focus();
+    });
+  }
+
+  if (showAllBtn) {
+    showAllBtn.addEventListener('click', () => {
+      expanded = true;
+      filter(input ? input.value : '');
+    });
+  }
+
+  window.addEventListener('hashchange', scrollToHashIfMatches);
+})();
+</script>

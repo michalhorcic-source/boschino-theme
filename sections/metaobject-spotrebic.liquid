@@ -1,0 +1,1041 @@
+{% assign appliance = metaobject %}
+
+{% assign has_appliance_extra_content = false %}
+
+{% if appliance.images.value != blank or appliance.pdf_files.value != blank or appliance.description.value != blank %}
+  {% assign has_appliance_extra_content = true %}
+{% endif %}
+
+<div
+  class="appliance-page page-width section-{{ section.id }}-padding bsh-collection-surface"
+  id="appliance-{{ section.id }}"
+  data-model-number='{{ appliance.model_number.value | json }}'
+>
+
+      <div class="appliance-top-row{% unless has_appliance_extra_content %} appliance-top-row--header-only{% endunless %}">
+  <div class="appliance-left-column">
+    <div class="appliance-header appliance-header--compact">
+      {% assign brand_name = appliance.brand.value | strip %}
+      {% assign brand_key = brand_name | downcase %}
+
+      <div class="appliance-header__top">
+        <h1 class="appliance-title h1">
+          {{ appliance.nazev_spotrebice.value | default: appliance.model_number.value }}
+        </h1>
+
+        {% if brand_name != blank %}
+          <div class="appliance-brand-logo" aria-label="{{ brand_name | escape }}">
+            {% if brand_key == 'bosch' %}
+              <img src="https://cdn.shopify.com/s/files/1/1001/0741/9979/files/logo_bosch_preview_rev_1_1.png?v=1770718551" alt="Bosch" loading="lazy">
+            {% elsif brand_key == 'siemens' %}
+              <img src="https://cdn.shopify.com/s/files/1/1001/0741/9979/files/logo_siemens_preview_rev_1.png?v=1770715813" alt="Siemens" loading="lazy">
+            {% elsif brand_key == 'gaggenau' %}
+              <img src="https://cdn.shopify.com/s/files/1/1001/0741/9979/files/logo_gaggenau_preview_rev_1.png?v=1770715814" alt="Gaggenau" loading="lazy">
+            {% elsif brand_key == 'constructa' %}
+              <img src="https://cdn.shopify.com/s/files/1/1001/0741/9979/files/logo_constructa_preview_rev_1.png?v=1770720694" alt="Constructa" loading="lazy">
+            {% elsif brand_key == 'balay' %}
+              <img src="https://cdn.shopify.com/s/files/1/1001/0741/9979/files/logo_Balay_preview_rev_1.png?v=1770715814" alt="Balay" loading="lazy">
+            {% elsif brand_key == 'neff' %}
+              <img src="https://cdn.shopify.com/s/files/1/1001/0741/9979/files/logo_neff_preview_rev_1.png?v=1770715813" alt="NEFF" loading="lazy">
+            {% else %}
+              <span class="appliance-brand-fallback">{{ brand_name }}</span>
+            {% endif %}
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+    {% if appliance.images.value != blank or appliance.pdf_files.value != blank %}
+      <div class="appliance-media">
+        {%- assign img_val = appliance.images.value -%}
+        {%- assign img_json = img_val | json -%}
+
+        {% if img_val != blank %}
+          <div class="appliance-images">
+            <h2 class="h2">Obrázky</h2>
+
+            <div class="appliance-images-content">
+              <div class="image-gallery">
+                {%- assign img_alt = appliance.nazev_spotrebice.value | default: appliance.model_number.value | escape -%}
+
+                {% if img_json contains '[' %}
+                  {% for file in img_val %}
+                    <div class="gallery-item">
+                      {%- assign img_src = nil -%}
+                      {%- assign img_href = nil -%}
+
+                      {% if file %}
+                        {%- assign img_src = file | image_url: width: 1200 -%}
+                        {%- assign img_href = file.url | default: img_src -%}
+                      {% endif %}
+
+                      {% if img_src == blank and file.preview_image %}
+                        {%- assign img_src = file.preview_image | image_url: width: 1200 -%}
+                        {%- assign img_href = file.url | default: img_src -%}
+                      {% elsif img_src == blank and file.image %}
+                        {%- assign img_src = file.image | image_url: width: 1200 -%}
+                        {%- assign img_href = file.url | default: img_src -%}
+                      {% elsif img_href == blank and file.url %}
+                        {%- assign img_href = file.url -%}
+                      {% endif %}
+
+                      {% if img_src %}
+                        <a href="{{ img_href }}" target="_blank" rel="noopener noreferrer" class="gallery-link">
+                          <img
+                            src="{{ img_src }}"
+                            alt="{{ img_alt }}"
+                            loading="lazy"
+                            width="1200"
+                            height="1200"
+                          >
+                        </a>
+                      {% elsif img_href %}
+                        <a href="{{ img_href }}" target="_blank" rel="noopener noreferrer" class="gallery-link">
+                          Zobrazit soubor
+                        </a>
+                      {% else %}
+                        <span>Obrázek nelze načíst.</span>
+                      {% endif %}
+                    </div>
+                  {% endfor %}
+                {% else %}
+                  {%- assign file = img_val -%}
+                  {%- assign img_src = nil -%}
+                  {%- assign img_href = nil -%}
+
+                  {% if file %}
+                    {%- assign img_src = file | image_url: width: 1200 -%}
+                    {%- assign img_href = file.url | default: img_src -%}
+                  {% endif %}
+
+                  {% if img_src == blank and file.preview_image %}
+                    {%- assign img_src = file.preview_image | image_url: width: 1200 -%}
+                    {%- assign img_href = file.url | default: img_src -%}
+                  {% elsif img_src == blank and file.image %}
+                    {%- assign img_src = file.image | image_url: width: 1200 -%}
+                    {%- assign img_href = file.url | default: img_src -%}
+                  {% elsif img_src == blank and file contains '//' or file contains '/cdn/' %}
+                    {%- assign img_src = file -%}
+                    {%- assign img_href = file -%}
+                  {% elsif img_href == blank and file.url %}
+                    {%- assign img_href = file.url -%}
+                  {% endif %}
+
+                  {% if img_src %}
+                    <div class="gallery-item">
+                      <a href="{{ img_href }}" target="_blank" rel="noopener noreferrer" class="gallery-link">
+                        <img
+                          src="{{ img_src }}"
+                          alt="{{ img_alt }}"
+                          loading="lazy"
+                          width="1200"
+                          height="1200"
+                        >
+                      </a>
+                    </div>
+                  {% elsif img_href %}
+                    <a href="{{ img_href }}" target="_blank" rel="noopener noreferrer" class="gallery-link">
+                      Zobrazit soubor
+                    </a>
+                  {% else %}
+                    <span>Obrázek nelze načíst.</span>
+                  {% endif %}
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        {% endif %}
+
+        {%- assign pdf_val = appliance.pdf_files.value -%}
+        {% if pdf_val != blank %}
+          <div class="appliance-pdfs">
+            <h2 class="h2">Dokumenty ke stažení</h2>
+
+            <div class="appliance-pdfs-content">
+              <ul class="pdf-list list-unstyled">
+                {% if pdf_val.size %}
+                  {% for pdf in pdf_val %}
+                    <li>
+                      {% assign pdf_href = nil %}
+                      {% if pdf.url %}
+                        {% assign pdf_href = pdf.url %}
+                      {% elsif pdf.file_url %}
+                        {% assign pdf_href = pdf.file_url %}
+                      {% elsif pdf.preview_image %}
+                        {% if pdf.preview_image.src %}
+                          {% assign pdf_href = pdf.preview_image.src %}
+                        {% else %}
+                          {% assign pdf_href = pdf.preview_image %}
+                        {% endif %}
+                      {% endif %}
+
+                      {% if pdf_href %}
+                        <a href="{{ pdf_href }}" target="_blank" rel="noopener noreferrer" class="pdf-link button">
+                          📄 Stáhnout PDF
+                        </a>
+                      {% else %}
+                        <span>PDF odkaz není dostupný.</span>
+                      {% endif %}
+                    </li>
+                  {% endfor %}
+                {% else %}
+                  {%- assign pdf = pdf_val -%}
+                  <li>
+                    {% assign pdf_href = nil %}
+                    {% if pdf.url %}
+                      {% assign pdf_href = pdf.url %}
+                    {% elsif pdf.file_url %}
+                      {% assign pdf_href = pdf.file_url %}
+                    {% endif %}
+
+                    {% if pdf_href %}
+                      <a href="{{ pdf_href }}" target="_blank" rel="noopener noreferrer" class="pdf-link button">
+                        📄 Stáhnout PDF
+                      </a>
+                    {% else %}
+                      <span>PDF odkaz není dostupný.</span>
+                    {% endif %}
+                  </li>
+                {% endif %}
+              </ul>
+            </div>
+          </div>
+        {% endif %}
+      </div>
+    {% endif %}
+  </div>
+
+  {% if appliance.description.value != blank %}
+    <div class="appliance-description accordion-block">
+      <details class="appliance-accordion">
+        <summary class="appliance-accordion__summary">
+          <h2 class="h2">Popis</h2>
+        </summary>
+
+        <div class="appliance-accordion__content rte">
+          {{ appliance.description | metafield_tag }}
+        </div>
+      </details>
+    </div>
+  {% endif %}
+</div>
+
+  <div class="compatible-products">
+    <div class="compatible-products-toolbar" hidden id="compatible-products-toolbar-{{ section.id }}">
+      <input
+        type="text"
+        id="compatible-products-search-{{ section.id }}"
+        class="compatible-products-search"
+        placeholder="Načítám kompatibilní díly…"
+        autocomplete="off"
+        inputmode="search"
+      >
+    </div>
+
+    <div id="compatible-products-status-{{ section.id }}" class="compatible-status">
+      Načítám kompatibilní díly…
+    </div>
+
+    <ul
+      id="boschino-fallback-grid"
+      class="grid product-grid boschino-product-grid grid--2-col-tablet-down grid--4-col-desktop"
+      hidden
+    ></ul>
+  </div>
+</div>
+
+<script>
+(function () {
+  const root = document.getElementById('appliance-{{ section.id }}');
+  if (!root) return;
+
+  const statusEl = document.getElementById('compatible-products-status-{{ section.id }}');
+const gridEl = root.querySelector('#boschino-fallback-grid');
+const toolbarEl = document.getElementById('compatible-products-toolbar-{{ section.id }}');
+const searchInputEl = document.getElementById('compatible-products-search-{{ section.id }}');
+const modelNumber = JSON.parse(root.dataset.modelNumber || '""');
+
+  const SUPABASE_URL = 'https://hbntpqlpcrodrhfjxhpv.supabase.co';
+  const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_py5U4zoYoBusjy_rngRuWg_IcZ6o-AV';
+  const SHOPIFY_STOREFRONT_TOKEN = '7ca8d15c338fa86a89f0c7f4670ba6b2';
+  const SHOPIFY_GRAPHQL_URL = window.location.origin + '/api/2024-10/graphql.json';
+
+  function escapeHtml(value) {
+    return String(value || '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  function normalizeText(value) {
+  return String(value || '')
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+  function formatPrice(amount, currencyCode) {
+    const numericAmount = Number(amount);
+    if (Number.isNaN(numericAmount)) return '';
+
+    try {
+      return new Intl.NumberFormat('cs-CZ', {
+        style: 'currency',
+        currency: currencyCode || 'CZK'
+      }).format(numericAmount);
+    } catch (error) {
+      return `${numericAmount.toFixed(2)} ${currencyCode || 'CZK'}`;
+    }
+  }
+
+  async function fetchSupabaseParts(model) {
+    const response = await fetch(`${SUPABASE_URL}/rest/v1/rpc/parts_for_model_only`, {
+      method: 'POST',
+      headers: {
+        apikey: SUPABASE_PUBLISHABLE_KEY,
+        Authorization: `Bearer ${SUPABASE_PUBLISHABLE_KEY}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        p_model_norm: model
+      })
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Supabase RPC chyba: ${response.status} ${errorText}`);
+    }
+
+    return response.json();
+  }
+
+  async function fetchShopifyProductsByGids(productGids) {
+    if (!productGids.length) return [];
+
+    const queryParts = productGids.map((gid, index) => {
+      const safeGid = JSON.stringify(gid);
+      return `
+        product_${index}: node(id: ${safeGid}) {
+          ... on Product {
+            id
+            handle
+            title
+            onlineStoreUrl
+            featuredImage {
+  url
+  altText
+}
+images(first: 1) {
+  nodes {
+    url
+    altText
+  }
+}
+priceRange {
+              minVariantPrice {
+                amount
+                currencyCode
+              }
+            }
+            metafield(namespace: "custom", key: "termin_dodani") {
+              value
+            }
+            variants(first: 1) {
+              edges {
+                node {
+  id
+  availableForSale
+  quantityAvailable
+}
+              }
+            }
+          }
+        }
+      `;
+    });
+
+    const graphqlQuery = `
+      query CompatibleProductsByGid {
+        ${queryParts.join('\n')}
+      }
+    `;
+
+    const response = await fetch(SHOPIFY_GRAPHQL_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Shopify-Storefront-Access-Token': SHOPIFY_STOREFRONT_TOKEN
+      },
+      body: JSON.stringify({ query: graphqlQuery })
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Shopify Storefront API chyba: ${response.status} ${errorText}`);
+    }
+
+    const payload = await response.json();
+
+    if (payload.errors && payload.errors.length) {
+      throw new Error(`Shopify GraphQL chyba: ${payload.errors.map(item => item.message).join(', ')}`);
+    }
+
+    const data = payload.data || {};
+    return productGids.map((gid, index) => data[`product_${index}`]).filter(Boolean);
+  }
+
+  function getStockState(product) {
+  const firstVariant = product?.variants?.edges?.[0]?.node || null;
+  const qty = firstVariant ? Number(firstVariant.quantityAvailable || 0) : 0;
+  const available = firstVariant ? firstVariant.availableForSale === true : false;
+  const terminDodani = product?.metafield?.value || '';
+  const terminNorm = String(terminDodani).trim().toLowerCase();
+  const variantId = firstVariant ? String(firstVariant.id || '').split('/').pop() : '';
+
+  if (['vyrazeno','vyřazeno'].includes(terminNorm)) {
+    return {
+      sortOrder: 3,
+      stockText: 'Trvale vyřazeno',
+      stockClass: 'boschino-stock__status--out',
+      canBuy: false,
+      variantId
+    };
+  }
+
+  if (qty > 0) {
+    return {
+      sortOrder: 1,
+      stockText: qty === 1 ? 'Poslední kus skladem' : 'Skladem',
+      stockClass: 'boschino-stock__status--in',
+      canBuy: !!firstVariant,
+      variantId
+    };
+  }
+
+  if (available) {
+    return {
+      sortOrder: 2,
+      stockText: ['neznamo', 'neznámo'].includes(terminNorm) ? 'Upřesnění po objednání' : 'Na objednávku',
+      stockClass: 'boschino-stock__status--order',
+      canBuy: !!firstVariant,
+      variantId
+    };
+  }
+
+  return {
+    sortOrder: 3,
+    stockText: 'Trvale vyřazeno',
+    stockClass: 'boschino-stock__status--out',
+    canBuy: false,
+    variantId
+  };
+}
+
+  function renderCard(part, product) {
+    const productUrl = product.onlineStoreUrl || `/products/${product.handle}`;
+    const imageUrl = product?.featuredImage?.url || product?.images?.nodes?.[0]?.url || '';
+    const imageAlt = product?.featuredImage?.altText || product?.images?.nodes?.[0]?.altText || product?.title || '';
+    const price = product?.priceRange?.minVariantPrice
+      ? formatPrice(product.priceRange.minVariantPrice.amount, product.priceRange.minVariantPrice.currencyCode)
+      : '';
+
+    const stock = getStockState(product);
+
+    return `
+  <li class="grid__item" data-product-title="${escapeHtml(normalizeText(product.title || part.title || ''))}">
+        <div class="card-wrapper product-card-wrapper">
+          <div class="card card--standard card--media" tabindex="-1">
+            <div class="card__inner">
+              <div class="card__media">
+                <a href="${escapeHtml(productUrl)}" class="media media--transparent">
+                  ${
+                    imageUrl
+                      ? `<img src="${escapeHtml(imageUrl)}" alt="${escapeHtml(imageAlt)}" loading="lazy">`
+                      : `<div class="boschino-image-placeholder"></div>`
+                  }
+                </a>
+              </div>
+            </div>
+
+            <div class="card__content">
+              <div class="card__information">
+                <h3 class="card__heading h5">
+                  <a href="${escapeHtml(productUrl)}" class="full-unstyled-link">
+                    ${escapeHtml(product.title || part.title || '')}
+                  </a>
+                </h3>
+
+                <div class="card-information">
+                  ${
+                    stock.canBuy
+                      ? `<div class="price"><div class="price__container"><div class="price__regular"><span class="price-item price-item--regular">${escapeHtml(price)}</span></div></div></div>`
+                      : `<div class="price" style="visibility:hidden"><div class="price__container"><div class="price__regular"><span class="price-item price-item--regular">0</span></div></div></div>`
+                  }
+
+                  <div class="boschino-stock">
+  <span class="inventory-status-with-tooltip" tabindex="0">
+    <span class="boschino-stock__status ${stock.stockClass}">
+      ${escapeHtml(stock.stockText)}
+    </span>
+    <span class="inventory-tooltip">
+      ${escapeHtml(
+        stock.stockClass === 'boschino-stock__status--in'
+          ? 'Odesíláme ihned s doručením následující pracovní den.'
+          : stock.stockText === 'Upřesnění po objednání'
+            ? 'Termín dodání upřesníme po Vašem objednání.'
+            : stock.stockClass === 'boschino-stock__status--order'
+              ? 'Tyto díly obvykle stíháme dodat do týdne od Vaší objednávky..'
+              : 'Tento díl je bohužel vyřazen a nelze jej již objednat.'
+      )}
+    </span>
+  </span>
+</div>
+                </div>
+              </div>
+
+              <div class="boschino-actions">
+                <form method="post" action="/cart/add" class="boschino-card-buy" data-boschino-card-buy>
+                  <input type="hidden" name="id" value="${escapeHtml(stock.variantId)}">
+
+                  <div class="boschino-quantity" data-boschino-qty>
+                    <button type="button" class="boschino-minus" data-qty-minus ${stock.canBuy ? '' : 'disabled'} aria-label="Odebrat 1 ks"></button>
+
+                   <input
+  type="number"
+  name="quantity"
+  value="${stock.canBuy ? '1' : '0'}"
+  min="${stock.canBuy ? '1' : '0'}"
+  step="1"
+  inputmode="numeric"
+  pattern="[0-9]*"
+  aria-label="Počet kusů"
+  data-qty-input
+  ${stock.canBuy ? '' : 'disabled'}
+>
+                    <button type="button" class="boschino-plus" data-qty-plus ${stock.canBuy ? '' : 'disabled'} aria-label="Přidat 1 ks"></button>
+                  </div>
+
+                  <div class="boschino-cta">
+                    <a class="boschino-cta__detail" href="${escapeHtml(productUrl)}">Detail produktu</a>
+
+                    <div class="boschino-cta__cart">
+                      <button type="submit" class="boschino-cta__btn" ${stock.canBuy ? '' : 'disabled'} aria-label="Přidat do košíku">
+                        <svg class="boschino-cart-ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                          <path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zm10 0c-1.1 0-1.99.9-1.99 2S15.9 22 17 22s2-.9 2-2-.9-2-2-2zM7.2 6h13.4c.8 0 1.4.7 1.2 1.5l-1.6 7.2c-.2.7-.8 1.3-1.6 1.3H8.1c-.7 0-1.4-.5-1.6-1.2L4.3 3H2V1h3.7c.6 0 1.1.4 1.2 1l.3 2z"></path>
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </li>
+    `;
+  }
+
+  function bindQuantityControls() {
+  root.querySelectorAll('[data-boschino-qty]').forEach((qtyWrap) => {
+    const input = qtyWrap.querySelector('[data-qty-input]');
+    const minus = qtyWrap.querySelector('[data-qty-minus]');
+    const plus = qtyWrap.querySelector('[data-qty-plus]');
+    if (!input || !minus || !plus) return;
+
+    const isDisabled = input.disabled || minus.disabled || plus.disabled;
+
+    if (isDisabled) {
+      input.value = '0';
+
+      minus.onclick = null;
+      plus.onclick = null;
+      input.oninput = null;
+
+      return;
+    }
+
+    minus.onclick = function (event) {
+      event.preventDefault();
+      event.stopPropagation();
+
+      const current = parseInt(input.value || '1', 10);
+      input.value = String(Math.max(1, current - 1));
+    };
+
+    plus.onclick = function (event) {
+      event.preventDefault();
+      event.stopPropagation();
+
+      const current = parseInt(input.value || '1', 10);
+      input.value = String(current + 1);
+    };
+
+    input.oninput = function () {
+      let value = parseInt(input.value || '1', 10);
+      if (Number.isNaN(value) || value < 1) value = 1;
+      input.value = String(value);
+    };
+  });
+}
+
+function applyCompatibleProductsFilter() {
+  if (!gridEl || !searchInputEl || gridEl.hidden) return;
+
+  const query = normalizeText(searchInputEl.value);
+  const items = Array.from(gridEl.querySelectorAll('.grid__item'));
+  let visibleCount = 0;
+
+  items.forEach((item) => {
+    const title = item.getAttribute('data-product-title') || '';
+    const matches = !query || title.includes(query);
+
+    item.hidden = !matches;
+    if (matches) visibleCount += 1;
+  });
+
+  if (query) {
+    searchInputEl.placeholder = `Nalezeno ${visibleCount} kompatibilních produktů pro „${searchInputEl.value.trim()}“`;
+  } else {
+    searchInputEl.placeholder = `Nalezeno ${items.length} kompatibilních produktů. Hledejte v názvu dílu…`;
+  }
+}
+
+  function renderProducts(parts, shopifyProducts) {
+    const productByGid = new Map(shopifyProducts.map((product) => [product.id, product]));
+
+    const enriched = parts
+      .map((part) => {
+        const product = productByGid.get(part.shopify_product_gid);
+        if (!product) return null;
+        return {
+          part,
+          product,
+          stock: getStockState(product)
+        };
+      })
+      .filter(Boolean)
+      .sort((a, b) => {
+
+  if (a.stock.sortOrder !== b.stock.sortOrder) {
+    return a.stock.sortOrder - b.stock.sortOrder;
+  }
+
+  const aHasImage = a.product.featuredImage?.url ? 1 : 0;
+  const bHasImage = b.product.featuredImage?.url ? 1 : 0;
+
+  if (aHasImage !== bHasImage) {
+    return bHasImage - aHasImage;
+  }
+
+  const nameA = (a.product.title || '').toLowerCase();
+  const nameB = (b.product.title || '').toLowerCase();
+
+  return nameA.localeCompare(nameB);
+});
+
+    if (!enriched.length) {
+      statusEl.textContent = 'Produkty byly nalezeny v Supabase, ale nepodařilo se je načíst ze Shopify.';
+      return;
+    }
+
+    gridEl.innerHTML = enriched.map(({ part, product }) => renderCard(part, product)).join('');
+gridEl.hidden = false;
+
+if (toolbarEl) {
+  toolbarEl.hidden = false;
+}
+
+if (searchInputEl) {
+  searchInputEl.value = '';
+  searchInputEl.placeholder = `Nalezeno ${enriched.length} kompatibilních produktů. Hledejte v názvu dílu…`;
+}
+
+statusEl.hidden = true;
+
+bindQuantityControls();
+applyCompatibleProductsFilter();
+  }
+
+if (searchInputEl) {
+  searchInputEl.addEventListener('input', () => {
+    applyCompatibleProductsFilter();
+  });
+}
+  
+  async function initCompatibleProducts() {
+    if (!modelNumber) {
+      statusEl.textContent = 'Chybí číslo modelu, nelze načíst kompatibilní díly.';
+      return;
+    }
+
+    console.time('boschino-load');
+
+    try {
+      const parts = await fetchSupabaseParts(modelNumber);
+
+      if (!Array.isArray(parts) || !parts.length) {
+        statusEl.textContent = 'Pro tento spotřebič zatím nemáme žádné produkty v nabídce.';
+        console.timeEnd('boschino-load');
+        return;
+      }
+
+      const productGids = parts.map((item) => item.shopify_product_gid).filter(Boolean);
+
+      if (!productGids.length) {
+        statusEl.textContent = 'Supabase sice vrátila díly, ale chybí jim Shopify product GID.';
+        console.timeEnd('boschino-load');
+        return;
+      }
+
+      const shopifyProducts = await fetchShopifyProductsByGids(productGids);
+      renderProducts(parts, shopifyProducts);
+      console.timeEnd('boschino-load');
+    } catch (error) {
+      console.error(error);
+      statusEl.textContent = `Chyba: ${error.message}`;
+      console.timeEnd('boschino-load');
+    }
+  }
+
+  initCompatibleProducts();
+})();
+</script>
+
+<style>
+#appliance-{{ section.id }}.appliance-page {
+  padding: 4rem 0;
+  --bosch-blue: #2a3885;
+  --bosch-red: #e20015;
+  --ui-bg: #E5E7E8;
+  --text-strong: rgba(0, 0, 0, 0.88);
+  --text-soft: rgba(0, 0, 0, 0.62);
+  --border-soft: rgba(0, 0, 0, 0.18);
+  --shadow-soft: 0 6px 16px rgba(0, 0, 0, 0.08);
+  --shadow-hover: 0 10px 22px rgba(0, 0, 0, 0.12);
+  --bottom-dark: #255da0;
+}
+
+#appliance-{{ section.id }} .appliance-header {
+  position: relative;
+  max-width: 760px;
+  margin-bottom: 2.4rem;
+  padding: 2.4rem 2.8rem;
+  border: 1px solid rgba(var(--color-foreground), 0.08);
+  border-radius: 2.4rem;
+  background: linear-gradient(135deg, #ffffff 0%, #fbfbfd 72%, #fff4f7 100%);
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.05);
+  overflow: hidden;
+}
+
+#appliance-{{ section.id }} .appliance-header::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 5px;
+  background: linear-gradient(180deg, var(--bosch-blue) 0%, var(--bosch-red) 100%);
+}
+
+#appliance-{{ section.id }} .appliance-header__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+}
+
+#appliance-{{ section.id }} .appliance-title {
+  margin: 0;
+  line-height: 1.05;
+}
+
+#appliance-{{ section.id }} .appliance-brand-logo {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  min-width: 120px;
+}
+
+#appliance-{{ section.id }} .appliance-brand-logo img {
+  display: block;
+  max-width: 150px;
+  max-height: 44px;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+}
+
+#appliance-{{ section.id }} .appliance-brand-fallback {
+  display: inline-flex;
+  align-items: center;
+  padding: 1rem 1.2rem;
+  border: 1px solid rgba(var(--color-foreground), 0.12);
+  border-radius: 1.2rem;
+  background: rgba(255, 255, 255, 0.86);
+  font-size: 1.4rem;
+  color: rgba(0, 0, 0, 0.88);
+  white-space: nowrap;
+}
+
+@media screen and (max-width: 749px) {
+  #appliance-{{ section.id }} .appliance-header__top {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  #appliance-{{ section.id }} .appliance-brand-logo {
+    justify-content: flex-start;
+  }
+
+  #appliance-{{ section.id }} .appliance-brand-logo img {
+    max-width: 120px;
+    max-height: 36px;
+  }
+}
+
+#appliance-{{ section.id }} .appliance-top-row {
+  display: grid;
+  grid-template-columns: minmax(320px, 0.9fr) minmax(320px, 1fr);
+  gap: 3rem;
+  align-items: start;
+  margin-bottom: 3rem;
+}
+
+#appliance-{{ section.id }} .appliance-left-column {
+  display: flex;
+  flex-direction: column;
+  gap: 2.2rem;
+  min-width: 0;
+}
+
+@media screen and (max-width: 989px) {
+  #appliance-{{ section.id }} .appliance-left-column {
+    gap: 1.8rem;
+  }
+
+  #appliance-{{ section.id }} .appliance-media {
+    max-width: none;
+  }
+}
+
+#appliance-{{ section.id }} .appliance-header--compact {
+  max-width: none;
+  margin-bottom: 0;
+  padding: 2rem 2.4rem;
+  min-height: auto;
+}
+
+#appliance-{{ section.id }} .appliance-header--compact .appliance-title {
+  font-size: clamp(2.4rem, 4vw, 4.6rem);
+}
+
+#appliance-{{ section.id }} .appliance-header--compact .appliance-brand-logo img {
+  max-width: 135px;
+  max-height: 40px;
+}
+
+#appliance-{{ section.id }} .appliance-media {
+  max-width: 520px;
+}
+
+@media screen and (max-width: 989px) {
+  #appliance-{{ section.id }} .appliance-top-row {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  #appliance-{{ section.id }} .appliance-media {
+    max-width: none;
+  }
+}
+
+#appliance-{{ section.id }} .appliance-description {
+  min-width: 0;
+}
+
+#appliance-{{ section.id }} .appliance-accordion {
+  border: 1px solid rgba(var(--color-foreground), 0.12);
+  border-left: 5px solid #69c7d0;
+  border-radius: 12px;
+  background: #fff;
+  overflow: hidden;
+}
+
+#appliance-{{ section.id }} .appliance-accordion__summary {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  cursor: pointer;
+  padding: 16px 18px;
+  user-select: none;
+}
+
+#appliance-{{ section.id }} .appliance-accordion__summary::-webkit-details-marker {
+  display: none;
+}
+
+#appliance-{{ section.id }} .appliance-accordion__summary::after {
+  content: "";
+  width: 9px;
+  height: 9px;
+  flex: 0 0 9px;
+  border-right: 2px solid rgba(0, 0, 0, 0.65);
+  border-bottom: 2px solid rgba(0, 0, 0, 0.65);
+  transform: rotate(45deg);
+  transition: transform 0.18s ease;
+  margin-right: 2px;
+}
+
+#appliance-{{ section.id }} .appliance-accordion[open] .appliance-accordion__summary::after {
+  transform: rotate(225deg);
+}
+
+#appliance-{{ section.id }} .appliance-accordion__summary .h2 {
+  margin: 0;
+  font-size: 2rem;
+}
+
+#appliance-{{ section.id }} .appliance-accordion__content {
+  padding: 0 18px 18px;
+}
+
+#appliance-{{ section.id }} .appliance-images-content,
+#appliance-{{ section.id }} .image-gallery,
+#appliance-{{ section.id }} .gallery-item{
+  width: 100%;
+  min-width: 0;
+}
+
+#appliance-{{ section.id }} .image-gallery{
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+#appliance-{{ section.id }} .gallery-item{
+  display: block;
+}
+
+#appliance-{{ section.id }} .gallery-link{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 260px;
+  min-height: 260px;
+  max-height: 260px;
+  padding: 12px;
+  background: #fff;
+  border: 1px solid rgba(var(--color-foreground), 0.08);
+  border-radius: 0.4rem;
+  overflow: hidden;
+  text-decoration: none;
+}
+
+#appliance-{{ section.id }} .gallery-link img{
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  object-position: center;
+  margin: 0 auto;
+}
+
+@media screen and (max-width: 749px){
+  #appliance-{{ section.id }} .image-gallery{
+    grid-template-columns: 1fr;
+  }
+
+  #appliance-{{ section.id }} .gallery-link{
+    height: 220px;
+    min-height: 220px;
+    max-height: 220px;
+  }
+}
+
+#appliance-{{ section.id }} .pdf-list {
+  margin-top: 2rem;
+}
+
+#appliance-{{ section.id }} .pdf-list li {
+  margin-bottom: 1rem;
+}
+
+#appliance-{{ section.id }} .compatible-products {
+  margin-top: 2.4rem;
+  padding-top: 0;
+  border-top: 0;
+}
+
+#appliance-{{ section.id }} .compatible-status {
+  margin: 2rem 0;
+  padding: 2rem;
+  background: rgba(var(--color-foreground), 0.04);
+  border-radius: 0.8rem;
+}
+
+#appliance-{{ section.id }} .boschino-product-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+@media screen and (min-width: 990px) {
+  #appliance-{{ section.id }} .boschino-product-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 28px;
+  }
+}
+
+#appliance-{{ section.id }} .compatible-products-toolbar {
+  margin: 2rem 0 1.6rem;
+}
+
+#appliance-{{ section.id }} .compatible-products-search {
+  width: 100%;
+  min-height: 52px;
+  padding: 0 16px;
+  border: 1px solid rgba(42, 56, 133, 0.22);
+  border-radius: 1.2rem;
+  background: #fff;
+  color: rgba(0, 0, 0, 0.88);
+  font-size: 15px;
+  outline: none;
+  box-shadow: none;
+}
+
+#appliance-{{ section.id }} .compatible-products-search::placeholder {
+  color: rgba(0, 0, 0, 0.5);
+}
+
+#appliance-{{ section.id }} .compatible-products-search:focus {
+  border-color: rgba(42, 56, 133, 0.45);
+  background: #fff;
+}
+
+#appliance-{{ section.id }} .compatible-status[hidden] {
+  display: none !important;
+}
+
+</style>
+
+{% schema %}
+{
+  "name": "Metaobject – Spotřebič",
+  "settings": [],
+  "presets": [
+    {
+      "name": "Metaobject – Spotřebič",
+      "category": "Metaobjects"
+    }
+  ]
+}
+{% endschema %}

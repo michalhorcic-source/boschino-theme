@@ -1,0 +1,71 @@
+{%- liquid
+  assign seo = collection.metafields.custom.seo_content.value
+  assign collection_description_plain = collection.description | strip_html | strip_newlines | strip
+  assign page_description_plain = page_description | default: blank | strip_html | strip_newlines | strip
+  assign description_source = blank
+  assign rich_text_source = blank
+
+  if page_description_plain != blank and page_description_plain != collection_description_plain and page_description_plain.size <= 220
+    assign description_source = page_description_plain
+  endif
+
+  if description_source == blank and seo != blank
+    if seo.pre_grid_intro != blank
+      assign rich_text_source = seo.pre_grid_intro | metafield_tag
+    elsif seo.purchase_info != blank
+      assign rich_text_source = seo.purchase_info | metafield_tag
+    endif
+  endif
+
+  if description_source == blank and rich_text_source != blank
+    assign description_source = rich_text_source
+  endif
+
+  if description_source == blank
+    assign description_source = collection_description_plain
+  endif
+
+  assign description_text = description_source | replace: '</li>', '. ' | replace: '<li>', '' | replace: '</p>', ' ' | replace: '<p>', '' | replace: '<br>', ' ' | replace: '<br/>', ' ' | replace: '<br />', ' ' | replace: '&nbsp;', ' ' | strip_html | strip_newlines | replace: ' .', '.' | replace: '..', '.' | replace: '  ', ' ' | strip | truncate: 220
+-%}
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      "@id": {{ canonical_url | append: "#breadcrumb" | json }},
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Domov",
+          "item": {{ shop.url | append: routes.root_url | json }}
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": {{ collection.title | strip | json }},
+          "item": {{ canonical_url | json }}
+        }
+      ]
+    },
+    {
+      "@type": "CollectionPage",
+      "@id": {{ canonical_url | append: "#collectionpage" | json }},
+      "url": {{ canonical_url | json }},
+      "name": {{ collection.title | strip | json }},
+      "description": {{ description_text | json }},
+      "isPartOf": {
+        "@type": "WebSite",
+        "url": {{ shop.url | json }},
+        "name": {{ shop.name | json }}
+      }{% if collection.image != blank %},
+      "image": {
+        "@type": "ImageObject",
+        "url": {{ collection.image | image_url: width: 1200 | prepend: "https:" | json }}
+      }{% endif %}
+    }
+  ]
+}
+</script>

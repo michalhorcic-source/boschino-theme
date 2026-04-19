@@ -1,0 +1,244 @@
+{{ 'component-card.css' | asset_url | stylesheet_tag }}
+{{ 'section-collection-list.css' | asset_url | stylesheet_tag }}
+
+{%- style -%}
+ul.collection-list.boschino-subcats{
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  align-items: stretch !important;
+  gap: 18px !important;
+
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+
+  padding: 6px 4px 14px !important;
+  margin: 0 !important;
+  padding-left: 0 !important;
+  list-style: none !important;
+
+  scroll-snap-type: x mandatory !important;
+  -webkit-overflow-scrolling: touch !important;
+}
+
+@media (min-width: 990px){
+  ul.collection-list.boschino-subcats{ gap: 22px !important; }
+}
+
+ul.collection-list.boschino-subcats > li{
+  scroll-snap-align: start !important;
+  flex: 0 0 240px !important;
+  width: 240px !important;
+  max-width: 240px !important;
+  margin: 0 !important;
+}
+
+@media (min-width: 990px){
+  ul.collection-list.boschino-subcats > li{
+    flex-basis: 300px !important;
+    width: 300px !important;
+    max-width: 300px !important;
+  }
+}
+
+ul.collection-list.boschino-subcats::-webkit-scrollbar{ height: 10px; }
+ul.collection-list.boschino-subcats::-webkit-scrollbar-thumb{
+  background: rgba(42,56,133,0.22);
+  border-radius: 999px;
+}
+ul.collection-list.boschino-subcats::-webkit-scrollbar-track{
+  background: rgba(0,0,0,0.06);
+  border-radius: 999px;
+}
+
+ul.collection-list.boschino-subcats .card-wrapper,
+ul.collection-list.boschino-subcats .card{
+  border: 2px solid rgba(42,56,133,0.18) !important;
+  border-radius: 0 !important;
+  background: #ffffff !important;
+
+  box-shadow: 0 10px 22px rgba(0,0,0,0.08) !important;
+  overflow: hidden !important;
+
+  position: relative !important;
+  transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease !important;
+}
+
+ul.collection-list.boschino-subcats .card-wrapper::before,
+ul.collection-list.boschino-subcats .card::before{
+  content: "" !important;
+  position: absolute !important;
+  top: 0; left: 0;
+  height: 5px; width: 100%;
+  background: linear-gradient(90deg, #2a3885, #e20015) !important;
+  z-index: 5 !important;
+}
+
+ul.collection-list.boschino-subcats .card-wrapper:hover,
+ul.collection-list.boschino-subcats .card-wrapper:focus-within{
+  border-color: rgba(42,56,133,0.60) !important;
+  box-shadow: 0 18px 34px rgba(42,56,133,0.18) !important;
+  transform: translateY(-2px) !important;
+}
+
+ul.collection-list.boschino-subcats .card__inner.ratio::before,
+ul.collection-list.boschino-subcats .card__media.ratio::before,
+ul.collection-list.boschino-subcats .ratio::before{
+  content: none !important;
+  display: none !important;
+}
+
+ul.collection-list.boschino-subcats .card__media,
+ul.collection-list.boschino-subcats .card__media .media{
+  height: 190px !important;
+  min-height: 190px !important;
+  background: #fff !important;
+}
+
+ul.collection-list.boschino-subcats .card__media .media{
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 12px !important;
+  box-sizing: border-box !important;
+}
+
+ul.collection-list.boschino-subcats .card__media img{
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: contain !important;
+}
+
+ul.collection-list.boschino-subcats .card__information{
+  padding: 14px 14px 16px !important;
+}
+
+ul.collection-list.boschino-subcats .card__heading,
+ul.collection-list.boschino-subcats .card__heading a{
+  color: rgba(0,0,0,0.88) !important;
+  font-size: 15px !important;
+  font-weight: 900 !important;
+  line-height: 1.25 !important;
+  text-decoration: none !important;
+}
+
+ul.collection-list.boschino-subcats .card__heading{
+  display: -webkit-box !important;
+  -webkit-line-clamp: 2 !important;
+  -webkit-box-orient: vertical !important;
+  overflow: hidden !important;
+  min-height: 2.6em !important;
+}
+
+ul.collection-list.boschino-subcats a::after,
+ul.collection-list.boschino-subcats .icon-wrap,
+ul.collection-list.boschino-subcats svg.icon,
+ul.collection-list.boschino-subcats .icon{
+  content: none !important;
+  display: none !important;
+}
+{%- endstyle -%}
+
+<div class="page-width">
+  <h1 class="title title--primary inline-richtext{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--fade-in{% endif %}">
+    {{ section.settings.title }}
+  </h1>
+
+  {%- liquid
+    case section.settings.sort
+      when 'products_high', 'products_low'
+        assign collections = collections | sort: 'all_products_count'
+      when 'date', 'date_reversed'
+        assign collections = collections | sort: 'published_at'
+    endcase
+
+    if section.settings.sort == 'products_high' or section.settings.sort == 'date_reversed' or section.settings.sort == 'alphabetical_reversed'
+      assign collections = collections | reverse
+    endif
+
+    assign moduloResult = 28 | modulo: section.settings.columns_desktop
+    assign paginate_by = 30
+    if moduloResult == 0
+      assign paginate_by = 28
+    endif
+  -%}
+
+  {%- paginate collections by paginate_by -%}
+    <ul class="collection-list boschino-subcats" role="list">
+      {%- for collection in collections -%}
+        <li class="collection-list__item{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}"
+          {% if settings.animations_reveal_on_scroll %}
+            data-cascade
+            style="--animation-order: {{ forloop.index }};"
+          {% endif %}
+        >
+          {% render 'card-collection-XYZ',
+            card_collection: collection,
+            media_aspect_ratio: section.settings.image_ratio,
+            columns: 3
+          %}
+        </li>
+      {%- endfor -%}
+    </ul>
+
+    {% render 'pagination', paginate: paginate %}
+  {%- endpaginate -%}
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.main-list-collections.name",
+  "class": "section",
+  "settings": [
+    {
+      "type": "inline_richtext",
+      "id": "title",
+      "label": "t:sections.main-list-collections.settings.title.label",
+      "default": "t:sections.main-list-collections.settings.title.default"
+    },
+    {
+      "type": "select",
+      "id": "sort",
+      "options": [
+        { "value": "alphabetical", "label": "t:sections.main-list-collections.settings.sort.options__1.label" },
+        { "value": "alphabetical_reversed", "label": "t:sections.main-list-collections.settings.sort.options__2.label" },
+        { "value": "date_reversed", "label": "t:sections.main-list-collections.settings.sort.options__3.label" },
+        { "value": "date", "label": "t:sections.main-list-collections.settings.sort.options__4.label" },
+        { "value": "products_high", "label": "t:sections.main-list-collections.settings.sort.options__5.label" },
+        { "value": "products_low", "label": "t:sections.main-list-collections.settings.sort.options__6.label" }
+      ],
+      "default": "alphabetical",
+      "label": "t:sections.main-list-collections.settings.sort.label"
+    },
+    {
+      "type": "select",
+      "id": "image_ratio",
+      "options": [
+        { "value": "adapt", "label": "t:sections.main-list-collections.settings.image_ratio.options__1.label" },
+        { "value": "portrait", "label": "t:sections.main-list-collections.settings.image_ratio.options__2.label" },
+        { "value": "square", "label": "t:sections.main-list-collections.settings.image_ratio.options__3.label" }
+      ],
+      "default": "adapt",
+      "label": "t:sections.main-list-collections.settings.image_ratio.label"
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "min": 1,
+      "max": 6,
+      "step": 1,
+      "default": 3,
+      "label": "t:sections.main-list-collections.settings.columns_desktop.label"
+    },
+    {
+      "type": "select",
+      "id": "columns_mobile",
+      "options": [
+        { "value": "1", "label": "t:sections.main-list-collections.settings.columns_mobile.options__1.label" },
+        { "value": "2", "label": "t:sections.main-list-collections.settings.columns_mobile.options__2.label" }
+      ],
+      "default": "2",
+      "label": "t:sections.main-list-collections.settings.columns_mobile.label"
+    }
+  ]
+}
+{% endschema %}
