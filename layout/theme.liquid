@@ -35,15 +35,25 @@
       <link rel="preconnect" href="https://fonts.shopifycdn.com" crossorigin>
     {%- endunless -%}
 
+    {%- liquid
+      assign boschino_title_base = page_title
+
+      if request.page_type == 'collection' and collection
+        if collection.handle == 'bosch-cerpadla-do-pracek'
+          assign boschino_title_base = 'Čerpadla do praček Bosch a Siemens | ' | append: shop.name
+        endif
+      endif
+    -%}
+
     <title>
-      {{ page_title }}
+      {{ boschino_title_base }}
       {%- if current_tags -%}
         &ndash; tagged "{{ current_tags | join: ', ' }}"
       {%- endif -%}
       {%- if current_page != 1 -%}
         &ndash; Page {{ current_page }}
       {%- endif -%}
-      {%- unless page_title contains shop.name -%}
+      {%- unless boschino_title_base contains shop.name -%}
         &ndash; {{ shop.name }}
       {%- endunless -%}
     </title>
@@ -127,7 +137,7 @@
         | replace: '&nbsp;', ' '
         | replace: '&#160;', ' '
         | strip
-        | truncate: 180, '…'
+        | truncate: 160, '…'
       }}
     {%- endcapture -%}
 
